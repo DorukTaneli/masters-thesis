@@ -1,0 +1,280 @@
+\documentclass[12pt,twoside]{report}
+\usepackage{parskip}
+\usepackage{comment}
+\setlength{\parindent}{2em}  % indentation of paragraph
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Definitions for the title page
+% Edit these to provide the correct information
+% e.g. \newcommand{\reportauthor}{Timothy Kimber}
+
+\newcommand{\reporttitle}{Automation and Intelligent Optimisation in High Performance Sailing Boats}
+\newcommand{\reportauthor}{Doruk Taneli}
+\newcommand{\supervisor}{Dr. Pedro Baiz}
+\newcommand{\degreetype}{Advanced Computing}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% load some definitions and default packages
+\input{includes}
+
+% load some macros
+\input{notation}
+
+\date{September 2021}
+
+\begin{document}
+
+% load title page
+\input{titlepage}
+
+
+% page numbering etc.
+\pagenumbering{roman}
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\setcounter{page}{1}
+\pagestyle{fancy}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{comment}
+\begin{abstract}
+Your abstract.
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Acknowledgments}
+Comment this out if not needed.
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\end{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%--- table of contents
+\fancyhead[RE,LO]{\sffamily {Table of Contents}}
+\tableofcontents 
+
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\fancyhead[LE,RO]{\slshape \rightmark}
+\fancyhead[LO,RE]{\slshape \leftmark}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{comment}
+\chapter{Introduction}
+
+\section{Motivation}
+
+\section{Entities Involved in the Project}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width = 0.4\hsize]{./figures/imperial}
+\caption{Imperial College Logo. It's nice blue, and the font is quite stylish. But you can choose a different one if you don't like it.}
+\label{fig:logo}
+\end{figure}
+
+Figure~\ref{fig:logo} is an example of a figure. 
+\end{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Background}
+
+\section{Literature Review}
+In this section, the modern Reinforcement Learning algorithms and the suggested algorithm to be used in the Reinforcement Learning approach is discussed.
+
+\subsection{Reinforcement Learning Algorithms} \label{LR:RL}
+
+In this section, Reinforcement Learning algorithms that might be used in the reinforcement learning approach will be discussed.
+
+\begin{figure}
+\centering
+\includegraphics[width = 0.9\hsize]{figures/RL algorithms.png}
+\caption{A non-exhaustive taxonomy of modern RL algorithms \cite{openai:rl-algs}}
+\label{fig:rl-algs}
+\end{figure}
+
+An introductory taxonomy of the modern RL algorithms can be seen in Figure ~\ref{fig:rl-algs}. There are two main classes of RL algorithms, Model-Based and Model-Free. In Model-Based algorithms, the algorithms have either access to the environment model, or it learns the environment model. The problem with this branch of algorithms is that usually, the ground truth of the environment is not readily available to the agent. The agent has to learn a simulated environment, then performs poorly on the real environment. This is specifically the case for our project. Furthermore, Model-Free algorithms have been more extensively developed and tested \cite{openai:rl-algs}. Because of these downsides of Model-Based algorithms, I will focus on the Model-Free algorithms for this project.
+
+In Model-Free RL, there are two main techniques: Policy Optimization and Q-Learning. Algorithms such as DDPG, TD3, and SAC - which are state of the are and best suits our use case - uses a hybrid approach of both of these techniques.
+DDPG is the first of these algorithms that was developed in 2015, and can be seen as an adaptation of Deep Q-Learning for continuous action spaces. \cite{ddpg} TD3 and SAC were both developed around the same time in 2018. They utilize different tricks to improve DDPG.
+
+\subsubsection{TD3}
+DDPG is prone to overestimating Q-values. Twin Delayed DDPG (TD3) attempts to solve this issue with three tricks: \cite{openai:td3}
+
+\begin{enumerate}
+  \item \textbf{Clipped Double-Q Learning:} Instead of one in DDPG, TD3 learns two Q functions, and uses the lesser Q value in the Bellman error loss functions.
+  \item \textbf{“Delayed” Policy Updates:} TD3 updates the policy and target networks less frequently than the Q-function. The original paper recommends one policy update for every two Q-function updates.
+  \item \textbf{Target Policy Smoothing:} TD3 adds noise to the target action, to make it harder for the policy to exploit Q-function errors by smoothing out Q along changes in action.
+\end{enumerate}
+
+In the original TD3 paper, Fujimoto et al. claims that TD3 outperforms the state of the art in every OpenAI gym task tested. \cite{td3} The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:td3-comparisons}.
+
+\begin{figure}
+\centering
+\includegraphics[width = \hsize]{figures/td3 comparison.png}
+\caption{Performance comparison of RL algorithms in TD3 paper \cite{td3}}
+\label{fig:td3-comparisons}
+\end{figure}
+
+
+\subsubsection{SAC}
+Instead of deterministic policies used in DDPG and TD3, SAC uses stochastic policies. Thus, it is a bridge between stochastic policy optimization and DDPG-style approaches. Like TD3, it uses a few tricks to improve DDPG: \cite{openai:sac}
+
+\begin{enumerate}
+  \item \textbf{Entropy Regularization:} The policy is trained to maximize a trade-off between expected return and entropy. This is closely related to exploration-exploitation trade-off: higher entropy results in more exploration, which can accelerate learning and prevent converging to bad local optimum.
+  \item \textbf{Next-State Actions:} In SAC, the next-state actions used in the target come from the current policy instead of the target policy.
+  \item \textbf{Clipped Double-Q Learning:} Like TD3, SAC makes use of Clipped Double-Q Learning.
+  \item \textbf{Target Policy Smoothing:} Although there is no explicit target policy smoothing, since SAC uses a stochastic policy, the noise from the randomness achieves a similar effect.
+\end{enumerate}
+
+In the original SAC paper, Haarnoja et al. claims that SAC outperforms the state of the art algorithms in sample-efficiency, asymptotic performance, and stability. \cite{sacOG} The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:sac-comparisons}.
+
+\begin{figure}
+\centering
+\includegraphics[width = \hsize]{figures/sac comparison og.png}
+\caption{Performance comparison of RL algorithms in SAC paper \cite{sacOG}}
+\label{fig:sac-comparisons}
+\end{figure}
+
+\subsubsection{Algorithm of Choice}
+Interestingly, both SAC and TD3 authors claim that they perform better than each other in their own papers. So a third party benchmark is necessary to be able to compare the two algorithms. A comparison of OpenAI PyTorch implementations of TD3, SAC, and few other algorithms can be seen in Figure \ref{fig:openAI-comparisons}.
+
+\begin{figure}
+     \centering
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/OpenAI benchmarks/halfcheetah pt.png}
+         \caption{HalfCheetah-v3}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/OpenAI benchmarks/hopper pt.png}
+         \caption{Hopper-v3}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/OpenAI benchmarks/walker pt.png}
+         \caption{Walker2d-v3}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/OpenAI benchmarks/ant pt.png}
+         \caption{Ant-v3}
+     \end{subfigure}
+        \caption{Performance comparison of OpenAI implementations of RL algorithms \cite{openai:bench}}
+        \label{fig:openAI-comparisons}
+\end{figure}
+
+As can be seen in Figure \ref{fig:openAI-comparisons}, both TD3 and SAC perform very closely to each other, with SAC having a slight advantage over TD3. However one should note that OpenAI implementation of SAC have slight variations that bring it closer to TD3. \cite{openai:sac-code}
+
+The advantage of TD3 is that it performs really close to SAC, with less complexity and less hyperparameters to tune. However, the second iteration of SAC from the original authors automatically tunes the problematic temperature hyperparameter, reducing the problem of hyperparameter tuning, making the algorithm more stable among different seeds and environments, and performs well even in the worst case, which is important for real life use cases. \cite{sacOG}
+
+Because of these reasons, the suggested algorithm to be used for the Reinforcement Learning Approach is Soft Actor-Critic (SAC).
+
+\section{Previous Student Work}
+The "Automation and Intelligent Optimisation in High Performance Sailing Boats" project started in 2019. Birk Ulstad and Roman Kastusik started working on the project simultaneously. Birk Ulstad took the Supervised Learning Approach, whereas Roman Kastusik took the Reinforcement Learning Approach to the problem. Following their work, Stanislas Hannabelle continued working on the supervised learning approach in late 2019. In 2020, Charles Metz continued the Reinforcement Learning work of Roman Kastusik. A very brief summary of each students work is presented below.
+%I, Doruk Taneli, will be picking up where Birk, Roman, Stanislas, and Charles left off and  further improve the project.
+
+\subsection{Birk Ulstad}
+Birk's goal was to develop a supervised machine learning model that predicts the rudder angle set by Jack Trigger on the Concise 8 boat, using the previous data recorded during races by the existing sensors on the boat. \cite{birk}
+
+Birk Ulstad converted the available raw, partially corrupted data to processable csv data. He then cleaned the csv data by removing the irrelevant and corrupted parts, analysing outliers and applying smoothing. Next, he normalized, reframed, and downsampled the data to get it ready for the supervised learning model.
+
+For the model, Birk preferred a two stateful LSTM layers, each followed by a dropout layer to prevent overfitting. The prediction plan of the model can be seen in Figure~\ref{fig:birk lstm}. The original plan was to use both past values of the feature set until time t-1 (blue arrows) and the current values at time t (red arrows) to predict the rudder angle. However he only managed to get blue arrow predictions to work, and used those while discussing his results.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.8\hsize]{figures/Birk Ulstad LSTM prediction.png}
+\caption{Birk Ulstad's LSTM prediction methods}
+\label{fig:birk lstm}
+\end{figure}
+
+Birk concluded that his model architecture is able to predict the rudder angle produced by a human within a couple of degrees. His other notable observations were: 
+\begin{itemize}
+  \item The model is able to predict the autopilot's rudder angle with much less error compared to a human's rudder angle. Birk explained this as "Learning a univariate rule-based function [of an autopilot] is easier than learning the multivariate function that maps human sensory input to human rudder output".
+  \item Downsampling the available data to 5 Hz from 25 Hz is a good middle ground between training time and RMSE. 
+  \item An input sequence length between 5-15 seconds provides an optimal trade-off between training time and prediction accuracy.
+\end{itemize} 
+
+\subsection{Roman Kastusik}
+Roman's objective was to utilize reinforcement learning to increase the autopilots' performance, potentially beyond human level. To achieve this, he trained a neural network to simulate the boat's behavior using Jack Trigger's race data, and created a reinforcement learning algorithm that would interact with said simulation environment. \cite{roman}
+
+Roman started with some data analysis, data cleaning, and scaling on Jack Trigger's race data. He then used  used this data to train the simulation environment that would be used for the reinforcement learning algorithm. The data flow around the simulation environment and the reinforcement learning algorithm can be found in Figure \ref{fig:roman dataflow}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.75\hsize]{figures/roman data flow.png}
+\caption{Roman Kastusik's RL data flow}
+\label{fig:roman dataflow}
+\end{figure}
+
+He also did research about the recent advancements in reinforcement learning, and created an RL algorithm utilizing Deep Deterministic Policy Gradients, Actor-Critic Networks and Experience Replay.
+
+Roman concluded that due to the poor performance of the simulation environment, it was not possible to realize the full potential of the reinforcement learning algorithm. Charles Metz later continues his work and improves the simulation environment.
+
+\subsection{Stanislas Hannabelle}
+Stanislas' goal was to improve the results of Birk Ulstad's supervised learning approach to the problem. He further cleaned the dataset using a tack\footnote{Tacking is a sailing maneuver where the boat changes direction by turning its head towards and through the wind so that the direction from which the wind blows changes from one side of the boat to the other, allowing progress in the desired direction. \cite{wiki:tack}} detection system, did hyperparameter and bayesian optimization, and compared GRU and LSTM models. He was able to reduce the Root Mean Squared Error from 3.493 degrees of Birk's final model to 1.096 degrees, and reduced the computational time needed for rudder angle prediction. \cite{stan}
+
+Stan further cleaned the available dataset by training a classifier to remove tacks, and manually removing the abnormal sailing conditions such as extremely light wind. With the new dataset, he performed the grid search shown in Table \ref{tbl:stan grid} for best sampling frequency (Hz) and input sequence length (seconds). He then performed bayesian optimization for LSTM and GRU models for 1Hz-5s and 5hz-2s parameters. After training and testing with the best hyperparameters he found, Stanislas got the results in Figure \ref{fig:stan results}.
+
+\begin{table}[h]
+\centering
+\includegraphics[width=\linewidth]{figures/stan grid search.png}
+\caption{validation RMSE for sampling frequency and input length combinations}
+\label{tbl:stan grid}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = \hsize]{figures/stan results.png}
+\caption{Stanislas Hannabelle's improvements on supervised learning approach}
+\label{fig:stan results}
+\end{figure}
+
+With his best model 'GRU 5Hz-2s', Stanislas reduced the testing RMSE of Birk's model by approximately 68\% while cutting the required training time in half. Stanislas' model was able to predict the rudder angle produced by a human by around 1 degree. His other success was to reduce the computational time needed for rudder angle prediction so that the model can be implemented live in onboard autopilots.
+
+\subsection{Charles Metz}
+Charles' goal was to improve the model Roman suggested, so it can reliably reproduce the behaviour of a sailing boat in its sea environment. His main idea was that instead of using 1 model to predict n sea and boat features like Roman, he used n models to predict n different features, which lead to very significant improvement. \cite{charles}
+
+Charles had a new dataset available, so he started by applying similar cleaning and preprocessing steps to this new dataset. He noticed that some of the features can be derived mathematically from other features such as true wind, apparent wind, and boat speed. He decided to calculate those features mathematically, then trained n separate models for n remaining features. He tried 2 different models, model 1 has two final dense layers whereas model 2 has only one final dense layer.
+
+He concluded that in general, deterministic mathematical derivations has the least error, followed by n models for n features, then 1 model for n features. Error rate of different prediction methods for some of the boat features can be seen in Table \ref{tbl:charles results}. Charles envisions that after n models for n features are individually optimised, they can be integrated into a reinforcement learning framework.
+
+\begin{table}[h]
+\centering
+\includegraphics[width=0.8\linewidth]{figures/charles results.png}
+\caption{Charles' error rates for different prediction methods}
+\label{tbl:charles results}
+\end{table}
+
+\newpage
+
+
+\begin{comment}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Contribution}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Experimental Results}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Conclusion}
+
+\end{comment}
+
+\appendix
+\chapter{Sail Trim Approach}
+\input{Chapters/appendix-sailtrim}
+
+%% bibliography
+\bibliographystyle{unsrt}
+\bibliography{bibliography}
+
+\end{document}
