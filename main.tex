@@ -35,8 +35,9 @@
 \setcounter{page}{1}
 \pagestyle{fancy}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{comment}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{abstract}
 Your abstract.
 \end{abstract}
@@ -46,26 +47,38 @@ Your abstract.
 Comment this out if not needed.
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
+
 \end{comment}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %--- table of contents
 \fancyhead[RE,LO]{\sffamily {Table of Contents}}
 \tableofcontents 
 
 
-\clearpage{\pagestyle{empty}\cleardoublepage}
+\clearpage{\pagestyle{empty}%\cleardoublepage
+}
 \pagenumbering{arabic}
 \setcounter{page}{1}
 \fancyhead[LE,RO]{\slshape \rightmark}
 \fancyhead[LO,RE]{\slshape \leftmark}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{comment}
+
 \chapter{Introduction}
 
 \section{Motivation}
+Modern sailing boats are so good.
+Autopilots have improved but not as much as the other parts.
+Autopilots used a lot in short handed races.
+I will utilize reinforcement learning on autopilots.
+to get Autopilots theoretically above human level
 
-\section{Entities Involved in the Project}
+\section{Objectives}
+
+\section{Outcomes}
+
+
 
 \begin{figure}[tb]
 \centering
@@ -75,18 +88,19 @@ Comment this out if not needed.
 \end{figure}
 
 Figure~\ref{fig:logo} is an example of a figure. 
-\end{comment}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Background}
 
-\section{Literature Review}
-In this section, the modern Reinforcement Learning algorithms and the suggested algorithm to be used in the Reinforcement Learning approach is discussed.
+\section{State of the Art Autopilots}
+Explain some of them.
+still requires lots of human tuning.
+Does not make use of onboard data / machine learning.
 
-\subsection{Reinforcement Learning Algorithms} \label{LR:RL}
+\section{Literature Review: RL Algorithms}
+In this section, the modern Reinforcement Learning algorithms and the suggested algorithm to be used for our use case in this project is discussed.
 
-In this section, Reinforcement Learning algorithms that might be used in the reinforcement learning approach will be discussed.
-
-\begin{figure}
+\begin{figure}[h]
 \centering
 \includegraphics[width = 0.9\hsize]{figures/RL algorithms.png}
 \caption{A non-exhaustive taxonomy of modern RL algorithms \cite{openai:rl-algs}}
@@ -98,7 +112,7 @@ An introductory taxonomy of the modern RL algorithms can be seen in Figure ~\ref
 In Model-Free RL, there are two main techniques: Policy Optimization and Q-Learning. Algorithms such as DDPG, TD3, and SAC - which are state of the are and best suits our use case - uses a hybrid approach of both of these techniques.
 DDPG is the first of these algorithms that was developed in 2015, and can be seen as an adaptation of Deep Q-Learning for continuous action spaces. \cite{ddpg} TD3 and SAC were both developed around the same time in 2018. They utilize different tricks to improve DDPG.
 
-\subsubsection{TD3}
+\subsection{TD3}
 DDPG is prone to overestimating Q-values. Twin Delayed DDPG (TD3) attempts to solve this issue with three tricks: \cite{openai:td3}
 
 \begin{enumerate}
@@ -109,7 +123,7 @@ DDPG is prone to overestimating Q-values. Twin Delayed DDPG (TD3) attempts to so
 
 In the original TD3 paper, Fujimoto et al. claims that TD3 outperforms the state of the art in every OpenAI gym task tested. \cite{td3} The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:td3-comparisons}.
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \includegraphics[width = \hsize]{figures/td3 comparison.png}
 \caption{Performance comparison of RL algorithms in TD3 paper \cite{td3}}
@@ -117,7 +131,7 @@ In the original TD3 paper, Fujimoto et al. claims that TD3 outperforms the state
 \end{figure}
 
 
-\subsubsection{SAC}
+\subsection{SAC}
 Instead of deterministic policies used in DDPG and TD3, SAC uses stochastic policies. Thus, it is a bridge between stochastic policy optimization and DDPG-style approaches. Like TD3, it uses a few tricks to improve DDPG: \cite{openai:sac}
 
 \begin{enumerate}
@@ -129,17 +143,17 @@ Instead of deterministic policies used in DDPG and TD3, SAC uses stochastic poli
 
 In the original SAC paper, Haarnoja et al. claims that SAC outperforms the state of the art algorithms in sample-efficiency, asymptotic performance, and stability. \cite{sacOG} The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:sac-comparisons}.
 
-\begin{figure}
+\begin{figure}[h]
 \centering
 \includegraphics[width = \hsize]{figures/sac comparison og.png}
 \caption{Performance comparison of RL algorithms in SAC paper \cite{sacOG}}
 \label{fig:sac-comparisons}
 \end{figure}
 
-\subsubsection{Algorithm of Choice}
+\subsection{Algorithm of Choice}
 Interestingly, both SAC and TD3 authors claim that they perform better than each other in their own papers. So a third party benchmark is necessary to be able to compare the two algorithms. A comparison of OpenAI PyTorch implementations of TD3, SAC, and few other algorithms can be seen in Figure \ref{fig:openAI-comparisons}.
 
-\begin{figure}
+\begin{figure}[h]
      \centering
      \begin{subfigure}[b]{0.49\textwidth}
          \centering
@@ -218,7 +232,7 @@ Roman concluded that due to the poor performance of the simulation environment, 
 \subsection{Stanislas Hannabelle}
 Stanislas' goal was to improve the results of Birk Ulstad's supervised learning approach to the problem. He further cleaned the dataset using a tack\footnote{Tacking is a sailing maneuver where the boat changes direction by turning its head towards and through the wind so that the direction from which the wind blows changes from one side of the boat to the other, allowing progress in the desired direction. \cite{wiki:tack}} detection system, did hyperparameter and bayesian optimization, and compared GRU and LSTM models. He was able to reduce the Root Mean Squared Error from 3.493 degrees of Birk's final model to 1.096 degrees, and reduced the computational time needed for rudder angle prediction. \cite{stan}
 
-Stan further cleaned the available dataset by training a classifier to remove tacks, and manually removing the abnormal sailing conditions such as extremely light wind. With the new dataset, he performed the grid search shown in Table \ref{tbl:stan grid} for best sampling frequency (Hz) and input sequence length (seconds). He then performed bayesian optimization for LSTM and GRU models for 1Hz-5s and 5hz-2s parameters. After training and testing with the best hyperparameters he found, Stanislas got the results in Figure \ref{fig:stan results}.
+Stanislas further cleaned the available dataset by training a classifier to remove tacks, and manually removing the abnormal sailing conditions such as extremely light wind. With the new dataset, he performed the grid search shown in Table \ref{tbl:stan grid} for best sampling frequency (Hz) and input sequence length (seconds). He then performed bayesian optimization for LSTM and GRU models for 1Hz-5s and 5hz-2s parameters. After training and testing with the best hyperparameters he found, Stanislas got the results in Figure \ref{fig:stan results}.
 
 \begin{table}[h]
 \centering
@@ -250,12 +264,14 @@ He concluded that in general, deterministic mathematical derivations has the lea
 \label{tbl:charles results}
 \end{table}
 
-\newpage
+\section{Available Datasets}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Progress}
+\input{Chapters/progress}
 
 
 \begin{comment}
-
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Contribution}
 
@@ -266,8 +282,8 @@ He concluded that in general, deterministic mathematical derivations has the lea
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Conclusion}
-
 \end{comment}
+
 
 \appendix
 \chapter{Sail Trim Approach}

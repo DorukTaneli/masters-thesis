@@ -100,5 +100,50 @@ There are other mainsail controls that affect the trim such as cunningham and ou
 
 \section{Sail Trim Capture System}
 
+The suggested camera placement is at the center back of the boat, possibly at the bimini top, as shows in Figure \ref{fig:camera-pos}. A camera from this angle will see a similar view of the sails with Figure \ref{fig:telltales}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.7\hsize]{figures/sail-trim-approach/camera-position.png}
+\caption{Camera position}
+\label{fig:camera-pos}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.8\hsize]{figures/sail-trim-approach/telltales.jpg}
+\caption{Camera's view of a bad(left) and good(right) light wind mainsail trim \cite{img:telltales}}
+\label{fig:telltales}
+\end{figure}
+
+The easiest way to tell if the trim is good for a human is to look at the red telltales at the back of the sails, see Figure \ref{fig:telltales}. The most important one is the topmost one. If the telltales are flying straight back, it means that the air is coming out of the sails alright. However if the telltale is going to the back of the sails, it shows us that the wind flow at the back of the sails are not optimal, meaning the trim is sub-optimal and the sails need to be loosened.
+
+For a machine, the easiest way to check trim might be comparing the areas of sail and the sky. In Figure \ref{fig:telltales}, you'll notice that Assuming a clear sky, by only comparing the number of blue pixels(sky) and the number of whiter pixels(sails), a very simple model can tell the difference between a good and a bad trim.
+
+Using the state of the art image classification models, we can achieve much better results, theoretically learning the sail trim for different wind and weather conditions, apparent wind angles, maybe even across different boats.
+
 
 \section{Suggested Timeline}
+
+The suggested timeline and some additional details for this project, planned considering the available time for Imperial MSc thesis projects can be seen in Figures \ref{fig:sta-plan1} and \ref{fig:sta-plan2}.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = \hsize]{figures/sail-trim-approach/plan1.png}
+\caption{Suggested plan - Iterations 1 and 2}
+\label{fig:sta-plan1}
+\end{figure}
+
+Iteration 1 aims to build a simple Proof of Concept that machine learning models can classify good and bad sail trims. After the initial Proof of Concept, the models are extended in Iteration 2. If the expected results are not met in the first iteration, using Integrated Gradients explained in section \ref{LR:IG}, one can see what the models have learned, assess if the learnt features are correct, and balance the dataset with more data countering the false features.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = \hsize]{figures/sail-trim-approach/plan2.png}
+\caption{Suggested plan - Iterations 3 and 4}
+\label{fig:sta-plan2}
+\end{figure}
+
+Iteration 3 aims to implement the models live on-board using a smartphone, including two different interfaces for education and professional use cases. Iteration 4 contains a buffer week if anything goes wrong for the project, then some time for project submission preparations, namely the code submission to software archive, final report, and the final presentation.
+
+For more information about the Sail Trim Approach, you can email me at:\\
+\href{mailto:doruktaneli97@gmail.com}{doruktaneli97@gmail.com}
