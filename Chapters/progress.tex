@@ -6,19 +6,19 @@ Spinning Up's main focus is education. Therefore the algorithm implementations a
 
 \begin{figure}[h]
      \centering
-     \begin{subfigure}[b]{0.49\textwidth}
+     \begin{subfigure}[t]{0.32\textwidth}
          \centering
          \includegraphics[width=\textwidth]{figures/rl-framework/sac-pendulum.png}
          \caption{Pendulum-v0 (Very Easy)}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[b]{0.49\textwidth}
+     \begin{subfigure}[t]{0.32\textwidth}
          \centering
          \includegraphics[width=\textwidth]{figures/rl-framework/sac-mountain-car.png}
          \caption{MountainCarContinuous-v0 (Easy)}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[b]{0.49\textwidth}
+     \begin{subfigure}[t]{0.32\textwidth}
          \centering
          \includegraphics[width=\textwidth]{figures/rl-framework/sac-bipedal-walker.png}
          \caption{BipedalWalker-v3 (Hard)}
@@ -29,20 +29,18 @@ Spinning Up's main focus is education. Therefore the algorithm implementations a
 
 Spinning Up implementation performs well and converges quickly on easy environments, but it provides disappointing results on the harder BipedalWalker-v3 environment. SAC is expected to have better exploration and achieve better results on BipedalWalker-v3 environment before 300.000 environment interacts \cite{gym-leaderboard}. But it never managed to escape a local minimum for a long period of training time. Considering our sailing environment will be pretty complex, Spinning Up implementation of SAC is not suitable for use on this project.
 
-\newpage
-
 \subsection{RL Framework Features} \label{RLF:framework-features}
 
 Spinning Up Framework lacks some important features for Reinforcement Learning. First, it does not support continuing training of a previously trained agents. This is problematic in a few ways: it costs precious time and resources to train agents from scratch every time, plus even if models are trained again from ground up, no two reinforcement learning runs will be identical because of the noise or stochasticity in the algorithms.
 
-The second lacking feature is that there is no hyperparameter optimization support. Hyperparameters can cause huge difference in performance \cite{hyperparameter-ddpg}. A comparison of DDPG on Walker2d-v1 with random hyperparameters can be seen in Figure \ref{fig:hyperparameter-ddpg}. The best and worst performing hyperparameters have approximately 3-fold average reward difference after 1 million timesteps.
-
-\begin{figure}[h]
+\begin{wrapfigure}{R}{0.5\textwidth}
 \centering
-\includegraphics[width = 0.5\hsize]{figures/rl-framework/hyperparameter-ddpg.png}
-\caption{Performance of DDPG on Walker2d-v1 with random hyperparameters \cite{hyperparameter-ddpg}}
+\includegraphics[width = 0.48\textwidth]{figures/rl-framework/hyperparameter-ddpg.png}
+\caption{DDPG on Walker2d-v1 with random hyperparameters \cite{hyperparameter-ddpg}}
 \label{fig:hyperparameter-ddpg}
-\end{figure}
+\end{wrapfigure}
+
+The second lacking feature is that there is no hyperparameter optimization support. Hyperparameters can cause huge difference in performance \cite{hyperparameter-ddpg}. A comparison of DDPG on Walker2d-v1 with random hyperparameters can be seen in Figure \ref{fig:hyperparameter-ddpg}. The best and worst performing hyperparameters have approximately 3-fold average reward difference after 1 million timesteps.
 
 Both of these features, and probably more that will arise in the future are important for this project, so another framework with these additional features is needed.
 
@@ -54,13 +52,13 @@ SB3 solves both of the problems of Spinning Up Framework mentioned in sections \
 
 \begin{figure}[h]
      \centering
-     \begin{subfigure}[b]{0.49\textwidth}
+     \begin{subfigure}[c]{0.49\textwidth}
          \centering
          \includegraphics[width=\textwidth]{figures/rl-framework/sac-bipedal-walker.png}
          \caption{Spinning Up implementation (Default parameters) - Goal not achieved in 400.000 steps}
      \end{subfigure}
      \hfill
-     \begin{subfigure}[b]{0.49\textwidth}
+     \begin{subfigure}[c]{0.49\textwidth}
          \centering
          \includegraphics[width=\textwidth]{figures/rl-framework/sb3-sac-BipedalWalker-v3.png}
          \caption{Stable Baselines3 implementation (Tuned parameters) - Goal Achieved in 200.000 steps}

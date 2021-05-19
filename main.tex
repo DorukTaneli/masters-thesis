@@ -72,18 +72,14 @@ Comment this out if not needed.
 
 \chapter{Introduction}
 
-\section{Motivation}
-Modern sailing boats are so good.
-Autopilots have improved but not as much as the other parts.
-Autopilots used a lot in short handed races.
-I will utilize reinforcement learning on autopilots.
-to get Autopilots theoretically above human level
 
 Modern sailboats are built by combining bleeding edge science from many areas, including material science for lighter and more durable materials, aero and hydro dynamics for the most efficient designs, and latest sensors for most accurate information. One area that stayed underdeveloped compared to the other parts of the boat is the autopilots. Although they have also improved, autopilots still do not use most of the data available from the onboard boat sensors.
 
-Shorthanded races are one type of popular competition in the sailing world. In shorthanded races, there is either one or two crew members, as opposed to full crews that can go up to around ten people. Autopilots are used extensively during these shorthanded races, steering the boat for more than 95\% of the time, while the crew handles other boat work or personal sustenance. While carrying out more than 95\% of the steering, autopilots only perform at 80\% of the capability of a professional skipper. Therefore there is a huge potential to gain race winning advantage in shorthanded competitions by improving the autopilots.
+Shorthanded races are one type of popular competition where there are either one or two crew members, as opposed to full crews that can go up to around ten people. Autopilots are used extensively during these shorthanded races, steering the boat for more than 95\% of the time, while the crew handles other boat work or personal sustenance. Despite carrying out more than 95\% of the steering, autopilots only perform at 80\% of the capability of a professional skipper. Therefore there is a huge potential to gain race winning advantage in shorthanded competitions by improving the autopilots. Jack Trigger \cite{trigger-racing}, who competes in shorthanded races, is providing the data from his boat sensors which makes this project possible. 
 
-The goal of this project is to create a Machine Learning model trained by Reinforcement Learning that can predict the optimal rudder angle using onboard boat sensors. To achieve that, this project will continue the work of former Imperial students and the employees of the partner company 'The Data Analysis Bureau'. Extensive work have been done on this project since 2018. Most of the work have been done in cleaning and preprocessing the available data, plus creating Machine Learning models that predicts the state of the boat and the environment, which will be used to simulate the environment that the Reinforcement Learning models will be trained on.
+The goal of this project is to realize this potential race winning advantage by creating a Machine Learning model, trained by Reinforcement Learning, which will predict the optimal rudder angle using onboard boat sensors. To achieve that, this project will continue the work of former Imperial students and the employees of the partner company 'The Data Analysis Bureau' \cite{t-dab}. Extensive work have been done on this project since 2018, mostly focusing on cleaning and preprocessing the available data, plus creating Machine Learning models that predicts the state of the boat and the sea environment.
+
+I, Doruk Taneli, will continue their work, and using the data and models they prepared, I will implement an OpenAI Gym environment in which the Reinforcement Learning will take place. I will then compare the performance of state-of-the-art RL algorithms on this environment, then draw conclusions. If the simulation environment can reproduce the interactions between the rudder, the boat, and the sea realistically enough, the Reinforcement Learning algorithm can potentially learn how to steer a boat better than a human professional.
 
 %\section{Objectives}
 
@@ -248,7 +244,7 @@ Stanislas further cleaned the available dataset by training a classifier to remo
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.9\hsize]{figures/stan results.png}
+\includegraphics[width = 0.8\hsize]{figures/stan results.png}
 \caption{Stanislas Hannabelle's improvements on supervised learning approach}
 \label{fig:stan results}
 \end{figure}
@@ -258,16 +254,18 @@ With his best model 'GRU 5Hz-2s', Stanislas reduced the testing RMSE of Birk's m
 \subsection{Charles Metz}
 Charles' goal was to improve the model Roman suggested, so it can reliably reproduce the behaviour of a sailing boat in its sea environment. His main idea was that instead of using 1 model to predict n sea and boat features like Roman, he used n models to predict n different features, which lead to very significant improvement. \cite{charles}
 
+\begin{wraptable}[19]{R}{0.5\textwidth}
+\centering
+\includegraphics[width=0.48\textwidth]{figures/charles results.png}
+\caption{Charles' prediction method results}
+\label{tbl:charles results}
+\end{wraptable}
+
 Charles had a new dataset available, so he started by applying similar cleaning and preprocessing steps to this new dataset. He noticed that some of the features can be derived mathematically from other features such as true wind, apparent wind, and boat speed. He decided to calculate those features mathematically, then trained n separate models for n remaining features. He tried 2 different models, model 1 has two final dense layers whereas model 2 has only one final dense layer.
 
 He concluded that in general, deterministic mathematical derivations has the least error, followed by n models for n features, then 1 model for n features. Error rate of different prediction methods for some of the boat features can be seen in Table \ref{tbl:charles results}. Charles envisions that after n models for n features are individually optimised, they can be integrated into a reinforcement learning framework.
 
-\begin{table}[h]
-\centering
-\includegraphics[width=0.55\linewidth]{figures/charles results.png}
-\caption{Charles' prediction method error rates}
-\label{tbl:charles results}
-\end{table}
+
 
 \section{Available Datasets}
 
