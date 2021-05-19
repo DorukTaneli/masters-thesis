@@ -1,7 +1,11 @@
 \documentclass[12pt,twoside]{report}
 \usepackage{parskip}
 \usepackage{comment}
+\usepackage{wrapfig}
 \setlength{\parindent}{2em}  % indentation of paragraph
+
+\pagenumbering{arabic}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Definitions for the title page
@@ -21,7 +25,7 @@
 % load some macros
 \input{notation}
 
-\date{September 2021}
+\date{May 2021}
 
 \begin{document}
 
@@ -30,9 +34,10 @@
 
 
 % page numbering etc.
-\pagenumbering{roman}
-\clearpage{\pagestyle{empty}\cleardoublepage}
-\setcounter{page}{1}
+% later: uncomment page numberings
+%\pagenumbering{roman}
+%\clearpage{\pagestyle{empty}\cleardoublepage}
+%\setcounter{page}{1}
 \pagestyle{fancy}
 
 \begin{comment}
@@ -58,8 +63,8 @@ Comment this out if not needed.
 
 \clearpage{\pagestyle{empty}%\cleardoublepage
 }
-\pagenumbering{arabic}
-\setcounter{page}{1}
+%\pagenumbering{arabic}
+%\setcounter{page}{1}
 \fancyhead[LE,RO]{\slshape \rightmark}
 \fancyhead[LO,RE]{\slshape \leftmark}
 
@@ -74,20 +79,16 @@ Autopilots used a lot in short handed races.
 I will utilize reinforcement learning on autopilots.
 to get Autopilots theoretically above human level
 
-\section{Objectives}
+Modern sailboats are built by combining bleeding edge science from many areas, including material science for lighter and more durable materials, aero and hydro dynamics for the most efficient designs, and latest sensors for most accurate information. One area that stayed underdeveloped compared to the other parts of the boat is the autopilots. Although they have also improved, autopilots still do not use most of the data available from the onboard boat sensors.
 
-\section{Outcomes}
+Shorthanded races are one type of popular competition in the sailing world. In shorthanded races, there is either one or two crew members, as opposed to full crews that can go up to around ten people. Autopilots are used extensively during these shorthanded races, steering the boat for more than 95\% of the time, while the crew handles other boat work or personal sustenance. While carrying out more than 95\% of the steering, autopilots only perform at 80\% of the capability of a professional skipper. Therefore there is a huge potential to gain race winning advantage in shorthanded competitions by improving the autopilots.
 
+The goal of this project is to create a Machine Learning model trained by Reinforcement Learning that can predict the optimal rudder angle using onboard boat sensors. To achieve that, this project will continue the work of former Imperial students and the employees of the partner company 'The Data Analysis Bureau'. Extensive work have been done on this project since 2018. Most of the work have been done in cleaning and preprocessing the available data, plus creating Machine Learning models that predicts the state of the boat and the environment, which will be used to simulate the environment that the Reinforcement Learning models will be trained on.
 
+%\section{Objectives}
 
-\begin{figure}[tb]
-\centering
-\includegraphics[width = 0.4\hsize]{./figures/imperial}
-\caption{Imperial College Logo. It's nice blue, and the font is quite stylish. But you can choose a different one if you don't like it.}
-\label{fig:logo}
-\end{figure}
+%\section{Outcomes}
 
-Figure~\ref{fig:logo} is an example of a figure. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Background}
@@ -107,7 +108,7 @@ In this section, the modern Reinforcement Learning algorithms and the suggested 
 \label{fig:rl-algs}
 \end{figure}
 
-An introductory taxonomy of the modern RL algorithms can be seen in Figure ~\ref{fig:rl-algs}. There are two main classes of RL algorithms, Model-Based and Model-Free. In Model-Based algorithms, the algorithms have either access to the environment model, or it learns the environment model. The problem with this branch of algorithms is that usually, the ground truth of the environment is not readily available to the agent. The agent has to learn a simulated environment, then performs poorly on the real environment. This is specifically the case for our project. Furthermore, Model-Free algorithms have been more extensively developed and tested \cite{openai:rl-algs}. Because of these downsides of Model-Based algorithms, I will focus on the Model-Free algorithms for this project.
+An introductory taxonomy of the modern RL algorithms can be seen in Figure ~\ref{fig:rl-algs}. There are two main classes of RL algorithms, Model-Based and Model-Free. In Model-Based algorithms, the algorithms have either access to the environment model, or it learns the environment model. The problem with this branch of algorithms is that usually, the ground truth of the environment is not readily available to the agent. The agent has to learn a simulated environment, then performs poorly on the real environment. This is specifically the case for our project. Furthermore, Model-Based algorithms have not been as extensively developed and tested as the Model-Free algorithms. \cite{openai:rl-algs} Because of these downsides of Model-Based algorithms, I will focus on the Model-Free algorithms for this project.
 
 In Model-Free RL, there are two main techniques: Policy Optimization and Q-Learning. Algorithms such as DDPG, TD3, and SAC - which are state of the are and best suits our use case - uses a hybrid approach of both of these techniques.
 DDPG is the first of these algorithms that was developed in 2015, and can be seen as an adaptation of Deep Q-Learning for continuous action spaces. \cite{ddpg} TD3 and SAC were both developed around the same time in 2018. They utilize different tricks to improve DDPG.
@@ -188,6 +189,10 @@ The advantage of TD3 is that it performs really close to SAC, with less complexi
 
 Because of these reasons, the suggested algorithm to be used for the Reinforcement Learning Approach is Soft Actor-Critic (SAC).
 
+\subsection{Hindsight Experience Replay}
+
+\subsection{Recent Advancement: Truncated Quantile Critics}
+
 \section{Previous Student Work}
 The "Automation and Intelligent Optimisation in High Performance Sailing Boats" project started in 2019. Birk Ulstad and Roman Kastusik started working on the project simultaneously. Birk Ulstad took the Supervised Learning Approach, whereas Roman Kastusik took the Reinforcement Learning Approach to the problem. Following their work, Stanislas Hannabelle continued working on the supervised learning approach in late 2019. In 2020, Charles Metz continued the Reinforcement Learning work of Roman Kastusik. A very brief summary of each students work is presented below.
 %I, Doruk Taneli, will be picking up where Birk, Roman, Stanislas, and Charles left off and  further improve the project.
@@ -201,7 +206,7 @@ For the model, Birk preferred a two stateful LSTM layers, each followed by a dro
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.8\hsize]{figures/Birk Ulstad LSTM prediction.png}
+\includegraphics[width = 0.7\hsize]{figures/Birk Ulstad LSTM prediction.png}
 \caption{Birk Ulstad's LSTM prediction methods}
 \label{fig:birk lstm}
 \end{figure}
@@ -220,7 +225,7 @@ Roman started with some data analysis, data cleaning, and scaling on Jack Trigge
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.75\hsize]{figures/roman data flow.png}
+\includegraphics[width = 0.65\hsize]{figures/roman data flow.png}
 \caption{Roman Kastusik's RL data flow}
 \label{fig:roman dataflow}
 \end{figure}
@@ -243,7 +248,7 @@ Stanislas further cleaned the available dataset by training a classifier to remo
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = \hsize]{figures/stan results.png}
+\includegraphics[width = 0.9\hsize]{figures/stan results.png}
 \caption{Stanislas Hannabelle's improvements on supervised learning approach}
 \label{fig:stan results}
 \end{figure}
@@ -259,12 +264,14 @@ He concluded that in general, deterministic mathematical derivations has the lea
 
 \begin{table}[h]
 \centering
-\includegraphics[width=0.8\linewidth]{figures/charles results.png}
-\caption{Charles' error rates for different prediction methods}
+\includegraphics[width=0.55\linewidth]{figures/charles results.png}
+\caption{Charles' prediction method error rates}
 \label{tbl:charles results}
 \end{table}
 
 \section{Available Datasets}
+
+\section{Sailing Background}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Progress}
@@ -285,12 +292,13 @@ He concluded that in general, deterministic mathematical derivations has the lea
 \end{comment}
 
 
-\appendix
-\chapter{Sail Trim Approach}
-\input{Chapters/appendix-sailtrim}
-
 %% bibliography
 \bibliographystyle{unsrt}
 \bibliography{bibliography}
+
+\appendix
+\addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+\chapter{Sail Trim Approach}
+\input{Chapters/appendix-sailtrim}
 
 \end{document}

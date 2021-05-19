@@ -39,15 +39,46 @@ The second lacking feature is that there is no hyperparameter optimization suppo
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.7\hsize]{figures/rl-framework/hyperparameter-ddpg.png}
-\caption{Performance curve of DDPG on Walker2d-v1 with random hyperparameters \cite{hyperparameter-ddpg}}
+\includegraphics[width = 0.5\hsize]{figures/rl-framework/hyperparameter-ddpg.png}
+\caption{Performance of DDPG on Walker2d-v1 with random hyperparameters \cite{hyperparameter-ddpg}}
 \label{fig:hyperparameter-ddpg}
 \end{figure}
 
-Both of these features, and probably more that will arise during the course of this project are important for this project, So another framework with these features is needed.
+Both of these features, and probably more that will arise in the future are important for this project, so another framework with these additional features is needed.
 
 
 \subsection{Stable Baselines 3}
-Stable Baselines3 (SB3) is a library providing reliable implementations of state-of-the-art reinforcement learning algorithms in PyTorch, complete with a training framework 'RL Baselines3 Zoo' which contains scripts for training, evaluating agents, tuning hyperparameters, plotting results, and recording videos.\cite{stable-baselines3} 
+Stable Baselines3 (SB3) is a library providing reliable implementations of state-of-the-art reinforcement learning algorithms in PyTorch, complete with a training framework 'RL Baselines3 Zoo' which contains scripts for training, evaluating agents, tuning hyperparameters, plotting results, and recording videos. \cite{stable-baselines3} 
 
-SB3 solves both of the problems of Spinning Up Framework mentioned in sections \ref{RLF:imp-diff} and \ref{RLF:framework-features}. SB3 is focused on providing reliable implementations that can be used on Deep Reinforcement Learning Research, instead of the education focus of Spinning Up. SB3 implementations are fully functional, high quality, and they match the results of best previous implementations. Moreover, the RL Baselines Zoo has the missing features of Spinning Up's training framework, namely hyperparameter optimization and continuing training of previously trained models. Therefore, SB3 will be the choice of RL Framework for this project from now on.
+SB3 solves both of the problems of Spinning Up Framework mentioned in sections \ref{RLF:imp-diff} and \ref{RLF:framework-features}. SB3 is focused on providing reliable implementations that can be used on Deep Reinforcement Learning Research, instead of an education focus of Spinning Up. SB3 implementations are fully functional, high quality, and they match the results of best previous implementations. A performance comparison of Soft Actor Critic implementations of Stable Baselines3 and OpenAI Spinning Up can be seen in Figure \ref{fig:spinup-vs-sb3}. We are expecting SAC to converge to 300 rewards which is the goal of this environment \cite{Bipedal-Walker-v2} in around 300.000 steps. \cite{gym-leaderboard} Stable Baselines3 implementation delivers expected results whereas the Spinning Up implementation falls short. The hyperparamaters were tuned in SB3 implementations, but weren't tuned for Spinning Up as it doesn't support hyperparameter tuning.
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/rl-framework/sac-bipedal-walker.png}
+         \caption{Spinning Up implementation (Default parameters) - Goal not achieved in 400.000 steps}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[b]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/rl-framework/sb3-sac-BipedalWalker-v3.png}
+         \caption{Stable Baselines3 implementation (Tuned parameters) - Goal Achieved in 200.000 steps}
+     \end{subfigure}
+        \caption{Training Performance of Spinning Up vs Stable Baselines3 implementations of SAC. Goal Score: 300}
+        \label{fig:spinup-vs-sb3}
+\end{figure}
+
+Moreover, the RL Baselines Zoo has the missing features of Spinning Up's training framework, namely hyperparameter optimization and continuing training of previously trained models. Therefore, SB3 will be the choice of RL Framework for this project from now on.
+
+\section{State Estimator}
+
+\section{Future Plans}
+
+\subsection{Gym Environment}
+
+In order to
+
+\subsection{GoalEnv Interface}
+
+\subsection{RL Algorithm Comparisons}
