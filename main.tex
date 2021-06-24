@@ -76,7 +76,7 @@ Comment this out if not needed.
 
 Modern sailboats are built by combining bleeding edge science from many areas, including material science for lighter and more durable materials, aero and hydro dynamics for the most efficient designs, and latest sensors for most accurate information. One area that stayed underdeveloped compared to the other parts of the boat is the autopilot. Although autopilot systems have also improved, they are still comparatively crude and low performing.
 
-Shorthanded races are one type of popular competition where there are either one or two crew members, as opposed to full crews that can go up to around ten people. Autopilots are used extensively during these shorthanded races, steering the boat for more than 95\% of the time, while the crew handles other boat work or personal sustenance. Despite carrying out more than 95\% of the steering, autopilots only perform at 80\% of the capability of a professional skipper. Therefore there is a huge potential to gain race winning advantage in shorthanded competitions by improving the autopilots. Jack Trigger \cite{trigger-racing}, who competes in shorthanded races, is providing the data from his boat sensors which makes this project possible. 
+Shorthanded races are one type of popular competition where there are either one or two crew members, as opposed to full crews that can go up to around ten people. Autopilots are used extensively during these shorthanded races, steering the boat for more than 95\% of the time, while the crew handles other boat work or personal sustenance. Despite carrying out more than 95\% of the steering, autopilots only perform at 80\% of the capability of a professional skipper \cite{roman}. Therefore there is a huge potential to gain race winning advantage in shorthanded competitions by improving the autopilots. Jack Trigger \cite{trigger-racing}, who competes in shorthanded races, is providing the data from his boat sensors which makes this project possible. 
 
 The goal of this project is to realize this potential race winning advantage by creating a Machine Learning model, trained by Reinforcement Learning, which will predict the optimal rudder angle using onboard boat sensors. To achieve that, this project will continue the work of former Imperial students and the employees of the partner company, The Data Analysis Bureau (T-DAB) \cite{t-dab}. Extensive work have been done on this project since 2018, mostly focusing on cleaning and preprocessing the available data, plus creating Machine Learning models that predicts the state of the boat and the sea environment.
 
@@ -112,10 +112,10 @@ In this section, the modern Reinforcement Learning algorithms and the suggested 
 \label{fig:rl-algs}
 \end{figure}
 
-An introductory taxonomy of the modern RL algorithms can be seen in Figure ~\ref{fig:rl-algs}. There are two main classes of RL algorithms, Model-Based and Model-Free. In Model-Based algorithms, the algorithms have either access to the environment model, or it learns the environment model. The problem with this branch of algorithms is that usually, the ground truth of the environment is not readily available to the agent. The agent has to learn a simulated environment, then performs poorly on the real environment. This is specifically the case for our project. Furthermore, Model-Based algorithms have not been as extensively developed and tested as the Model-Free algorithms. \cite{openai:rl-algs} Because of these downsides of Model-Based algorithms, I will focus on the Model-Free algorithms for this project.
+An introductory taxonomy of the modern RL algorithms can be seen in Figure ~\ref{fig:rl-algs}. There are two main classes of RL algorithms, Model-Based and Model-Free. In Model-Based algorithms, the algorithms have either access to the environment model, or it learns the environment model. The problem with this branch of algorithms is that usually, the ground truth of the environment is not readily available to the agent. The agent has to learn a simulated environment, then performs poorly on the real environment. This is specifically the case for our project. Furthermore, Model-Based algorithms have not been as extensively developed and tested as the Model-Free algorithms \cite{openai:rl-algs}. Because of these downsides of Model-Based algorithms, I will focus on the Model-Free algorithms for this project.
 
 In Model-Free RL, there are two main techniques: Policy Optimization and Q-Learning. Algorithms such as DDPG, TD3, and SAC - which are state of the are and best suits our use case - uses a hybrid approach of both of these techniques.
-DDPG is the first of these algorithms that was developed in 2015, and can be seen as an adaptation of Deep Q-Learning for continuous action spaces. \cite{ddpg} TD3 and SAC were both developed around the same time in 2018. They utilize different tricks to improve DDPG.
+DDPG is the first of these algorithms that was developed in 2015, and can be seen as an adaptation of Deep Q-Learning for continuous action spaces \cite{ddpg}. TD3 and SAC were both developed around the same time in 2018. They utilize different tricks to improve DDPG.
 
 \subsection{TD3}
 DDPG is prone to overestimating Q-values. Twin Delayed DDPG (TD3) attempts to solve this issue with three tricks: \cite{openai:td3}
@@ -126,7 +126,7 @@ DDPG is prone to overestimating Q-values. Twin Delayed DDPG (TD3) attempts to so
   \item \textbf{Target Policy Smoothing:} TD3 adds noise to the target action, to make it harder for the policy to exploit Q-function errors by smoothing out Q along changes in action.
 \end{enumerate}
 
-In the original TD3 paper, Fujimoto et al. claims that TD3 outperforms the state of the art in every OpenAI gym task tested. \cite{td3} The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:td3-comparisons}.
+In the original TD3 paper, Fujimoto et al. claims that TD3 outperforms the state of the art in every OpenAI gym task tested \cite{td3}. The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:td3-comparisons}.
 
 \begin{figure}[h]
 \centering
@@ -146,7 +146,7 @@ Instead of deterministic policies used in DDPG and TD3, SAC uses stochastic poli
   \item \textbf{Target Policy Smoothing:} Although there is no explicit target policy smoothing, since SAC uses a stochastic policy, the noise from the randomness achieves a similar effect.
 \end{enumerate}
 
-In the original SAC paper, Haarnoja et al. claims that SAC outperforms the state of the art algorithms in sample-efficiency, asymptotic performance, and stability. \cite{sacOG} The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:sac-comparisons}.
+In the original SAC paper, Haarnoja et al. claims that SAC outperforms the state of the art algorithms in sample-efficiency, asymptotic performance, and stability \cite{sacOG}. The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:sac-comparisons}.
 
 \begin{figure}[h]
 \centering
@@ -187,9 +187,9 @@ Interestingly, both SAC and TD3 authors claim that they perform better than each
         \label{fig:openAI-comparisons}
 \end{figure}
 
-As can be seen in Figure \ref{fig:openAI-comparisons}, both TD3 and SAC perform very closely to each other, with SAC having a slight advantage over TD3. However one should note that OpenAI implementation of SAC have slight variations that bring it closer to TD3. \cite{openai:sac-code}
+As can be seen in Figure \ref{fig:openAI-comparisons}, TD3 and SAC perform closely to each other, with SAC having a slight advantage over TD3. However one should note that OpenAI implementation of SAC have slight variations that bring it closer to TD3 \cite{openai:sac-code}.
 
-The advantage of TD3 is that it performs really close to SAC, with less complexity and less hyperparameters to tune. However, the second iteration of SAC from the original authors automatically tunes the problematic temperature hyperparameter, reducing the problem of hyperparameter tuning, making the algorithm more stable among different seeds and environments, and performs well even in the worst case, which is important for real life use cases. \cite{sacOG}
+The advantage of TD3 is that it performs really close to SAC, with less complexity and less hyperparameters to tune. However, the second iteration of SAC from the original authors automatically tunes the problematic temperature hyperparameter, reducing the problem of hyperparameter tuning, making the algorithm more stable among different seeds and environments, and performs well even in the worst case, which is important for real life use cases \cite{sacOG}. 
 
 Because of these reasons, the suggested algorithm to be used for the Reinforcement Learning Approach is Soft Actor-Critic (SAC).
 
@@ -206,12 +206,12 @@ Truncated Quantile Critics (TQC) is a novel algorithm whose original paper was p
 
 TQC is not as thoroughly tested as the current state of the art, but it shows promising results, especially in the harder environments. Although it is in beta, there is an implementation of TQC publicly available. Therefore, this new advancement in continuous RL algorithms will definitely be incorporated in this project.
 
-\section{Previous Student Work}
-The "Automation and Intelligent Optimisation in High Performance Sailing Boats" project started in 2019. Birk Ulstad and Roman Kastusik started working on the project simultaneously. Birk Ulstad took the Supervised Learning Approach, whereas Roman Kastusik took the Reinforcement Learning Approach to the problem. Following their work, Stanislas Hannabelle continued working on the supervised learning approach in late 2019. In 2020, Charles Metz continued the Reinforcement Learning work of Roman Kastusik. A very brief summary of each students work is presented below.
+\section{Previous Work}
+The "Automation and Intelligent Optimisation in High Performance Sailing Boats" project started in 2019. Birk Ulstad and Roman Kastusik started working on the project simultaneously. Birk Ulstad took the Supervised Learning Approach, whereas Roman Kastusik took the Reinforcement Learning Approach to the problem. Following their work, Stanislas Hannabelle continued working on the supervised learning approach in late 2019. In 2020, Charles Metz continued the Reinforcement Learning work of Roman Kastusik. Finally, Thomas Ryder continued Charles work before I picked up the project. A very brief summary of everyone's work is presented below.
 %I, Doruk Taneli, will be picking up where Birk, Roman, Stanislas, and Charles left off and  further improve the project.
 
 \subsection{Birk Ulstad}
-Birk's goal was to develop a supervised machine learning model that predicts the rudder angle set by Jack Trigger on the Concise 8 boat, using the previous data recorded during races by the existing sensors on the boat. \cite{birk}
+Birk's goal was to develop a supervised machine learning model that predicts the rudder angle set by Jack Trigger on the Concise 8 boat, using the previous data recorded during races by the existing sensors on the boat \cite{birk}.
 
 Birk Ulstad converted the available raw, partially corrupted data to processable csv data. He then cleaned the csv data by removing the irrelevant and corrupted parts, analysing outliers and applying smoothing. Next, he normalized, reframed, and downsampled the data to get it ready for the supervised learning model.
 
@@ -232,7 +232,7 @@ Birk concluded that his model architecture is able to predict the rudder angle p
 \end{itemize} 
 
 \subsection{Roman Kastusik}
-Roman's objective was to utilize reinforcement learning to increase the autopilots' performance, potentially beyond human level. To achieve this, he trained an LSTM state estimator to simulate the boat's behavior using Jack Trigger's race data, and created a reinforcement learning algorithm that would interact with said simulation environment. \cite{roman}
+Roman's objective was to utilize reinforcement learning to increase the autopilots' performance, potentially beyond human level. To achieve this, he trained an LSTM state estimator to simulate the boat's behavior using Jack Trigger's race data, and created a reinforcement learning algorithm that would interact with said simulation environment \cite{roman}.
 
 \begin{wrapfigure}{R}{0.55\textwidth}
 \centering
@@ -241,14 +241,14 @@ Roman's objective was to utilize reinforcement learning to increase the autopilo
 \label{fig:roman dataflow}
 \end{wrapfigure}
 
-Roman started with some data analysis, data cleaning, and scaling on Jack Trigger's race data. He then used  used this data to train the simulation environment that would be used for the reinforcement learning algorithm. The data flow around the simulation environment and the reinforcement learning algorithm can be found in Figure \ref{fig:roman dataflow}.
+Roman started with some data analysis, data cleaning, and scaling on Jack Trigger's race data. He then used this data to train the simulation environment that would be used for the reinforcement learning algorithm. The data flow around the simulation environment and the reinforcement learning algorithm can be found in Figure \ref{fig:roman dataflow}.
 
 He also did research about the recent advancements in reinforcement learning, and created an RL algorithm utilizing Deep Deterministic Policy Gradients, Actor-Critic Networks and Experience Replay.
 
 Roman concluded that due to the poor performance of the simulation environment, it was not possible to realize the full potential of the reinforcement learning algorithm. Charles Metz later continues his work and improves the simulation environment.
 
 \subsection{Stanislas Hannabelle}
-Stanislas' goal was to improve the results of Birk Ulstad's supervised learning approach to the problem. He further cleaned the dataset using a tack\footnote{Tacking is a sailing maneuver where the boat changes direction by turning its head towards and through the wind so that the direction from which the wind blows changes from one side of the boat to the other, allowing progress in the desired direction. \cite{wiki:tack}} detection system, did hyperparameter and bayesian optimization, and compared GRU and LSTM models. He was able to reduce the Root Mean Squared Error from 3.493 degrees of Birk's final model to 1.096 degrees, and reduced the computational time needed for rudder angle prediction. \cite{stan}
+Stanislas' goal was to improve the results of Birk Ulstad's supervised learning approach to the problem. He further cleaned the dataset using a tack\footnote{Tacking is a sailing maneuver where the boat changes direction by turning its head towards and through the wind so that the direction from which the wind blows changes from one side of the boat to the other, allowing progress in the desired direction \cite{wiki:tack}.} detection system, did hyperparameter and bayesian optimization, and compared GRU and LSTM models. He was able to reduce the Root Mean Squared Error from 3.493 degrees of Birk's final model to 1.096 degrees, and reduced the computational time needed for rudder angle prediction \cite{stan}.
 
 \begin{figure}[h]
 \centering
@@ -269,7 +269,7 @@ Stanislas further cleaned the available dataset by training a classifier to remo
 With his best model 'GRU 5Hz-2s', Stanislas reduced the testing RMSE of Birk's model by approximately 68\% while cutting the required training time in half. Stanislas' model was able to predict the rudder angle produced by a human by around 1 degree. His other success was to reduce the computational time needed for rudder angle prediction so that the model can be implemented live in onboard autopilots.
 
 \subsection{Charles Metz}
-Charles' goal was to improve the state estimator model Roman suggested, so it can reliably reproduce the behaviour of a sailing boat in its sea environment. His main idea was that instead of using 1 model to predict n sea and boat features like Roman, he used n models to predict n different features, which lead to very significant improvement. \cite{charles}
+Charles' goal was to improve the state estimator model Roman suggested, so it can reliably reproduce the behaviour of a sailing boat in its sea environment. His main idea was that instead of using 1 model to predict \emph{n} sea and boat features like Roman, he used \emph{n} models to predict \emph{n} different features, which lead to very significant improvement \cite{charles}.
 
 \begin{wraptable}{R}{0.55\textwidth}
 \centering
@@ -278,21 +278,212 @@ Charles' goal was to improve the state estimator model Roman suggested, so it ca
 \label{tbl:charles results}
 \end{wraptable}
 
-Charles had a new dataset available, so he started by applying similar cleaning and preprocessing steps to this new dataset. He noticed that some of the features can be derived mathematically from other features such as true wind, apparent wind, and boat speed. He decided to calculate those features mathematically, then trained n separate models for n remaining features. He tried 2 different models, model 1 has two final dense layers whereas model 2 has only one final dense layer.
+Charles had a new dataset available, so he started by applying similar cleaning and preprocessing steps to this new dataset. He noticed that some of the features can be derived mathematically from other features such as true wind, apparent wind, and boat speed. He decided to calculate those features mathematically, then trained \emph{n} separate models for \emph{n} remaining features. He tried 2 different models, model 1 has two final dense layers whereas model 2 has only one final dense layer.
 
-He concluded that in general, deterministic mathematical derivations has the least error, followed by model 2, then model 1, and lastly single model for n features. He tested model 2 in only some of the features, but it performed better in every feature tested. Error rate of different prediction methods for some of the boat features can be seen in Table \ref{tbl:charles results}. Charles envisions that after n models for n features are individually optimised, they can be integrated into a reinforcement learning framework.
+He concluded that in general, deterministic mathematical derivations has the least error, followed by model 2, then model 1, and lastly single model for \emph{n} features. He tested model 2 in only some of the features, but it performed better in every feature tested. Error rate of different prediction methods for some of the boat features can be seen in Table \ref{tbl:charles results}. His other notable finding was that mathematical formulas do not always agree with the sensor data, which indicates that something might be wrong on the boat sensors/algorithms. Nevertheless, Charles envisions that after \emph{n} models for \emph{n} features are individually optimised, they can be integrated into a reinforcement learning framework.
 
+\subsection{Thomas Ryder}
+
+Following Charles' project, T-DAB employee Thomas Ryder carried on his work. Thomas' goal was to create a full pipeline which would create \emph{n} separate state estimator models, given the dataset in csv format. Charles had worked on his project using Jupyter Notebooks. Thomas converted those notebooks into concise Python scripts, plus incorporated bayesian optimization into each of the \emph{n} models like Charles suggested as a future work. Thomas' scripts now consists of the following parts, explained very briefly below:
+
+\begin{enumerate}
+  \item \textbf{Preprocessing:} Rename and select columns, convert angles to radians, scale, label tacks, split into train-validation-test segments, and downsample the data.
+  \item \textbf{Optimisation:} Run Bayesian optimization for each feature within the parameters given in the config file.
+  \item \textbf{Training:} Train an LSTM network with optimized hyperparameters for each feature given in the config file. Log the training history data.
+  \item \textbf{Evaluation:} Make predictions using the test data, then calculate MAE and RMSE. Print information about trained models.
+\end{enumerate}
+
+The scripts are structured better than Charles' notebooks, plus they are much easier to understand and use. However, there were some problems and tests that need to be tackled before the final models that will be used for the Reinforcement Learning Environment can be produced. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Progress}
-\input{Chapters/progress}
-
-
+%\chapter{Progress}
+%\input{Chapters/progress}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\chapter{Contribution}
+\chapter{Contribution}
 
+\section{Available Datasets}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|l|c|}
+\hline
+\textbf{\begin{tabular}[c]{@{}c@{}}Dataset name\\(Race)\end{tabular}} & \textbf{Boat} & \textbf{\begin{tabular}[c]{@{}l@{}}Original\\Format\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Original\\Length(h)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Cleaned\\Length(h)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Tack\\Detection\end{tabular}} \\ \hline
+RDR         & \multirow{3}{*}{Concise 8}    & .nkz \& .csv  & 16    & 16    & $\ballotx$        \\ \cline{1-1} \cline{3-6}
+DHREAM 18   &                               & .log          & 64.5  & 64.5  & $\ballotx$        \\ \cline{1-1} \cline{3-6} 
+Atlantic    &                               & .nkz          & 290.9 & 228.7 & $\ballotcheck$    \\ \hline
+DHREAM 20   & VMB                           & .nkz          & 70    & 6     & $\ballotx$        \\ \hline
+transat\_1  & Unknown 1                     & .nkz          & 383.5 & 63.3  & $\ballotx$        \\ \hline
+\end{tabular}
+\caption{Available Datasets}
+\label{tab:datasets}
+\end{table}
+
+\section{State Estimator Scripts}
+In this section contributions related to the state estimator scripts that Charles and Thomas initially created will be described.
+
+\subsection{Initial Improvements}
+
+\subsubsection{State Estimator Bug}
+When I took on the project over from Thomas, there was an error causing bug in the scripts that caused the scripts to halt without producing any results. Working together with Thomas, the problem was found to be the difference in the dataset rows that preprocessing scripts created, and the rows that optimization scripts were expecting. After fixing the bug, the scripts started working as expected in local and Azure cloud machines.
+
+\subsubsection{Data Store}
+The scripts are using local csv files as input. There was a plan to switch to using cloud databases, but the switch to databases were postponed due to the following reasons:
+
+\begin{itemize}
+  \item \textbf{Cost:} There isn't any available infrastructure in T-DAB to host the database. So, Microsoft's time-series database, InfluxDB was the choice of Database. However, keeping the database online on InfluxDB costs money.
+  \item \textbf{Complexity:} The switch to cloud database adds complexity to both workflow and the code. The preprocessing code previous students have spend most of their time on work with csv files. Those csv files needs to be processed separately, uploaded to cloud database, and then the same data needs to be pulled from the database with specific querying to have the same structure with the csv files, then be fed as input to the rest of the scripts.
+  \item \textbf{Time:} It will take time to implement changes required to switch to cloud databases. That time is better spend on the RL portion of the project instead.
+  \item \textbf{No significant advantage:} Currently, there is no significant advantage of using stand-alone cloud database that will justify the cost, complexity, and time spent. We do not have any constant flow of data, or the need for regular analysis or reporting.
+  \item \textbf{A better alternative:} Currently, the race data is stored on the company SharePoint. A quick and easy way to download this data on Azure Cloud Machines was found, using a single \textit{wget} command from the terminal. This eliminates the biggest drawback of using local csv files, which is manually downloading and uploading large files. Plus it doesn't have any added cost or complexity.
+\end{itemize}
+
+\subsubsection{Tack Detection}
+In his project, Stanislas Hannabelle created a model that classifies tacks. When he removed the found tacks from the dataset and retrained the state estimator model, he achieved substantial improvement in the model's test results. 
+
+To realize this improvement on our new optimized models, the scripts were modified to take the selected dataset \textit{Atlantic}'s tack bounds as input, and remove them from the train-validation-test sets. In the future, it is planned to incorporate Stan's tack detection models into the script pipeline. This way, the user would not have to provide the tack info themselves, but the script will automatically find and remove them.
+
+\subsection{Data Split Concern}
+
+There are two proposed ways of splitting the dataset into training, validation, and testing sets; named as \emph{Normal} and \emph{Segment} by Thomas. The Normal split method allocates the first 60\% of the data to training, next 20\% to validation and the last 20\% to testing. The Segment split method on the other hand, first splits the dataset into continuous segments separated by unusable areas such as tacks. Then each of those segments are individually split into train-validation-test using 60-20-20 split and then concatenated together.
+
+The data in the available datasets are logged chronologically. The nuance is that the weather and sea conditions change during the course of the races. In order to train the models on all the different sea and weather conditions, Charles has used the segment split method, as if he had used the normal split method, the models couldn't have been trained on the conditions present towards the end of the race.
+
+Charles achieved good results using the segment split. However, one recent concern about segment split is whether it causes data leak. When using the segment split, the test data is not truly held-out. The models are trained on data that is very similar to the ones used in validation and test sets. Therefore we cannot test the performance of the models on how they would perform on unseen data.
+
+The initial plan was to create two sets of models with segment and normal split methods. The resulting models would then be compared if there is a considerable difference in the error metrics. Then, Eric informed me that although undocumented in his report, Charles already compared the two split methods, and observed significantly worse results in normal split.
+
+On a discussion with Eric and Pedro, it was decided that the performance drop was due to the models not having a chance to learn about the conditions present at the end of the race. To test how the models would perform on unseen data, we will test the data trained on one race on another race. This is called the Transferability Experiment and the details can be found in section \ref{section:transferability}.
+
+\subsection{Efficiency Experiment}
+
+
+\section{Optimized Models}
+
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Feature} &
+  \textbf{Model} &
+  \textbf{MAE} &
+  \textbf{RMSE} \\ \hline
+AWS &
+  \begin{tabular}[c]{@{}l@{}}Model 2\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}1.220\\ 0.614\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}1.748\\ 0.785\end{tabular} \\ \hline
+Yaw\_cos &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.007\\ 0.007\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.051\\ 0.023\end{tabular} \\ \hline
+Yaw\_sin &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.040\\ 0.021\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.053\\ 0.034\end{tabular} \\ \hline
+Pitch &
+  \begin{tabular}[c]{@{}l@{}}Model 2\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.641\\ 1.367\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}1.058\\ 1.822\end{tabular} \\ \hline
+AWA\_cos &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.028\\ 0.040\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.037\\ 0.056\end{tabular} \\ \hline
+AWA\_sin &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.021\\ 0.031\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.037\\ 0.045\end{tabular} \\ \hline
+Roll &
+  \begin{tabular}[c]{@{}l@{}}Model 2\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}1.390\\ 1.470\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}2.002\\ 1.910\end{tabular} \\ \hline
+Heading\_ov\_ground\_cos &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.037\\ 0.011\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.076\\ 0.025\end{tabular} \\ \hline
+Heading\_ov\_ground\_sin &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.020\\ 0.013\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.044\\ 0.048\end{tabular} \\ \hline
+\end{tabular}
+\caption{YYYYYYYYY}
+\end{table}
+
+\section{Transferability Experiment} \label{section:transferability}
+
+\section{RL Framework}
+After the Background Research, the planned Reinforcement Learning framework to use was OpenAI's Spinning Up framework. They provide clean implementations of modern RL algorithms, and a basic interface to apply the algorithms to OpenAI Gym environments, then plot the results. However, OpenAI Spinning Up has some downsides and lack some important features that would be helpful during this project.
+
+\subsection{RL Algorithm Implementation Differences} \label{RLF:imp-diff}
+Spinning Up's main focus is education. Therefore the algorithm implementations are stripped down from the proposed versions from the original papers, so the algorithms would be easier to read and understand. Although this is good for education, the resulting algorithms do not perform up to their potential due to their simplicity. The performance of SAC which is the algorithm of choice for this project, used on different Gym environments can be seen in Figure \ref{fig:spinup-SAC}.
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[t]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/rl-framework/sac-pendulum.png}
+         \caption{Pendulum-v0 (Very Easy)}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/rl-framework/sac-mountain-car.png}
+         \caption{MountainCarContinuous-v0 (Easy)}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/rl-framework/sac-bipedal-walker.png}
+         \caption{BipedalWalker-v3 (Hard)}
+     \end{subfigure}
+        \caption{Performance of Spinning Up implementation of SAC on different environments, using default parameters}
+        \label{fig:spinup-SAC}
+\end{figure}
+
+Spinning Up implementation performs well and converges quickly on easy environments, but it provides disappointing results on the harder BipedalWalker-v3 environment. SAC is expected to have better exploration and achieve better results on BipedalWalker-v3 environment before 300.000 environment interacts \cite{gym-leaderboard}. But it never managed to escape a local minimum for a long period of training time. Considering our sailing environment will be pretty complex, Spinning Up implementation of SAC is not suitable for use on this project.
+
+\subsection{RL Framework Features} \label{RLF:framework-features}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+\vspace{-4em}
+\centering
+\includegraphics[width = 0.39\textwidth]{figures/rl-framework/hyperparameter-ddpg.png}
+\caption{DDPG on Walker2d-v1 with random hyperparameters \cite{hyperparameter-ddpg}}
+\label{fig:hyperparameter-ddpg}
+\vspace{-1em}
+\end{wrapfigure}
+
+Spinning Up Framework lacks some important features for Reinforcement Learning. First, it does not support continuing training of a previously trained agents. This is problematic in a few ways: it costs precious time and resources to train agents from scratch every time, plus even if models are trained again from ground up, no two reinforcement learning runs will be identical because of the noise or stochasticity in the algorithms.
+
+The second lacking feature is that there is no hyperparameter optimization support. Hyperparameters can cause huge difference in performance \cite{hyperparameter-ddpg}. A comparison of DDPG on Walker2d-v1 with random hyperparameters can be seen in Figure \ref{fig:hyperparameter-ddpg}. The best and worst performing hyperparameters have approximately 3-fold average reward difference after 1 million timesteps.
+
+Both of these features, and probably more that will arise in the future are important for this project, so another framework with these additional features is needed.
+
+
+\subsection{Stable Baselines 3}
+Stable Baselines3 (SB3) is a library providing reliable implementations of state-of-the-art reinforcement learning algorithms in PyTorch, complete with a training framework 'RL Baselines3 Zoo' which contains scripts for training, evaluating agents, tuning hyperparameters, plotting results, and recording videos \cite{stable-baselines3}.
+
+SB3 solves both of the problems of Spinning Up Framework mentioned in sections \ref{RLF:imp-diff} and \ref{RLF:framework-features}. SB3 is focused on providing reliable implementations that can be used on Deep Reinforcement Learning Research, instead of an education focus of Spinning Up. SB3 implementations are fully functional, high quality, and they match the results of best previous implementations. A performance comparison of Soft Actor Critic implementations of Stable Baselines3 and OpenAI Spinning Up can be seen in Figure \ref{fig:spinup-vs-sb3}. We are expecting SAC to converge to 300 score which is the goal of this environment \cite{Bipedal-Walker-v2} in around 300.000 steps \cite{gym-leaderboard}. Stable Baselines3 implementation delivers expected results whereas the Spinning Up implementation falls short. The hyperparamaters were tuned in SB3 implementations, but weren't tuned for Spinning Up as it doesn't support hyperparameter tuning.
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[t]{0.49\textwidth}
+         \centering
+         \includegraphics[width=0.91\textwidth]{figures/rl-framework/sac-bipedal-walker.png}
+         \caption{Spinning Up implementation (Default parameters) - Goal not achieved in 400.000 steps}
+     \end{subfigure}
+     \hfill
+     \begin{subfigure}[t]{0.49\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/rl-framework/sb3-sac-BipedalWalker-v3.png}
+         \caption{Stable Baselines3 implementation (Tuned parameters) - Goal Achieved in 200.000 steps}
+     \end{subfigure}
+        \caption{Training Performance of SAC implementations. Goal Score: 300}
+        \label{fig:spinup-vs-sb3}
+\end{figure}
+
+Moreover, the RL Baselines Zoo has the missing features of Spinning Up's training framework, namely hyperparameter optimization and continuing training of previously trained models \cite{rl-zoo3}. Therefore, SB3 will be the choice of RL Framework.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\chapter{Experimental Results}
@@ -305,7 +496,7 @@ He concluded that in general, deterministic mathematical derivations has the lea
 
 %% bibliography
 \bibliographystyle{unsrt}
-\setlength\bibsep{3pt}
+%\setlength\bibsep{3pt}
 \bibliography{bibliography}
 
 

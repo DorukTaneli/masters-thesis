@@ -12,7 +12,7 @@ Full crews have dedicated people for sail trim, however it is hard to achieve co
 In this section, a current overview of the relevant topics related to the proposed Sail Trim Approach (\ref{LR:TL}, \ref{LR:IG}, and \ref{LR:AST}) are presented. Transfer Learning is a suggested technique to be used in Sail Trim Approach so that the model can be trained with less collected data. Integrated Gradients is an Explainable AI technique which can be used for understanding what the sail trim model is learning to check if its correct. Lastly, Assisted Sail Trim is a system used in cruising yachts that is somewhat similar to the proposed Sail Trim Approach.
 
 \subsection{Transfer Learning} \label{LR:TL}
-Transfer learning is a method where a machine learning model trained for a task is used as a starting point for another task.\cite{brownlee_2019} In our context, instead of training a model from ground up, transfer learning can be utilized by building up on a model that was previously trained for a large scale image classification task. The idea behind transfer learning for imaging is that if a model is trained on a large and general enough dataset, it can serve as a generic model of the visual world. \cite{TF:TL} This generic model can be trained much more easily to classify different sail trims thanks to its advantages. 
+Transfer learning is a method where a machine learning model trained for a task is used as a starting point for another task \cite{brownlee_2019}. In our context, instead of training a model from ground up, transfer learning can be utilized by building up on a model that was previously trained for a large scale image classification task. The idea behind transfer learning for imaging is that if a model is trained on a large and general enough dataset, it can serve as a generic model of the visual world \cite{TF:TL}. This generic model can be trained much more easily to classify different sail trims thanks to its advantages. 
 
 Lisa Torrey and Jude Shavlik explain in their book the 3 advantages of transfer learning and how it improves model learning \cite{10.5555/1803899}, which can be seen in Figure \ref{fig:TL}.
 
@@ -36,10 +36,10 @@ Lisa Torrey and Jude Shavlik explain in their book the 3 advantages of transfer 
 \label{fig:TL-results}
 \end{figure}
 
-Theoretically, using transfer learning the deep learning models converge much faster, as seen in Figure \ref{fig:TL}. This means that models can be trained with a lot less data. In their study, Wenbo et al. examines the transfer learning for image classification's impact on training sample size. \cite{ZHU2021104269} Wenbo et al. conclude that the deep learning models can achieve over 90\% accuracy for image classification tasks by using less than 100 samples utilizing transfer learning, significantly lower than the previous rule of thumb of 1000 samples per class. Wenbo et al.'s results graph of accuracy vs sample size, with and without transfer learning can be seen in Figure \ref{fig:TL-results}.
+Theoretically, using transfer learning the deep learning models converge much faster, as seen in Figure \ref{fig:TL}. This means that models can be trained with a lot less data. In their study, Wenbo et al. examines the transfer learning for image classification's impact on training sample size \cite{ZHU2021104269}. Wenbo et al. conclude that the deep learning models can achieve over 90\% accuracy for image classification tasks by using less than 100 samples utilizing transfer learning, significantly lower than the previous rule of thumb of 1000 samples per class. Wenbo et al.'s results graph of accuracy vs sample size, with and without transfer learning can be seen in Figure \ref{fig:TL-results}.
 
 \subsection{Integrated Gradients} \label{LR:IG}
-Integrated Gradients is an explainable AI technique to help understand what the model is learning, which can be used in any differentiable model such as images, text or structured data. \cite{TF:IG} The suggested usage in the sail trim approach is on images, to see whether the model is learning the expected features. The technique is easy to implement, and requires no modifications on the original network, only requires some calls to the standard gradient operator. \cite{IGpaper} An example of Integrated gradients used on images can be seen in Figure \ref{fig:IG}. 
+Integrated Gradients is an explainable AI technique to help understand what the model is learning, which can be used in any differentiable model such as images, text or structured data \cite{TF:IG}. The suggested usage in the sail trim approach is on images, to see whether the model is learning the expected features. The technique is easy to implement, and requires no modifications on the original network, only requires some calls to the standard gradient operator \cite{IGpaper}. An example of Integrated gradients used on images can be seen in Figure \ref{fig:IG}. 
 
 \begin{figure}[h]
 \centering
@@ -51,7 +51,7 @@ Integrated Gradients is an explainable AI technique to help understand what the 
 When the models do not perform as expected, or just to see what the models have learned, Integrated Gradients is a nice technique to have to be able to understand and debug the models: either by regularization or gathering more and better balanced data.
 
 \subsection{Jeanneau \& Harken Assisted Sail Trim} \label{LR:AST}
-A somewhat similar idea to the sail trim approach has been done as a collaboration with Jeanneau and Harken in 2015, \cite{harkenAST} which won the Pittman Innovation Award. \cite{pittman_awards}
+A somewhat similar idea to the sail trim approach has been done as a collaboration with Jeanneau and Harken in 2015 \cite{harkenAST}, which won the Pittman Innovation Award \cite{pittman_awards}.
 The Assisted Sail Trim (AST) system has several components. The relevant component to this project focuses on maintaining the rough trim of the sails by adjusting the sheets depending on the apparent wind measured by on-board electronics. An illustration of this can be seen in Figure~\ref{fig:AST}.
 
 \begin{figure}[h]

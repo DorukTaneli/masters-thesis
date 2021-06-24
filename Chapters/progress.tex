@@ -1,6 +1,6 @@
 \section{State Estimator} \label{sec:state-estimator}
 
-Following Charles' project, T-DAB employee Thomas Ryder carried on his work. Thomas' goal was to create a full pipeline which would create n separate state estimator models, given the dataset in csv format.  Charles had worked on his project using Jupyter Notebooks. Thomas converted those notebooks into concise Python scripts, plus incorporated bayesian optimization into each of the n models like Charles suggested as a future work. Thomas' scripts now consists of the following parts, explained very briefly below:
+Following Charles' project, T-DAB employee Thomas Ryder carried on his work. Thomas' goal was to create a full pipeline which would create \emph{n} separate state estimator models, given the dataset in csv format.  Charles had worked on his project using Jupyter Notebooks. Thomas converted those notebooks into concise Python scripts, plus incorporated bayesian optimization into each of the \emph{n} models like Charles suggested as a future work. Thomas' scripts now consists of the following parts, explained very briefly below:
 
 \begin{enumerate}
   \item \textbf{Preprocessing:} Rename and select columns, convert angles to radians, scale, label tacks, split into train-validation-test segments, and downsample the data.
@@ -17,14 +17,14 @@ Thomas' script do not find tacks in the given datasets. Instead, the script take
 
 \begin{table}[h]
 \centering
-\begin{tabular}{|l|l|l|l|c|}
+\begin{tabular}{|l|l|l|l|l|c|}
 \hline
-\textbf{Dataset name} & \textbf{Boat}              & \textbf{\begin{tabular}[c]{@{}l@{}}Original\\Length(h)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Cleaned\\Length(h)\end{tabular}} & \textbf{Tack Detection} \\ \hline
-RDR                   & \multirow{3}{*}{Concise 8} & 16                                                                     & 16                                                                   & $\ballotx$                      \\ \cline{1-1} \cline{3-5} 
-DHREAM 18             &                            & 64.5                                                                   & 64.5                                                                 & $\ballotx$                      \\ \cline{1-1} \cline{3-5} 
-Atlantic              &                            & 290.9                                                                  & 228.7                                                                & $\ballotcheck$                     \\ \hline
-DHREAM 20             & VMB                        & 7                                                                      & 6                                                                    & $\ballotx$                      \\ \hline
-transat\_1            & Unknown 1                  & 383.5                                                                  & 63.3                                                                 & $\ballotx$                      \\ \hline
+\textbf{\begin{tabular}[c]{@{}c@{}}Dataset name\\(Race)\end{tabular}} & \textbf{Boat} & \textbf{\begin{tabular}[c]{@{}l@{}}Original\\Format\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Original\\Length(h)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Cleaned\\Length(h)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Tack\\Detection\end{tabular}} \\ \hline
+RDR         & \multirow{3}{*}{Concise 8}    & .nkz \& .csv  & 16    & 16    & $\ballotx$        \\ \cline{1-1} \cline{3-6}
+DHREAM 18   &                               & .log          & 64.5  & 64.5  & $\ballotx$        \\ \cline{1-1} \cline{3-6} 
+Atlantic    &                               & .nkz          & 290.9 & 228.7 & $\ballotcheck$    \\ \hline
+DHREAM 20   & VMB                           & .nkz          & 70    & 6     & $\ballotx$        \\ \hline
+transat\_1  & Unknown 1                     & .nkz          & 383.5 & 63.3  & $\ballotx$        \\ \hline
 \end{tabular}
 \caption{Available Datasets}
 \label{tab:datasets}
@@ -89,9 +89,9 @@ Both of these features, and probably more that will arise in the future are impo
 
 
 \subsection{Stable Baselines 3}
-Stable Baselines3 (SB3) is a library providing reliable implementations of state-of-the-art reinforcement learning algorithms in PyTorch, complete with a training framework 'RL Baselines3 Zoo' which contains scripts for training, evaluating agents, tuning hyperparameters, plotting results, and recording videos. \cite{stable-baselines3} 
+Stable Baselines3 (SB3) is a library providing reliable implementations of state-of-the-art reinforcement learning algorithms in PyTorch, complete with a training framework 'RL Baselines3 Zoo' which contains scripts for training, evaluating agents, tuning hyperparameters, plotting results, and recording videos \cite{stable-baselines3}.
 
-SB3 solves both of the problems of Spinning Up Framework mentioned in sections \ref{RLF:imp-diff} and \ref{RLF:framework-features}. SB3 is focused on providing reliable implementations that can be used on Deep Reinforcement Learning Research, instead of an education focus of Spinning Up. SB3 implementations are fully functional, high quality, and they match the results of best previous implementations. A performance comparison of Soft Actor Critic implementations of Stable Baselines3 and OpenAI Spinning Up can be seen in Figure \ref{fig:spinup-vs-sb3}. We are expecting SAC to converge to 300 score which is the goal of this environment \cite{Bipedal-Walker-v2} in around 300.000 steps. \cite{gym-leaderboard} Stable Baselines3 implementation delivers expected results whereas the Spinning Up implementation falls short. The hyperparamaters were tuned in SB3 implementations, but weren't tuned for Spinning Up as it doesn't support hyperparameter tuning.
+SB3 solves both of the problems of Spinning Up Framework mentioned in sections \ref{RLF:imp-diff} and \ref{RLF:framework-features}. SB3 is focused on providing reliable implementations that can be used on Deep Reinforcement Learning Research, instead of an education focus of Spinning Up. SB3 implementations are fully functional, high quality, and they match the results of best previous implementations. A performance comparison of Soft Actor Critic implementations of Stable Baselines3 and OpenAI Spinning Up can be seen in Figure \ref{fig:spinup-vs-sb3}. We are expecting SAC to converge to 300 score which is the goal of this environment \cite{Bipedal-Walker-v2} in around 300.000 steps \cite{gym-leaderboard}. Stable Baselines3 implementation delivers expected results whereas the Spinning Up implementation falls short. The hyperparamaters were tuned in SB3 implementations, but weren't tuned for Spinning Up as it doesn't support hyperparameter tuning.
 
 \begin{figure}[h]
      \centering
@@ -121,11 +121,11 @@ As for the Data Split concerns, if data leak is present and it considerably affe
 \end{comment}
 After the data split method is decided, the state estimator models that will be used on the Reinforcement Learning environment will be created.
 
-\textbf{Hindsight Experience Replay}
-(HER) is a technique that helps agents to learn from mistakes, which allows the agents to learn with sparse and binary rewards, therefore eliminating the need for complicated reward engineering \cite{her-paper}. While making environment creation easier, it also improves performance and sample efficiency. More research on HER and how to incorporate it will be conducted.
-
 \textbf{Gym Environment:}
-In order to use Stable Baselines Zoo and Algorithms, our environment needs to implement the OpenAI Gym interface, and be structured as an importable PIP package. To use HER, it needs to implement the stricter GoalEnv interface, which inherits from the Gym interface. Using the state estimator models created, a Gym environment that follows GoalEnv interface will be implemented. Several obstacles that are currently unknown are expected during this step.
+In order to use Stable Baselines Zoo and Algorithms, our environment needs to implement the OpenAI Gym interface, and be structured as an importable PIP package. Using the state estimator models created, a Gym environment will be implemented. Several obstacles that are currently unknown are expected during this step.
+
+\textbf{Hindsight Experience Replay}
+(HER) is a technique that helps agents to learn from mistakes, which allows the agents to learn with sparse and binary rewards, therefore eliminating the need for complicated reward engineering \cite{her-paper}. While making environment creation easier, it also improves performance and sample efficiency. To use HER, our environment needs to implement the stricter GoalEnv interface, which inherits from the Gym interface.
 
 \textbf{RL Algorithms:}
 After the Gym environment is implemented, the RL algorithms can be tested on the new environment. The suggested algorithms to be trained are: SAC with HER, which is the current state of the art that is widely tested; plus TQC with HER, which is a recent advancement that shows promising results. All of these algorithms are available in Stable Baselines 3, although TQC is still in beta.
@@ -135,12 +135,7 @@ If there are no signs of life after training with tuned hyperparameters, reward 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.9\hsize]{figures/gantt-chart.png}
+\includegraphics[width = 0.92\hsize]{figures/gantt-chart2.png}
 \caption{Tentative timeline, including a second iteration for improvements}
 \label{fig:gantt-chart}
 \end{figure}
-
-\begin{comment}
-\subsection*{Timeline}
-It is important to stay flexible due to mentioned obstacles, and iterate according to feedback of the supervisors. A tentative timeline has been created, which can be found in appendix \ref{}, at the very end of this report.
-\end{comment}
