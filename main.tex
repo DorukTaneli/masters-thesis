@@ -3,6 +3,7 @@
 \usepackage{comment}
 \usepackage{wrapfig}
 \usepackage{arev}
+\usepackage[table]{xcolor}
 \setlength{\parindent}{2em}  % indentation of paragraph
 
 \pagenumbering{arabic}
@@ -26,7 +27,7 @@
 % load some macros
 \input{notation}
 
-\date{May 2021}
+\date{September 2021}
 
 \begin{document}
 
@@ -89,6 +90,55 @@ I, Doruk Taneli, will continue their work, and using the data and code they prep
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Background}
+
+\section{Sailing Background}
+
+\subsection{Basics of Sailing}
+Many people may think that sailboats move with the wind's pushing on the sail. Although this is true for some wind angles, most of the time the sails work like airplane wings utilizing Bernoulli's Principle. To put it simply, Bernoulli's principle states that increasing flow speed in fluids corresponds to decreasing pressure, and vice versa. The shape of the sails resemble an airplane wing. Because of its shape, the air travels faster on one side than the other, which creates a pressure difference, and results in a net force that drives the boat forward.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.8\hsize]{figures/sailing/sail-bernoulli.jpg}
+\caption{Visualization of Bernoulli Principle: (a)Airplane wing, (b)Sail \cite{bernoulli}}
+\label{fig:bernoulli}
+\end{figure}
+
+Sailboats work by utilizing the balance of forces created between the sails and the wind as the driving force, the keel/rudder and the sea for controlling the boat, plus the gravity for countering the heel. There are countless online resources to learn about the details of how sailboats work. Here, I will focus on the parts that are important for the project such as factors that affect the boat heading.
+
+\begin{figure}[]
+\centering
+\includegraphics[width = 0.5\hsize]{figures/sailing/sailboat-parts.png}
+\caption{Sailboat parts \cite{sail-parts}}
+\label{fig:sail-parts}
+\end{figure}
+
+\subsection{Elements Affecting Boat Heading}
+
+\subsubsection{Rudder}
+First of all the Rudder, whose main purpose is to steer the boat. It works by displacing water at the back of the boat, which creates a force that turns the boat around its center, the keel. Although it is the easiest way to control the boat, moving the rudder creates drag and slows down the boat, so it is not preferable to use it excessively.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.5\hsize]{figures/sailing/rudder.jpg}
+\caption{How rudder works \cite{rudder}}
+\label{fig:rudders}
+\end{figure}
+
+\subsubsection{Boat Design and Sail Trim}
+If there is more force acting from the front of the keel than from the back of the keel, the boat will naturally turn. This is taken into account when designing the boat, by carefully calculating the area of fore and main sails, position of mast and keel, etc. The balance of these forces can also be altered after the boat s manufactured. For example, many high performance sailing boats have features to adjust the position, angle and bend of the mast. Furthermore, it can even be adjusted on the go, by trimming the fore and main sails individually.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.6\hsize]{figures/sailing/rudder.jpg}
+\caption{How rudder works \cite{rudder}}
+\label{fig:rudders}
+\end{figure}
+
+\subsubsection{Heel}
+Heeling in sailing means the tipping of the sailboat to one side, also known as Roll in boating or aviation. As the boat heels, 
+
+These knowledge affected the decisions made in the later parts of the project, for example the Reinforcement Learning environment.
+
 
 \section{State of the Art Autopilots}
 
@@ -309,15 +359,35 @@ The scripts are structured better than Charles' notebooks, plus they are much ea
 \centering
 \begin{tabular}{|l|l|l|l|l|c|}
 \hline
-\textbf{\begin{tabular}[c]{@{}c@{}}Dataset name\\(Race)\end{tabular}} & \textbf{Boat} & \textbf{\begin{tabular}[c]{@{}l@{}}Original\\Format\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Original\\Length(h)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Cleaned\\Length(h)\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Tack\\Detection\end{tabular}} \\ \hline
-RDR         & \multirow{3}{*}{Concise 8}    & .nkz \& .csv  & 16    & 16    & $\ballotx$        \\ \cline{1-1} \cline{3-6}
-DHREAM 18   &                               & .log          & 64.5  & 64.5  & $\ballotx$        \\ \cline{1-1} \cline{3-6} 
-Atlantic    &                               & .nkz          & 290.9 & 228.7 & $\ballotcheck$    \\ \hline
-DHREAM 20   & VMB                           & .nkz          & 70    & 6     & $\ballotx$        \\ \hline
-transat\_1  & Unknown 1                     & .nkz          & 383.5 & 63.3  & $\ballotx$        \\ \hline
+\textbf{Dataset Name} & \textbf{Boat Name} & 
+\textbf{\begin{tabular}[c]{@{}l@{}}Original\\Format\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Original\\Length[h]\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Cleaned\\Length[h]\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Tack\\Detection\end{tabular}} \\ \hline
+RDR\_nkz    & \multirow{4}{*}{Concise 8}    & .nkz & 16    & 16    & $\ballotx$        \\ \cline{1-1} \cline{3-6}
+RDR\_adrena &                               & .csv & 306   & -     & $\ballotx$        \\ \cline{1-1} \cline{3-6}
+DHREAM 18   &                               & .log & 64.5  & 64.5  & $\ballotx$        \\ \cline{1-1} \cline{3-6} 
+Atlantic    &                               & .nkz & 290.9 & 228.7 & $\ballotcheck$    \\ \hline
+DHREAM 20   & VMB                           & .nkz & 70    & 6     & $\ballotx$        \\ \hline
+Team Ocean  & Time for Oceans               & .nkz & 383.5 & 63.3  & $\ballotcheck$    \\ \hline
+transat\_2  & \textit{unknown}              & .nkz & 387.5 & -     & $\ballotx$        \\ \hline
 \end{tabular}
-\caption{Available Datasets}
+\caption{Practical information about available datasets}
 \label{tab:datasets}
+\end{table}
+
+\begin{table}[]
+\centering
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+\textbf{Dataset Name} & \textbf{Boat Name}         & \textbf{Boat Class}       & \textbf{Race}          & \textbf{Year} \\ \hline
+RDR\_nkz              & \multirow{4}{*}{Concise 8} & \multirow{5}{*}{Class 40} & Route du Rhum          & 2018          \\ \cline{1-1} \cline{4-5} 
+RDR\_adrena           &                            &                           & Route du Rhum          & 2018          \\ \cline{1-1} \cline{4-5} 
+DHREAM 18             &                            &                           & DHREAM Cup             & 2018          \\ \cline{1-1} \cline{4-5} 
+Atlantic              &                            &                           & \textit{boat delivery} & 2019          \\ \cline{1-2} \cline{4-5} 
+DHREAM 20             & Virgin Media Business      &                           & DHREAM Cup             & 2020          \\ \hline
+Team Ocean            & Time for Oceans            & \multirow{2}{*}{IMOCA 60} & Transat Jacques Vabre  & 2019          \\ \cline{1-2} \cline{4-5} 
+transat\_2            & \textit{unknown}           &                           & Transat Jacques Vabre  & 2019          \\ \hline
+\end{tabular}
+\caption{Factual information about available datasets}
+\label{tab:my-table}
 \end{table}
 
 \section{State Estimator Scripts}
@@ -407,10 +477,115 @@ Heading\_ov\_ground\_sin &
   \begin{tabular}[c]{@{}l@{}}0.020\\ 0.013\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.044\\ 0.048\end{tabular} \\ \hline
 \end{tabular}
-\caption{YYYYYYYYY}
+\caption{Charles' best performing models vs new optimized models: Part 1}
+\label{tab:opt-model-p1}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Feature} &
+  \textbf{Model} &
+  \textbf{MAE} &
+  \textbf{RMSE} \\ \hline
+Speed\_ov\_ground &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.820\\ 0.132\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}1.154\\ 0.205\end{tabular} \\ \hline
+Heading\_Mag\_cos &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}-\\ 0.016\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}-\\ 0.024\end{tabular} \\ \hline
+Heading\_Mag\_sin &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}-\\ 0.014\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}-\\ 0.023\end{tabular} \\ \hline
+VMG &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.520\\ 0.767\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.866\\ 1.100\end{tabular} \\ \hline
+TWA\_cos &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.026\\ 0.022\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.036\\ 0.030\end{tabular} \\ \hline
+TWA\_sin &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.021\\ 0.016\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.034\\ 0.024\end{tabular} \\ \hline
+Speed\_ov\_surface &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}1.200\\ 0.231\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}1.846\\ 0.347\end{tabular} \\ \hline
+Heading\_True\_cos &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.017\\ 0.010\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.045\\ 0.018\end{tabular} \\ \hline
+Heading\_True\_sin &
+  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.017\\ 0.012\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.038\\ 0.020\end{tabular} \\ \hline
+\end{tabular}
+\caption{Charles' best performing models vs new optimized models: Part 2}
+\label{tab:opt-model-p2}
 \end{table}
 
 \section{Transferability Experiment} \label{section:transferability}
+
+\begin{table}[]
+\centering
+\rowcolors{2}{gray!20}{white}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{1}{|r|}{\textbf{Test Set:}} &
+  \multicolumn{2}{c|}{\textbf{Atlantic}} &
+  \multicolumn{2}{c|}{\textbf{RDR\_nkz}} &
+  \multicolumn{2}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}RDR\_nkz\\ (Atlantic \\ conditions)\end{tabular}}} \\ \hline
+                         & MAE   & RMSE  & MAE   & RMSE  & MAE   & RMSE  \\ \hline
+AWS                      & 0.614 & 0.785 & 10.44 & 11.48 & 13.11 & 13.83 \\ \hline
+Yaw\_cos                 & 0.007 & 0.023 & 0.025 & 0.029 & 0.025 & 0.030 \\ \hline
+Yaw\_sin                 & 0.021 & 0.034 & 0.165 & 0.182 & 0.221 & 0.231 \\ \hline
+Pitch                    & 1.367 & 1.822 & 6.697 & 7.643 & 9.904 & 10.39 \\ \hline
+AWA\_cos                 & 0.040 & 0.056 & 0.175 & 0.242 & 0.073 & 0.095 \\ \hline
+AWA\_sin                 & 0.031 & 0.045 & 0.134 & 0.170 & 0.085 & 0.111 \\ \hline
+Roll                     & 1.470 & 1.910 & 7.589 & 8.998 & 11.76 & 12.40 \\ \hline
+Heading\_ov\_ground\_cos & 0.011 & 0.025 & 0.193 & 0.251 & 0.099 & 0.113 \\ \hline
+Heading\_ov\_ground\_sin & 0.013 & 0.048 & 0.538 & 0.699 & 0.518 & 0.707 \\ \hline
+\end{tabular}
+\caption{transferability part 1}
+\label{tab:transferability-p1}
+\end{table}
+
+\begin{table}[]
+\centering
+\rowcolors{2}{gray!20}{white}
+\begin{tabular}{|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{1}{|r|}{\textbf{Test Set:}} &
+  \multicolumn{2}{c|}{\textbf{Atlantic}} &
+  \multicolumn{2}{c|}{\textbf{RDR\_nkz}} &
+  \multicolumn{2}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}RDR\_nkz\\ (Atlantic \\ conditions)\end{tabular}}} \\ \hline
+                   & MAE   & RMSE  & MAE   & RMSE  & MAE   & RMSE  \\ \hline
+Speed\_ov\_ground  & 0.132 & 0.205 & 2.094 & 2.367 & 2.580 & 2.742 \\ \hline
+Heading\_Mag\_cos  & 0.016 & 0.024 & 0.289 & 0.407 & 0.167 & 0.216 \\ \hline
+Heading\_Mag\_sin  & 0.014 & 0.023 & 0.357 & 0.391 & 0.357 & 0.407 \\ \hline
+VMG                & 0.767 & 1.100 & 3.917 & 4.379 & 2.276 & 2.698 \\ \hline
+TWA\_cos           & 0.022 & 0.030 & 0.118 & 0.140 & 0.111 & 0.125 \\ \hline
+TWA\_sin           & 0.016 & 0.024 & 0.137 & 0.159 & 0.213 & 0.226 \\ \hline
+Speed\_ov\_surface & 0.231 & 0.347 & 2.433 & 2.746 & 3.644 & 3.820 \\ \hline
+Heading\_True\_cos & 0.010 & 0.018 & 0.153 & 0.225 & 0.080 & 0.103 \\ \hline
+Heading\_True\_sin & 0.012 & 0.020 & 0.320 & 0.412 & 0.357 & 0.458 \\ \hline
+\end{tabular}
+\caption{transferability part 2}
+\label{tab:transferability-p2}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.7\hsize]{figures/transferability/transferability chart.png}
+\caption{average error rates}
+\label{fig:transferability-avg-chart}
+\end{figure}
 
 \section{RL Framework}
 After the Background Research, the planned Reinforcement Learning framework to use was OpenAI's Spinning Up framework. They provide clean implementations of modern RL algorithms, and a basic interface to apply the algorithms to OpenAI Gym environments, then plot the results. However, OpenAI Spinning Up has some downsides and lack some important features that would be helpful during this project.
@@ -484,6 +659,12 @@ SB3 solves both of the problems of Spinning Up Framework mentioned in sections \
 \end{figure}
 
 Moreover, the RL Baselines Zoo has the missing features of Spinning Up's training framework, namely hyperparameter optimization and continuing training of previously trained models \cite{rl-zoo3}. Therefore, SB3 will be the choice of RL Framework.
+
+
+\section{Gym Environment Implementation}
+
+\subsection{Available data and Environment Constraints}
+We do not have information about
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\chapter{Experimental Results}
