@@ -1,0 +1,11 @@
+These 4 features were used while creating the \textit{RDR\_nkz (Atlantic Conditions)} dataset. They are included here for convenience. Below are the explanation of the 4 features, exactly as written in his project report by Charles Metz \cite{charles}.
+
+\subsubsection{Features describing the physical environment} 
+Only some features are relevant to describe the physical environment and state of the boat. Indeed, some features are partially redundant to others and some correlate strongly to others (e.g. boat and wind speed under normal conditions). Therefore, 4 features were selected that capture the essential elements of the environment as experienced by the boat. In consultation with Dr. Eric Topham, internal supervisor of the study with extensive sailing experience, these features were found to be: 
+
+\begin{itemize}
+    \item \textbf{True Wind Speed (TWS):} important for the lift generated from the airflow over the sails, as well as affecting the sea state.
+    \item \textbf{True Wind Angle (TWA):} the angle at which the wind hits the boat in relation to its orientation when the boat would be stationary. It allows to characterize the angle of the wind in relation to the boat at any given moment.
+    \item \textbf{Apparent Wind Angle (AWA):} characterizes the angle at which the wind effectively hits the boat when the boat is in motion.
+    \item \textbf{Pitch:} describes the inclination of the boat’s bow; numerous high and low values for pitch hence indicate an agitated sea that would raise and lower the nose of the boat. Out of the pitch, roll and yaw angles that describe the attitude of the boat, pitch is the best for approximating the sea state. Indeed, roll can be affected by wind which can be independent of the sea state, and yaw can be affected by the helmsman steering the boat in a choice of direction unrelated to the sea state.
+\end{itemize}

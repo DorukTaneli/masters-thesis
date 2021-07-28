@@ -4,7 +4,9 @@
 \usepackage{wrapfig}
 \usepackage{arev}
 \usepackage[table]{xcolor}
+\usepackage{gensymb}
 \setlength{\parindent}{2em}  % indentation of paragraph
+\usepackage{float}
 
 \pagenumbering{arabic}
 
@@ -79,70 +81,133 @@ Modern sailboats are built by combining bleeding edge science from many areas, i
 
 Shorthanded races are one type of popular competition where there are either one or two crew members, as opposed to full crews that can go up to around ten people. Autopilots are used extensively during these shorthanded races, steering the boat for more than 95\% of the time, while the crew handles other boat work or personal sustenance. Despite carrying out more than 95\% of the steering, autopilots only perform at 80\% of the capability of a professional skipper \cite{roman}. Therefore there is a huge potential to gain race winning advantage in shorthanded competitions by improving the autopilots. Jack Trigger \cite{trigger-racing}, who competes in shorthanded races, is providing the data from his boat sensors which makes this project possible. 
 
-The goal of this project is to realize this potential race winning advantage by creating a Machine Learning model, trained by Reinforcement Learning, which will predict the optimal rudder angle using onboard boat sensors. To achieve that, this project will continue the work of former Imperial students and the employees of the partner company, The Data Analysis Bureau (T-DAB) \cite{t-dab}. Extensive work have been done on this project since 2018, mostly focusing on cleaning and preprocessing the available data, plus creating Machine Learning models that predicts the state of the boat and the sea environment.
+The goal of this project is to realize this potential race winning advantage by creating a Machine Learning model, trained by Reinforcement Learning, which will predict the optimal rudder angle using onboard boat sensors. To achieve that, this project will continue the work of former Imperial students and the employees of the partner company, The Data Analysis Bureau (T-DAB) \cite{t-dab}. Extensive work have been done on this project since 2018, mostly focusing on cleaning and preprocessing the available data, plus creating Machine Learning models that predicts the state of the boat, which will be referred as state estimator models in the rest of this report.
 
-I, Doruk Taneli, will continue their work, and using the data and code they prepared, I will implement an OpenAI Gym environment in which the Reinforcement Learning will take place. I will then compare the performance of state-of-the-art RL algorithms on this environment, then draw conclusions. If the simulation environment can reproduce the interactions between the rudder, the boat, and the sea realistically enough, the Reinforcement Learning algorithm can potentially learn how to steer a boat better than a human professional.
+I, Doruk Taneli, will continue their work, and using the data and code they prepared, I will further improve the state estimator models, implement an OpenAI Gym environment in which the Reinforcement Learning will take place, compare the performance of state-of-the-art RL algorithms on this environment, then draw conclusions. If the simulation environment can reproduce the interactions between the rudder, the boat, and the sea realistically enough, the Reinforcement Learning algorithm can potentially learn how to steer a boat better than a human professional.
 
 %\section{Objectives}
 
 %\section{Outcomes}
 
+%\section{Report Structure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Background}
 
+\begin{wrapfigure}{r}{0.50\textwidth}
+\vspace{-11cm}
+\centering
+\includegraphics[width = 0.45\textwidth]{figures/sailing/sailboat-parts.png}
+\caption{Sailboat parts \cite{sail-parts}}
+\label{fig:sail-parts}
+\end{wrapfigure}
+
 \section{Sailing Background}
+Sailboats work by utilizing the balance of forces created between the sails and the wind as the driving force, the keel/rudder and the sea for controlling the boat, plus the gravity for countering the heel. There are countless online resources to learn about the details of how sailboats work. Here, I will focus on the parts that are important for the project.
 
 \subsection{Basics of Sailing}
-Many people may think that sailboats move with the wind's pushing on the sail. Although this is true for some wind angles, most of the time the sails work like airplane wings utilizing Bernoulli's Principle. To put it simply, Bernoulli's principle states that increasing flow speed in fluids corresponds to decreasing pressure, and vice versa. The shape of the sails resemble an airplane wing. Because of its shape, the air travels faster on one side than the other, which creates a pressure difference, and results in a net force that drives the boat forward.
+Many might think that sailboats move with the wind's pushing on the sail. Although this is true for some wind angles, most of the time the sails work like airplane wings utilizing Bernoulli's Principle. To put it simply, Bernoulli's principle \cite{wiki:bernoulli} states that increasing flow speed in fluids corresponds to decreasing pressure, and vice versa. The shape of the sails resemble an airplane wing. Because of its shape, the air travels faster on one side than the other, which creates a pressure difference, and results in a net force that drives the boat forward. Using the Bernoulli Principle, a sailboat is able to travel in much wider wind angles, compared to what would be possible by using wind push only.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.8\hsize]{figures/sailing/sail-bernoulli.jpg}
+\includegraphics[width = 0.6\hsize]{figures/sailing/sail-bernoulli.jpg}
 \caption{Visualization of Bernoulli Principle: (a)Airplane wing, (b)Sail \cite{bernoulli}}
 \label{fig:bernoulli}
 \end{figure}
 
-Sailboats work by utilizing the balance of forces created between the sails and the wind as the driving force, the keel/rudder and the sea for controlling the boat, plus the gravity for countering the heel. There are countless online resources to learn about the details of how sailboats work. Here, I will focus on the parts that are important for the project such as factors that affect the boat heading.
-
-\begin{figure}[]
-\centering
-\includegraphics[width = 0.5\hsize]{figures/sailing/sailboat-parts.png}
-\caption{Sailboat parts \cite{sail-parts}}
-\label{fig:sail-parts}
-\end{figure}
-
-\subsection{Elements Affecting Boat Heading}
-
-\subsubsection{Rudder}
-First of all the Rudder, whose main purpose is to steer the boat. It works by displacing water at the back of the boat, which creates a force that turns the boat around its center, the keel. Although it is the easiest way to control the boat, moving the rudder creates drag and slows down the boat, so it is not preferable to use it excessively.
+\subsection{Point of Sails}
+The direction of the boat compared to the wind is called the point of sails. As can be seen in Figure \ref{fig:points-of-sail}, sailboats can go in almost all angles with respect to the wind, except from straight into the wind.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.5\hsize]{figures/sailing/rudder.jpg}
+\includegraphics[width = 0.55\hsize]{figures/sailing/PointsOfSail.png}
+\caption{Point of Sails \cite{img:sailing-tack-gybe}}
+\label{fig:points-of-sail}
+\end{figure}
+
+In order to make progress towards the wind, one needs to sail close hauled as seen in Figure \ref{fig:points-of-sail}, and make repeated turns with respect to the wind, known as tack. During a tack, the boat changes direction by turning its head towards and through the wind so that the direction from which the wind blows changes from one side of the boat to the other \cite{wiki:tack}. Jibe is similar to tack, but it is used while sailing downwind, and the boat changes direction by heading away instead of towards the wind. Visualizations of tack and jibe can be seen in Figure \ref{fig:tack-jibe}. 
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.28\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/sailing/tack.png}
+        %\caption{tack \cite{img:sailing-tack-gybe}}
+        \label{fig:tack}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.22\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/sailing/jibe.png}
+        %\caption{jibe \cite{img:sailing-tack-gybe}}
+        \label{fig:jibe}
+    \end{subfigure}
+    \caption{Tack (left) and Jibe (right) \cite{img:sailing-tack-gybe}}
+    \label{fig:tack-jibe}
+\end{figure}
+
+Since tacks and jibes require readjustments in sails, an autopilot should not do these manoeuvres unless specifically instructed by the skipper. In addition, the state of the boat differs a lot during tacks and jibes compared straight cruising, which confuses the state estimators we are trying to build. Stanislas removed tacks from the dataset the models were trained on, and achieved significant performance increase (cf. Section \ref{sec:Stan}).
+
+\subsection{Polar Speed}
+
+Although the boats can sail in many angles with respect to the wind, there are optimal angles to sail with due to the design of the boat. A polar plot, which plots the performance of a boat with reference to the true wind angle, is a helpful tool to judge a boat's optimal angles. The polar plot for Concise 8 can be seen in Figure \ref{fig:polar-plot}. Looking at the polar plot, we can see that the best upwind angle is around 45\degree, whereas the best downwind angle is around 150\degree. In his project, Roman incorporated this optimal degree and speed information in Reinforcement Learning reward.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.85\hsize]{figures/sailing/polar-plot.png}
+\caption{Concise 8 Polar Plot \cite{stan}}
+\label{fig:polar-plot}
+\end{figure}
+
+\subsection{Elements Affecting Boat Heading}
+\subsubsection{Rudder}
+The most important element that affects the boat heading is the rudder, whose main purpose is to steer the boat. It works by displacing water at the back of the boat, which creates a force that turns the boat around its center, the keel. Although it is the easiest way to control the boat, moving the rudder creates drag and slows down the boat, so it is not preferable to use it excessively.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.6\textwidth]{figures/sailing/rudder.jpg}
 \caption{How rudder works \cite{rudder}}
 \label{fig:rudders}
 \end{figure}
 
 \subsubsection{Boat Design and Sail Trim}
-If there is more force acting from the front of the keel than from the back of the keel, the boat will naturally turn. This is taken into account when designing the boat, by carefully calculating the area of fore and main sails, position of mast and keel, etc. The balance of these forces can also be altered after the boat s manufactured. For example, many high performance sailing boats have features to adjust the position, angle and bend of the mast. Furthermore, it can even be adjusted on the go, by trimming the fore and main sails individually.
+
+\begin{wrapfigure}[10]{r}{0.3\textwidth}
+\vspace{-1cm}
+\centering
+\includegraphics[width = 0.15\textwidth]{figures/sailing/tork.jpg}
+\caption{Balance of torque across keel}
+\label{fig:keel-tork}
+\end{wrapfigure}
+
+If there is more force acting from the front of the keel than from the back of the keel, the boat will naturally turn. This is taken into account when designing the boat, by carefully calculating the area of fore and main sails, position of mast and keel, etc. The balance of these forces can also be altered after the boat is manufactured. For example, many high performance sailing boats have features to adjust the position, angle and bend of the mast. Furthermore, this balance can even be adjusted on the go, by trimming the fore and main sails individually.
+
+\subsubsection{Heel}
+Heeling in sailing means the tipping of the sailboat to one side, also known as Roll in boating or aviation. When the boat heels, the boat wants to turn towards the wind. Sailboats heel more as the wind speed increases. This is also factored in during the design of the boat, because continually countering this turn with rudder would significantly slow the boat down.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.6\hsize]{figures/sailing/rudder.jpg}
-\caption{How rudder works \cite{rudder}}
-\label{fig:rudders}
+\includegraphics[width = 0.7\textwidth]{figures/sailing/boat-pitch-roll-yaw.png}
+\caption{Wave affecting boat \cite{img:pitch-roll-yaw}}
+\label{fig:pitch-roll-yaw}
 \end{figure}
 
-\subsubsection{Heel}
-Heeling in sailing means the tipping of the sailboat to one side, also known as Roll in boating or aviation. As the boat heels, 
+\subsubsection{Waves}
+Waves affect the heading in two ways. First, the momentum of the waves hitting the boat from different angles changes the course of the boat. Second, as the boat moves through the waves, the roll and the pitch of the boat changes, which affects the boat's centre of gravity and how sails interact with wind, resulting in a change in heading.
 
-These knowledge affected the decisions made in the later parts of the project, for example the Reinforcement Learning environment.
+As we can see, there are a lot of factors that affect the boat heading, and it can't be controlled solely by rudder. This knowledge affected the decisions made in the later parts of the project, for example the Reinforcement Learning environment.
 
 
 \section{State of the Art Autopilots}
 
 The common consumer autopilots work in a very basic way. It either focuses on the boat's heading, using the data from magnetic compass; or focuses on the apparent wind, using the data from the wind sensor usually found at the top of the mast. The autopilot system compares the current reading and the goal reading, and every time the boat diverges from the goal(e.g., by wind or waves), the autopilot compensates by moving the rudder in the opposite way. 
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.65\textwidth]{figures/other/autopilot.jpg}
+\caption{A typical autopilot system \cite{img:autopilot}}
+\label{fig:autopilot}
+\end{figure}
 
 The focus of common consumer autopilots is to keep the boat on the right course. There are also more advanced options, gaining popularity in the last few years, that focus more on performance and racing. These autopilots have some features that imitates how a professional skipper would steer a boat in certain situations. For example: B\&G autopilots \cite{bandg} have gust response feature that quickly recovers from changes in wind, NKE autopilots \cite{nke} have surf mode that promotes the use of waves in downwind angles \cite{yachting_world_2020}, Raymarine autopilots \cite{raymarine} decide on whether to use apparent or true wind depending on wind angle \cite{cruising_world_2019}.
 
@@ -297,7 +362,7 @@ He also did research about the recent advancements in reinforcement learning, an
 
 Roman concluded that due to the poor performance of the simulation environment, it was not possible to realize the full potential of the reinforcement learning algorithm. Charles Metz later continues his work and improves the simulation environment.
 
-\subsection{Stanislas Hannabelle}
+\subsection{Stanislas Hannabelle} \label{sec:Stan}
 Stanislas' goal was to improve the results of Birk Ulstad's supervised learning approach to the problem. He further cleaned the dataset using a tack\footnote{Tacking is a sailing maneuver where the boat changes direction by turning its head towards and through the wind so that the direction from which the wind blows changes from one side of the boat to the other, allowing progress in the desired direction \cite{wiki:tack}.} detection system, did hyperparameter and bayesian optimization, and compared GRU and LSTM models. He was able to reduce the Root Mean Squared Error from 3.493 degrees of Birk's final model to 1.096 degrees, and reduced the computational time needed for rudder angle prediction \cite{stan}.
 
 \begin{figure}[h]
@@ -343,7 +408,9 @@ Following Charles' project, T-DAB employee Thomas Ryder carried on his work. Tho
   \item \textbf{Evaluation:} Make predictions using the test data, then calculate MAE and RMSE. Print information about trained models.
 \end{enumerate}
 
-The scripts are structured better than Charles' notebooks, plus they are much easier to understand and use. However, there were some problems and tests that need to be tackled before the final models that will be used for the Reinforcement Learning Environment can be produced. 
+According to Charles' findings of Model 2 working better on all 4 features tested, Charles decided to use Model 2 with one less final dense layer for all 18 features.
+
+The scripts are structured better than Charles' notebooks, plus they are much easier to understand and use. However, there are some problems and tests that need to be tackled before the final models that will be used for the Reinforcement Learning Environment can be produced.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -354,6 +421,8 @@ The scripts are structured better than Charles' notebooks, plus they are much ea
 \chapter{Contribution}
 
 \section{Available Datasets}
+
+There are 7 datasets available for use in this project. Substantial work have been done by previous students for converting, cleaning and preprocessing the datasets. Curated information about the datasets can be found in Figures \ref{tab:datasets-practical} and \ref{tab:datasets-factual}. The information about Team Ocean dataset is recently recieved, it was referred as transat\_1 in previous student reports. 
 
 \begin{table}[h]
 \centering
@@ -370,7 +439,7 @@ Team Ocean  & Time for Oceans               & .nkz & 383.5 & 63.3  & $\ballotche
 transat\_2  & \textit{unknown}              & .nkz & 387.5 & -     & $\ballotx$        \\ \hline
 \end{tabular}
 \caption{Practical information about available datasets}
-\label{tab:datasets}
+\label{tab:datasets-practical}
 \end{table}
 
 \begin{table}[]
@@ -387,16 +456,17 @@ Team Ocean            & Time for Oceans            & \multirow{2}{*}{IMOCA 60} &
 transat\_2            & \textit{unknown}           &                           & Transat Jacques Vabre  & 2019          \\ \hline
 \end{tabular}
 \caption{Factual information about available datasets}
-\label{tab:my-table}
+\label{tab:datasets-factual}
 \end{table}
 
+
 \section{State Estimator Scripts}
-In this section contributions related to the state estimator scripts that Charles and Thomas initially created will be described.
+In this section contributions related to the state estimator scripts that Charles and Thomas first created will be described.
 
 \subsection{Initial Improvements}
 
 \subsubsection{State Estimator Bug}
-When I took on the project over from Thomas, there was an error causing bug in the scripts that caused the scripts to halt without producing any results. Working together with Thomas, the problem was found to be the difference in the dataset rows that preprocessing scripts created, and the rows that optimization scripts were expecting. After fixing the bug, the scripts started working as expected in local and Azure cloud machines.
+When the project was handed over from Thomas, there was an error causing bug in the scripts that caused the scripts to halt without producing any results. Working together with Thomas, the problem was found to be the difference in the dataset rows that preprocessing scripts created, and the rows that optimization scripts were expecting. After fixing the bug, the scripts started working as expected in local and Azure cloud machines.
 
 \subsubsection{Data Store}
 The scripts are using local csv files as input. There was a plan to switch to using cloud databases, but the switch to databases were postponed due to the following reasons:
@@ -410,13 +480,27 @@ The scripts are using local csv files as input. There was a plan to switch to us
 \end{itemize}
 
 \subsubsection{Tack Detection}
-In his project, Stanislas Hannabelle created a model that classifies tacks. When he removed the found tacks from the dataset and retrained the state estimator model, he achieved substantial improvement in the model's test results. 
+As mentioned on section \ref{sec:Stan}, when Stanislas removed the found tacks from the dataset and retrained the state estimator model, he achieved substantial improvement in the model's test results. 
 
-To realize this improvement on our new optimized models, the scripts were modified to take the selected dataset \textit{Atlantic}'s tack bounds as input, and remove them from the train-validation-test sets. In the future, it is planned to incorporate Stan's tack detection models into the script pipeline. This way, the user would not have to provide the tack info themselves, but the script will automatically find and remove them.
+To realize this improvement on our new optimized models, the scripts were modified to take the selected dataset \textit{Atlantic}'s tack bounds as input, and remove them from the train-validation-test sets. The tack bounds for Atlantic dataset were stored in a different format, which required some change in the code.
+
+It is suggested to incorporate Stan's tack detection models into the script pipeline. This way, the user would not have to provide the tack info themselves, the script will automatically find and remove them. This would also alleviate the problem of different tack bound formats. (cf. Future Work)
 
 \subsection{Data Split Concern}
 
 There are two proposed ways of splitting the dataset into training, validation, and testing sets; named as \emph{Normal} and \emph{Segment} by Thomas. The Normal split method allocates the first 60\% of the data to training, next 20\% to validation and the last 20\% to testing. The Segment split method on the other hand, first splits the dataset into continuous segments separated by unusable areas such as tacks. Then each of those segments are individually split into train-validation-test using 60-20-20 split and then concatenated together.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = \hsize]{figures/Contribution/Normal Split.png}
+\caption{Normal Split}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = \hsize]{figures/Contribution/Segment Split.png}
+\caption{Segment Split}
+\end{figure}
 
 The data in the available datasets are logged chronologically. The nuance is that the weather and sea conditions change during the course of the races. In order to train the models on all the different sea and weather conditions, Charles has used the segment split method, as if he had used the normal split method, the models couldn't have been trained on the conditions present towards the end of the race.
 
@@ -424,15 +508,113 @@ Charles achieved good results using the segment split. However, one recent conce
 
 The initial plan was to create two sets of models with segment and normal split methods. The resulting models would then be compared if there is a considerable difference in the error metrics. Then, Eric informed me that although undocumented in his report, Charles already compared the two split methods, and observed significantly worse results in normal split.
 
-On a discussion with Eric and Pedro, it was decided that the performance drop was due to the models not having a chance to learn about the conditions present at the end of the race. To test how the models would perform on unseen data, we will test the data trained on one race on another race. This is called the Transferability Experiment and the details can be found in section \ref{section:transferability}.
+On a discussion with Eric Topham and Pedro Baiz, it was decided that the performance drop was due to the models not having a chance to learn about the conditions present at the end of the race. To test how the models would perform on unseen data, we will test the data trained on one race on another race. This is called the Transferability Experiment and the details can be found in section \ref{section:transferability}.
 
 \subsection{Efficiency Experiment}
+At the beginning of the project, some initial tests were made to make sure the scripts were working fine on local and Azure cloud computers. It was noticed that with a small test dataset, running the scripts on CPU took shorter than running them on GPU. CTO of T-DAB, Ivan Scattergood suggested testing whether this was caused by the bigger overhead of GPU, or the scripts were straight up better optimized for CPU.
 
+If it is just due to the multiprocessing overhead, running larger datasets on GPU should take shorter than CPU. But if it doesn't, we can conclude that the scripts are better optimized for CPU.
+
+Therefore a series of experiments were started, trying to find the most efficient way to run the scripts; whether on single-core CPU, multi-core CPU, or GPU. Plus trying to estimate the total amount of time it would take to produce the state estimator models.
+
+\subsubsection{Current Information}
+\begin{itemize}
+  \item We aim to produce 18 different state estimators. Producing each one is independent from others. They differ slightly in training time, due to the randomness of bayesian optimization and different resulting hyperparameters.
+  \item With a small test dataset, using CPU takes shorter than using GPU.
+\end{itemize}
+
+\subsubsection{Hypothesis}
+Running the scripts on GPU take longer with the small test dataset because of the overheads. Using bigger datasets will make GPU more efficient than CPU.
+
+\subsubsection{Side Goal}
+Predict how long the full script will take to produce all 18 models.
+
+\subsubsection{Experimental set up and method}
+\begin{enumerate}
+    \item Do test runs on single threaded cpu, multi-threaded cpu, and gpu; with a small dataset and smaller optimization search space.
+    \item Redo the experiments with 2x and 10x amount of data to see how it affects the runs.
+    \item Lastly, test with full optimization search space with the better processing unit to estimate how long the full run will take.
+\end{enumerate}
+
+Speed\_ov\_ground was picked as the feature to train models on, as it has medium error rate in previous iterations of the models compared to the other features. It is expected to be a good example to infer how long the full run will take.
+
+For CPU Tests, the default Azure compute instance “Standard\_DS3\_v2” with 4 cores, 14GB RAM, 28GB storage will be used.
+
+For GPU Tests, the Azure-recommended “Standard\_NC6” with 6 cores, 56GB RAM, 380GB storage will be used.
+
+\subsubsection{Assumptions}
+\begin{itemize}
+  \item Azure Mazhine Learning Computing units are consistent and does not fluctuate in performance 
+  \item RAM does not have an effect on performance
+\end{itemize}
+
+\subsubsection{Results}
+
+First of all, one should note the time needed is variable because of the randomness in Bayesian Optimization, but it should give us an idea of how long it will take.
+
+As can be seen in Table \ref{tab:cpu-gpu} and Figure \ref{fig:cpu-gpu}, running the scripts on GPU is much faster than CPU, especially as the dataset size increases.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Dataset Size} & \textbf{CPU - single threaded} & \textbf{CPU - multi threaded} & \textbf{GPU} \\ \hline
+\textbf{50 MB}  & 0:01:09 & 0:01:41 & 0:01:08 \\ \hline
+\textbf{100 MB} & 0:02:01 & 0:03:23 & 0:01:17 \\ \hline
+\textbf{500 MB} & 0:11:24 & 0:09:12 & 0:06:08 \\ \hline
+\end{tabular}
+\caption{Optimization time for small search space among different processing options}
+\label{tab:cpu-gpu}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.8\hsize]{figures/efficiency/cpu-gpu.pdf}
+\caption{Line graph of optimization times of different processing options}
+\label{fig:cpu-gpu}
+\end{figure}
+
+It is clear that hyperparameter optimization will take less time using GPU, so the further tests to estimate how long the full run will take will only be done on GPUs.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Dataset Size} & \textbf{small search space} & \textbf{full search space} \\ \hline
+\textbf{50 MB}        & 0:01:08                     & 0:12:38                    \\ \hline
+\textbf{100 MB}       & 0:01:17                     & 0:16:18                    \\ \hline
+\textbf{500 MB}       & 0:06:08                     & 1:18:08                    \\ \hline
+\end{tabular}
+\caption{Optimization times for GPU, small vs full search space}
+\label{tab:gpu-search-spaces}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 0.8\hsize]{figures/efficiency/gpu.pdf}
+\caption{Line graph of optimization times for GPU, small vs full search space}
+\label{fig:gpu}
+\end{figure}
+
+The full dataset is 12.6 GB, approximately 25 times the large dataset. The trend is pretty linear, so optimization for full dataset for 1 feature is expected to take around 32.5 hours. If all of the features take same of amount of time for optimization, All of the 18 features would take 585 hours, which is around 24.4 days.
+
+Each feature is independent from each other, and running them on the same script does optimizations back to back in series. Each feature can be run on separate compute instances to save a lot of time. Assuming there is no starting fee for computing instances, and only per hour fees, this wouldn’t add much in cost either.
+
+\subsubsection{Conclusion}
+The hypothesis was true, GPU takes shorter in bigger datasets, and the gap is expected to grow in even bigger datasets.
+
+From the results of this experiment, running the full dataset for all features is expected to take around 24.4 days on a single compute, but they can also be run on separate compute instances to save time with no considerable drawback.
+
+\subsubsection{Next Step}
+The full optimization and training runs for all 18 features will be run on multiple Azure Cloud GPUs in parallel.
 
 \section{Optimized Models}
 
+After the efficiency tests were completed and GPU was chosen as the choice of processing unit, the full optimization and training run was started. T-DAB has received credits from Microsoft that can be spent on Azure ML platform for Innovation use. Therefore, the default NVIDIA Tesla K80 GPUs available on Azure ML platform were used to optimize and train the models. The result of the efficiency test points that multiple GPUs can be used in parallel. The maximum number of GPUs in the innovation account quota was used and the models were trained on 3 seperate NVIDIA Tesla K80 GPUs.
 
-\begin{table}[h]
+18 models were trained for 18 features. The error rates of the optimized models can be seen in Table \ref{tab:opt-model}, compared to the error rates of Charles' best performing models. The new models were trained and tested on the larger \textit{Atlantic} dataset, whereas Charles' models were trained and tested on the smaller \textit{DHREAM 18} dataset. Thus it is not a one to one comparison, and because the optimized models were trained and tested on a larger dataset with a more variaty of conditions, we might even expect larger error rates. Nevertheless many of the features have same or lower error rates, which is a great success, except from Pitch, AWA\_cos, AWA\_sin, and VMG models that have higher error rates.
+
+\begin{table}[htbp]
 \centering
 \begin{tabular}{|l|l|l|l|}
 \hline
@@ -476,29 +658,16 @@ Heading\_ov\_ground\_sin &
   \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.020\\ 0.013\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.044\\ 0.048\end{tabular} \\ \hline
-\end{tabular}
-\caption{Charles' best performing models vs new optimized models: Part 1}
-\label{tab:opt-model-p1}
-\end{table}
-
-\begin{table}[h]
-\centering
-\begin{tabular}{|l|l|l|l|}
-\hline
-\textbf{Feature} &
-  \textbf{Model} &
-  \textbf{MAE} &
-  \textbf{RMSE} \\ \hline
 Speed\_ov\_ground &
   \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.820\\ 0.132\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}1.154\\ 0.205\end{tabular} \\ \hline
 Heading\_Mag\_cos &
-  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}-\\ optimized\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}-\\ 0.016\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}-\\ 0.024\end{tabular} \\ \hline
 Heading\_Mag\_sin &
-  \begin{tabular}[c]{@{}l@{}}Model 1\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}-\\ optimized\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}-\\ 0.014\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}-\\ 0.023\end{tabular} \\ \hline
 VMG &
@@ -526,13 +695,57 @@ Heading\_True\_sin &
   \begin{tabular}[c]{@{}l@{}}0.017\\ 0.012\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.038\\ 0.020\end{tabular} \\ \hline
 \end{tabular}
-\caption{Charles' best performing models vs new optimized models: Part 2}
-\label{tab:opt-model-p2}
+\caption{Charles' best performing models vs new optimized models}
+\label{tab:opt-model}
 \end{table}
+
+The efficiency test results suggested that the optimization would take around 34.5 hours for every feature. In the original scripts and during the efficiency tests, there were logging messages about GPU jobs, printing hundreds of times each second to console. Printing has a surprising effect on time taken by a program, more than a novice engineer might expect. Before starting the runs on Azure cloud GPUs, these logging prints were removed. 
+
+In the resulting models, the average optimization duration was 29:01:16, minimum was 16:11:35, and maximum was 41:46:53. A box whisker plot of the optimization times, compared to the estimated time from the efficiency tests can be seen in Figure \ref{fig:opt-time}. As expected, the range is pretty high due to randomness in Bayesian randomness. However, judging from the plot, the estimated time was accurate and removing the excessive log prints were effective.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.8\hsize]{figures/Contribution/Opt-time-box-whisker.png}
+\caption{Optimization time box-whisker plot compared to estimated time(orange)}
+\label{fig:opt-time}
+\end{figure}
+
+The full details of the runs, including optimization times, training times, error metrics, and the resulting hyperparameters for all features can be found in appendix.
 
 \section{Transferability Experiment} \label{section:transferability}
 
-\begin{table}[]
+This section is about the Transferability Experiment conducted to see how well the models trained on one dataset can predict the boat features using data from another dataset.
+
+\subsubsection{Current Information}
+\begin{itemize}
+  \item Each dataset belongs to another race/boat transfer, so the sea, wind and the boat trim conditions are different.
+  \item The new, optimized models were trained on the \textit{Atlantic} dataset, which were recorded by nke instruments and software.
+  \item Charles have previously tested and found that the models trained on one dataset are not transferable to another dataset recorded on the same boat with a different electronics system.
+\end{itemize}
+
+\subsubsection{Hypothesis}
+The new models have optimized hyperparameters and were trained on a larger dataset.
+\begin{itemize}
+  \item \textbf{Hypothesis 1:} The new models will be able to predict the boat states of another dataset that were recorded on the same boat with the same electronics system, with a similar error rate.
+  \item \textbf{Hypothesis 2:} The new models will be able to predict the boat states of another dataset that were recorded on the same boat with the same electronics system, with a similar error rate, on the sections that have similar environmental conditions.
+\end{itemize}
+
+\subsubsection{Assumptions}
+Charles' suggested essential features describing the physical environment, which are: True Wind Speed, True Wind Angle, Apparent Wind Angle, and Pitch, provide an accurate and sufficient description of the environment. More information about these essential features can be found in the appendix.
+
+\subsubsection{Experimental set up and methods}
+To test this hypothesis, we need a dataset which was recorded on the same boat with the same electronics system and format as the \textit{Atlantic} dataset the models were trained on. Looking at Figure \ref{tab:datasets-practical} in the Available Datasets Section, we can see that the \textit{RDR\_nkz} dataset, suits these requirements. Thus it was chosen as the dataset to make the experiments.
+
+To test both of the hypotheses, A new dataset was created, named \textit{RDR\_nkz (Atlantic conditions)}, by selecting parts from the RDR\_nkz dataset, which have the mentioned four essential features in the range of what is present in the \textit{Atlantic} dataset. For a detailed explanation of how \textit{RDR\_nkz (Atlantic conditions)} was created, see Appendix.
+
+
+\subsubsection{Results}
+
+The error rates for each feature can be seen in Table \ref{tab:transferability} and the average error rates for different testing datasets is available in Figure \ref{fig:transferability-avg-chart}.
+
+The error rates on \textit{RDR\_nkz} dataset are over four times the rates on the \textit{Atlantic} dataset. Moreover, the error rates of \textit{RDR\_nkz (Atlantic conditions)}, which was created to have similar conditions to the \textit{Atlantic} dataset, are even higher than the full \textit{RDR\_nkz} dataset.
+
+\begin{table}[htbp]
 \centering
 \rowcolors{2}{gray!20}{white}
 \begin{tabular}{|l|l|l|l|l|l|l|}
@@ -551,21 +764,6 @@ AWA\_sin                 & 0.031 & 0.045 & 0.134 & 0.170 & 0.085 & 0.111 \\ \hli
 Roll                     & 1.470 & 1.910 & 7.589 & 8.998 & 11.76 & 12.40 \\ \hline
 Heading\_ov\_ground\_cos & 0.011 & 0.025 & 0.193 & 0.251 & 0.099 & 0.113 \\ \hline
 Heading\_ov\_ground\_sin & 0.013 & 0.048 & 0.538 & 0.699 & 0.518 & 0.707 \\ \hline
-\end{tabular}
-\caption{transferability part 1}
-\label{tab:transferability-p1}
-\end{table}
-
-\begin{table}[]
-\centering
-\rowcolors{2}{gray!20}{white}
-\begin{tabular}{|l|l|l|l|l|l|l|}
-\hline
-\multicolumn{1}{|r|}{\textbf{Test Set:}} &
-  \multicolumn{2}{c|}{\textbf{Atlantic}} &
-  \multicolumn{2}{c|}{\textbf{RDR\_nkz}} &
-  \multicolumn{2}{c|}{\textbf{\begin{tabular}[c]{@{}c@{}}RDR\_nkz\\ (Atlantic \\ conditions)\end{tabular}}} \\ \hline
-                   & MAE   & RMSE  & MAE   & RMSE  & MAE   & RMSE  \\ \hline
 Speed\_ov\_ground  & 0.132 & 0.205 & 2.094 & 2.367 & 2.580 & 2.742 \\ \hline
 Heading\_Mag\_cos  & 0.016 & 0.024 & 0.289 & 0.407 & 0.167 & 0.216 \\ \hline
 Heading\_Mag\_sin  & 0.014 & 0.023 & 0.357 & 0.391 & 0.357 & 0.407 \\ \hline
@@ -576,16 +774,25 @@ Speed\_ov\_surface & 0.231 & 0.347 & 2.433 & 2.746 & 3.644 & 3.820 \\ \hline
 Heading\_True\_cos & 0.010 & 0.018 & 0.153 & 0.225 & 0.080 & 0.103 \\ \hline
 Heading\_True\_sin & 0.012 & 0.020 & 0.320 & 0.412 & 0.357 & 0.458 \\ \hline
 \end{tabular}
-\caption{transferability part 2}
-\label{tab:transferability-p2}
+\caption{Full error rate data of the transferability experiment for all features}
+\label{tab:transferability}
 \end{table}
 
-\begin{figure}[h]
+
+\begin{figure}[htbp]
 \centering
-\includegraphics[width = 0.7\hsize]{figures/transferability/transferability chart.png}
-\caption{average error rates}
+\includegraphics[width = \hsize]{figures/transferability/transferability chart.png}
+\caption{Average error rates on different testsets}
 \label{fig:transferability-avg-chart}
 \end{figure}
+
+\subsubsection{Conclusion}
+Both of the hypotheses were wrong, as the models trained on the \textit{Atlantic} dataset have drastically higher error rates on both the \textit{RDR\_nkz} dataset, which was recorded on the same boat and same electronics system; and on the \textit{RDR\_nkz (Atlantic conditions)} dataset, which also have similar environmental conditions.
+
+A further takeaway is that the Charles' suggested essential features describing the physical environment are not sufficient for transferability among datasets, as the error rates of \textit{RDR\_nkz (Atlantic conditions)} are higher than \textit{RDR\_nkz} error rates.
+
+\subsubsection{Next Step}
+The state estimator models we have can only predict succesfully on \textit{Atlantic} data. Therefore in the RL environment that will be created, the data from \textit{Atlantic} dataset will be used.
 
 \section{RL Framework}
 After the Background Research, the planned Reinforcement Learning framework to use was OpenAI's Spinning Up framework. They provide clean implementations of modern RL algorithms, and a basic interface to apply the algorithms to OpenAI Gym environments, then plot the results. However, OpenAI Spinning Up has some downsides and lack some important features that would be helpful during this project.
@@ -673,6 +880,8 @@ We do not have information about
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\chapter{Conclusion}
 
+\section{Future Work}
+add tack detection to pipeline
 
 
 %% bibliography
@@ -684,7 +893,18 @@ We do not have information about
 %% appendix
 \appendix
 \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+
 \chapter{Sail Trim Approach}
 \input{Chapters/appendix-sailtrim}
+
+\chapter{Azure Cloud Run Details}
+\input{Chapters/gpu-run-details}
+
+\chapter{Charles' Suggested Features Describing the Environment}
+\input{Chapters/appendix-4-essential-features}
+
+\chapter{Creating the RDR\_nkz(Atlantic Conditions) Dataset}
+\input{Chapters/appendix-RDR-nkz-atlantic-conditions}
+
 
 \end{document}
