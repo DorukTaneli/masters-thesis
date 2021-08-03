@@ -1,0 +1,38 @@
+\subsubsection{Boat States}
+Features describing the current state of the boat. These 18 states are predicted by the state estimator models, using the 60 seconds of state history.
+
+\begin{itemize}
+    \item AWS (Apparent Wind Speed)
+    \item AWA\_cos, AWA\_sin (Apparent Wind Angle)
+    \item TWA\_cos, TWA\_sin (True Wind Angle)
+    \item Heading\_ov\_ground\_cos, Heading\_ov\_ground\_sin (Heading over ground)
+    \item Heading\_Mag\_cos, Heading\_Mag\_sin (Magnetic heading)
+    \item Heading\_True\_cos, Heading\_True\_sin (True heading)
+    \item Speed\_ov\_ground (Speed over ground)
+    \item Speed\_ov\_surface (Speed over surface)
+    \item VMG (Velocity Made Good)
+    \item Yaw\_cos, Yaw\_sin, Pitch, Roll (3 dimensions of boat movement)
+\end{itemize}
+
+
+\bigskip
+\subsubsection{Boat States - Math}
+3 features that are more accurately calculated from previous values mathematically, rather than using ML models, as tested by Charles \cite{charles}.
+
+\begin{itemize}
+    \item Latitude
+    \item Longitude\_cos, Longitude\_sin
+\end{itemize}
+
+
+\clearpage
+\subsubsection{Sea States}
+The features that describe the sea state, independent from the boat.
+
+\begin{itemize}
+    \item Current\_speed (Speed of ocean current)
+    \item Current\_direction\_cos, Current\_direction\_sin (Direction of ocean current)
+    \item TWS (True Wind Speed)
+    \item TWD\_cos, TWD\_sin (True Wind Direction)
+    \item Air\_temp (Air temperature)
+\end{itemize}

@@ -5,6 +5,7 @@
 \usepackage{arev}
 \usepackage[table]{xcolor}
 \usepackage{gensymb}
+\usepackage[export]{adjustbox}
 \setlength{\parindent}{2em}  % indentation of paragraph
 \usepackage{float}
 
@@ -865,13 +866,245 @@ SB3 solves both of the problems of Spinning Up Framework mentioned in sections \
         \label{fig:spinup-vs-sb3}
 \end{figure}
 
-Moreover, the RL Baselines Zoo has the missing features of Spinning Up's training framework, namely hyperparameter optimization and continuing training of previously trained models \cite{rl-zoo3}. Therefore, SB3 will be the choice of RL Framework.
+Moreover, the RL Baselines Zoo has the missing features of Spinning Up's training framework, namely hyperparameter optimization and continuing training of previously trained models \cite{rl-zoo3}. Therefore, Stable Baselines 3 will be the choice of RL Framework.
 
-
-\section{Gym Environment Implementation}
+\section{Custom OpenAI Gym Environment}
+In this section, the Reinforcement Learning environment implemented to train the sailboat autopilot will be described.
 
 \subsection{Available data and Environment Constraints}
-We do not have information about
+A good way to train the RL autopilot would be to randomly create goal locations around the boat's initial location, and let the reinforcement learning agent learn how to reach them the fastest way. By setting the initial states and goal locations randomly, the agent would be able to learn how to sail in all possible wind angle and sea state combinations.
+
+Unfortunately, we do not have information about the sea states anywhere except where the boat was in the recorded data. Therefore, the Reinforcement Learning episodes need to happen around the historical boat locations.
+
+\subsection{Core Environment Setup}
+There are many different versions of environment that were created. The difference is mostly the observation space of the agent, and the reward function. All of these environments share the rest and the largest part of the code, the core of the environment which will be described here.
+
+As explained in the previous sections, the models are not transferable to other datasets, and we only have sea state data from the historical data from the boat's location. Therefore the \textit{Atlantic} dataset will be used as a baseline for the environment. The main goal of the gym environment is to reach where the historical boat was a few minutes later, and hopefully reach there faster than the historical boat.
+
+The core gym environment structure, whose diagram can be seen in Figure \ref{fig:env-setup}, is as follows: At the beginning of each episode, a random 60 second section is chosen as the state history from the preprocessed, usuable areas of \textit{Atlantic} dataset. Every timestep, the new row of states are created and appended to the end of the state history, while the oldest row is discarded. This state history contains 4 sections, which are all generated in different ways:
+
+\begin{itemize}
+    \item \textbf{Rudder:} The rudder angle. This is provided by the RL agent every step. As the agent learns to drive the boat better, it provides better angles.
+    \item \textbf{Boat States:} Features describing the current state of the boat. These 18 states are predicted by the state estimator models, using the 60 seconds of state history.
+    \item \textbf{Boat States - Math:} 3 features that are more accurately calculated from previous values mathematically, rather than using ML models, as tested by Charles \cite{charles}.
+    \item \textbf{Sea States:} The features that describe the sea state, independent from the boat. These features are taken from the historical values.
+\end{itemize}
+
+\noindent The full details of which features every section contains can be found in appendix.
+
+\begin{figure}[htbp]
+\includegraphics[width=1\textwidth,center]{figures/rl-env/JTR env setup.png}
+\caption{RL Environment Setup}
+\label{fig:env-setup}
+\end{figure}
+
+To ensure that the sea states are valid, when the simulated boat diverges too much from the historical route, the environment is reset and another episode is started with new initial states.
+
+\subsection{Gym Environment Rendering}
+A visual rendering of the environment have been implemented to better understand and view how the agent performs, which can be seen in Figure \ref{fig:env-render}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width = 0.5\hsize]{figures/rl-env/rendering.png}
+\caption{Environment Render}
+\label{fig:env-render}
+\end{figure}
+
+The dark blue boat is the one the RL agent controls in real time, and the dark blue line is the path taken. The light blue counterparts are the historical data that the agent is trying to take over. The light red area is the goal, which the environment is reset when the dark blue boat reaches it. Other useful information such as the speed of the boat, rudder angle provided by the agent, distance to goal, etc. are printed to terminal.
+
+\section{State Estimator Problem}
+After the initial versions of the OpenAI Gym Environment have been implemented, they have been trained on Azure Cloud CPUs. The training reward graph for the default Stable Baselines 3 hyperparameters and the popular gSDE hyperparameters for SAC, can be seen in Figure \ref{fig:jtr-v1}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width = 0.7\hsize]{figures/rl-reward-plots/jtr-v1 100k.png}
+\caption{jtr-v1 training plot for default(blue) and gSDE(orange) hyperparams}
+\label{fig:jtr-v1}
+\end{figure}
+
+There is no improvements in the reward the agent achieves, in 100 thousand steps, the general trend for the reward is downwards, which indicates that there is a problem. To find the problem, the resulting agent from the training run have been observed. The simulation starts fine for the first few seconds, but it very quickly gets problematic. A four second section of the problematic part can be seen in Figure \ref{fig:heading-problem}. 
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.35\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/heading-problem/heading-t0.png}
+         \caption{t=0, Rudder=3.438}
+     \end{subfigure}
+     \quad
+     \begin{subfigure}[b]{0.35\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/heading-problem/heading-t1.png}
+         \caption{t=1, Rudder=5.131}
+     \end{subfigure}
+     \quad
+     \begin{subfigure}[b]{0.35\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/heading-problem/heading-t2.png}
+         \caption{t=2, Rudder=3.291}
+     \end{subfigure}
+     \quad
+     \begin{subfigure}[b]{0.35\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/heading-problem/heading-t3.png}
+         \caption{t=3, Rudder=4.535}
+     \end{subfigure}
+        \caption{Discrepancy between rudder angle and heading}
+        \label{fig:heading-problem}
+\end{figure}
+
+The possible rudder range is between -50 to 50 degrees. Here, the provided rudder angles are pretty straight, in 3 to 5 degrees range. However, the boat heading is wildly jumping left to right with each step. This indicates that the problem is not on the Reinforcement Learning part, but the state estimator part. Therefore, the state estimator models were examined next.
+
+\section{State Estimator Practicality Tests}
+
+\subsection{Test 1: Long Term Predictions}
+
+\subsubsection{Current Information}
+\begin{itemize}
+    \item Previous students have tested how the models perform for the next one time step only.
+    \item To use the state estimator models in a Reinforcement Learning setting, the state estimators need to be able to reliably predict values long term, using previously predicted values as input.
+\end{itemize}
+
+\subsubsection{Hypothesis}
+The state estimator models can successfully make accurate long-term predictions, using previously predicted values as input.
+
+\subsubsection{Experimental Setup}
+To test the state estimators, a similar approach to Figure \ref{fig:env-setup} in Core Environment Setup section have been used. The models were given a 60 second history. Then for every timestep, the exact historical Rudder angle and Sea states were given, using the 18 state estimator models the new boat states were predicted, and 3 boat states were calculated mathematically. 60 seconds of new states were predicted/calculated, and then compared to the historical boat states.
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots/Rudder.png}
+         \caption{Rudder}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots/TWS.png}
+         \caption{TWS (Sea State)}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots/Current_speed.png}
+         \caption{Current\_speed (Sea State)}
+     \end{subfigure}
+        \caption{Using historical Rudder angle and Sea states}
+        \label{fig:prediction-sea-rudder}
+\end{figure}
+
+\subsubsection{Results}
+The first 60 seconds are the historical values, the predictions start after 60 seconds. The first few values, in t=61, 62, and 63 are close to the historical values, but very quickly after the first few seconds, the predictions start jumping between very high and very low in every step. A few example features of the 18 predicted states are presented in Figure \ref{fig:prediction-boat-states}. The blue line is the historical values, and the orange line is the predicted values. The plots of all features can be found in Appendix.
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots/AWA_cos.png}
+         \caption{AWA\_cos}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots/AWA_sin.png}
+         \caption{AWA\_sin}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots/AWS.png}
+         \caption{AWS}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots/Speed_ov_ground.png}
+         \caption{Speed\_ov\_ground}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots/VMG.png}
+         \caption{VMG}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots/Yaw_cos.png}
+         \caption{Yaw\_cos}
+     \end{subfigure}
+        \caption{Some of predicted boat states, Historical(Blue) vs Predicted(Orange)}
+        \label{fig:prediction-boat-states}
+\end{figure}
+
+
+\subsubsection{Conclusion}
+The hypothesis is refuted. The state estimator models cannot successfully make accurate long-term predictions, using previously predicted values as input. Therefore the state estimator models in their current condition are not suitable for simulating a Reinforcement Learning Environment.
+
+\subsubsection{Next Steps}
+Yaw\_cos stands out to be the feature that clearly performs very poorly from the first prediction. Further tests will be made by using historical Yaw\_cos, to see if Yaw\_cos was causing the problems in other predictions.
+
+\subsection{Test 2: Problematic feature Yaw\_cos}
+\subsubsection{Current Information}
+\begin{itemize}
+    \item Because the models for each feature uses the predicted values from all the other features in their input, one bad model might affect all the features.
+    \item Yaw\_cos clearly stands out as the worst performing model from the very first prediction.
+\end{itemize}
+
+\subsubsection{Hypothesis}
+The poor predictions of Yaw\_cos is the root cause that affect the inputs of all other features, causing them to make inadequate predictions.
+
+\subsubsection{Experimental Setup}
+Same setup with \textit{Test 1: Long term predictions} will be applied, but historical Yaw\_cos values will be used instead of making predictions. Then the outputs of Test 1 and Test 2 will be compared.
+
+\subsubsection{Results}
+The results of Test 2(Orange) were drawn in the same plot with the results of Test 1(Green) for an easier comparison. As can be seen in Figure \ref{fig:prediction-Yaw-cos}, the results are very similar to Test 1 results. In some features, the jumps start a little later, and the amplitude of jumps are a little smaller. The plots of all features can be found in Appendix.
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-compared/AWA_cos.png}
+         \caption{AWA\_cos}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-compared/AWA_sin.png}
+         \caption{AWA\_sin}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-compared/AWS.png}
+         \caption{AWS}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-compared/Speed_ov_ground.png}
+         \caption{Speed\_ov\_ground}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-compared/VMG.png}
+         \caption{VMG}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-compared/Yaw_cos.png}
+         \caption{Yaw\_cos}
+     \end{subfigure}
+        \caption{Historical(Blue) vs Test1(Orange) vs Test2(Green)}
+        \label{fig:prediction-Yaw-cos}
+\end{figure}
+
+\subsubsection{Conclusion}
+The hypothesis is refuted. The poor predictions of Yaw\_cos is not the root cause that affects all other features, it is only a small part of the problem.
+
+
+\section{OpenAI Gym Environment Refinements}
+COULDNT USE MODELS, USING CONSTANT SPEED AND LINEAR RUDDER - HEADING RELATIONSHIP
+
+SO THAT THE RL ENVIRONMENT CAN BE USED WHEN STATE ESTIMATOR IS IMPROVED
+
+As explained in Core Environment Setup section, the main goal of the gym environment is to reach where the historical boat was a few minutes later, and hopefully reach there faster than the historical boat. The reward function and the observation space of the agent was refined through many iterations to achieve this main goal. The next sections will explain the final, successful versions used. The details of what was changed during each iterations, which also include performance and rendering improvements can be seen in Appendix.
+
+\subsection{Observation Space}
+
+\subsection{Reward Function}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\chapter{Experimental Results}
@@ -905,6 +1138,15 @@ add tack detection to pipeline
 
 \chapter{Creating the RDR\_nkz(Atlantic Conditions) Dataset}
 \input{Chapters/appendix-RDR-nkz-atlantic-conditions}
+
+\chapter{Boat and Sea States Details}
+\input{Chapters/appendix-state-details}
+
+\chapter{State Estimator Tests Prediction Plots}
+\input{Chapters/appendix-prediction-plots}
+
+\chapter{OpenAI Gym Environment Refinement Iterations}
+\input{Chapters/appendix-rl-iterations}
 
 
 \end{document}
