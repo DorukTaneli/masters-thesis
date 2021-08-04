@@ -955,8 +955,6 @@ There is no improvements in the reward the agent achieves, in 100 thousand steps
 
 The possible rudder range is between -50 to 50 degrees. Here, the provided rudder angles are pretty straight, in 3 to 5 degrees range. However, the boat heading is wildly jumping left to right with each step. This indicates that the problem is not on the Reinforcement Learning part, but the state estimator part. Therefore, the state estimator models were examined next.
 
-\section{State Estimator Practicality Tests}
-
 \subsection{Test 1: Long Term Predictions}
 
 \subsubsection{Current Information}
@@ -1093,25 +1091,61 @@ The results of Test 2(Orange) were drawn in the same plot with the results of Te
 \subsubsection{Conclusion}
 The hypothesis is refuted. The poor predictions of Yaw\_cos is not the root cause that affects all other features, it is only a small part of the problem.
 
+\subsubsection{Next steps}
+The problem with the state estimators is not something that can be solved quickly. The Reinforcement Learning Gym Environment will be refined assuming a working state estimator model, so it can be used when the state estimators are improved.
 
 \section{OpenAI Gym Environment Refinements}
-COULDNT USE MODELS, USING CONSTANT SPEED AND LINEAR RUDDER - HEADING RELATIONSHIP
+Examining the results of the State Estimator models, it is clear that they are not suitable for use in a Reinforcement Learning Environment in their current state. Therefore, to refine the Gym Environment, a simple but consistent model will be followed.
 
-SO THAT THE RL ENVIRONMENT CAN BE USED WHEN STATE ESTIMATOR IS IMPROVED
+To build a basic autopilot, the agent does not need to know the full 28 features present in our data. It only needs to 2 features, the speed and the heading of the boat. The gym environment will be refined by assuming a constant speed, and a linear relationship between the rudder and heading, such as if the rudder is turned 10 degrees to left, the boat will turn 10 degrees to left in the next second.
 
-As explained in Core Environment Setup section, the main goal of the gym environment is to reach where the historical boat was a few minutes later, and hopefully reach there faster than the historical boat. The reward function and the observation space of the agent was refined through many iterations to achieve this main goal. The next sections will explain the final, successful versions used. The details of what was changed during each iterations, which also include performance and rendering improvements can be seen in Appendix.
+As explained in Core Environment Setup section, the main goal of the gym environment is to reach where the historical boat was a few minutes later, and hopefully reach there faster than the historical boat. The reward function and the observation space of the agent was refined through many iterations to achieve this main goal. The details of what was changed during each iterations, which also include performance and rendering improvements can be seen in Appendix.
 
 \subsection{Observation Space}
+To help the agent reach the goal, we need to provide the necessary information to the agent in the observation space. The initial, naive attempt was to include both the current location and the goal location separately in the observation space. Different formats were tried using cos and sin or angular values. Neither of the attempts were successful.
+
+Next, widely used Gym environments were examined. Many of the similar goal oriented Gym Environments such as the Lunar Lander \cite{LunarLander-v2} and the Robotics Environments \cite{gym-robotics} use relative position in their observation space. This makes sense for our environment too, as how the autopilot steers the boat should not change based on latitude and longitude, we only need the relative position information to be able to reach the goal. Therefore, using relative position between the current location and the goal location have been tried, but it wasn't very successful either. 
+
+Finally, the existing autopilots that utilize heading and compass for steering were inspired from, and heading was used in the observation space, which showed great success. The final observation space consists of the current boat heading angle, and the heading angle to the goal location, recalculated at every timestep. 
+
+The speed of the boat, which is crucial for a high performance autopilot, was omitted in the final version as it is constant. The suggested observation space to be used when the state estimators are improved, proposed based on experiences during implementation and sailing domain knowledge can be found in Suggested Environment section.
 
 \subsection{Reward Function}
+The reward function Roman used only gave rewards based on how close it is to the historical route. There are no rewards based on speed or time taken. Plus there are no bounds for rewards. The rewards reach hundreds of thousands per episode, which makes judging the agent from rewards difficult. It is clear that we need a better reward function.
 
+The initial inspiration for the reward function was the Car Racing \cite{CarRacing-v0} environment. It is a similar environment to ours in the sense that we are trying to make the vehicle reach the finishing point as fast as possible. The first versions of our environment followed a very similar reward function to the Car Racing environment. There are at most 1000 rewards given, based on how close the boat is able to get to the goal location. Then, there is some penalty based on time, such that if the boat reaches the goal at the same time with the historical boat, the total reward will be 900. If the agent can reach the goal faster, the reward will be more than 900, if it is slower, reward will be less than 900.
+
+Observing the behaviour of the trained agent, a lot of times, the boat was getting close to the goal but not quite reach it, then it was going straight past the goal. As a solution, in addition to the rewards while getting closer to goal, a penalty was added when moving away from the goal. But the total reward for reaching the goal was kept at 1000.
+
+A penalty for rudder movement was experimented with, which helps the agent learn that the quickest route is more or less a straight line. However, there are good rudder movements that makes a boat go faster, so this penalty were removed. More information about this rudder movements can be found in the Suggested Environment Section.
+
+Finally, we wanted to give more weight in rewards for reaching the goal fast, so the reward for reaching the goal was decreased to 200 while keeping the time penalty the same. 
+
+The resulting reward function makes it easy to judge the behavior of the agent from the episode reward. A negative reward means that the boat can't make progress towards the goal. Reward near 100 means that it can reach the goal, but not as fast as the historical boat. Lastly, if the reward is more than 100, the agent can reach the goal faster than the historical boat, and the environment is solved.
+
+\subsection{Final Refined Environment}
+jtr-modelless-v4 is the final refined environment, which uses the mentioned observation space and the reward function. Using Stable Baselines3's Soft-Actor Critic algorithm with the default hyperparameters, it converges before 15 thousand steps. The trained agent can be watched on \href{https://youtu.be/uccN--r2uc0} {\underline{\textit{YouTube}}}, and the training episode rewards for the final refined model can be seen in Figure \ref{fig:modelless-v4}.
+
+
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/rl-refinements/modelless-v4 100k steps.png}
+        \caption{Full run for 100k steps}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/rl-refinements/modelless-v4 zoomed in.png}
+        \caption{Zoomed in}
+    \end{subfigure}
+    \caption{Training episodic reward of final refined environment}
+    \label{fig:modelless-v4}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\chapter{Experimental Results}
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%\chapter{Conclusion}
+\chapter{Conclusion}
 
 \section{Future Work}
 add tack detection to pipeline
@@ -1130,13 +1164,13 @@ add tack detection to pipeline
 \chapter{Sail Trim Approach}
 \input{Chapters/appendix-sailtrim}
 
-\chapter{Azure Cloud Run Details}
+\chapter{Azure State Estimator Training Run Details}
 \input{Chapters/gpu-run-details}
 
 \chapter{Charles' Suggested Features Describing the Environment}
 \input{Chapters/appendix-4-essential-features}
 
-\chapter{Creating the RDR\_nkz(Atlantic Conditions) Dataset}
+\chapter{Creating the RDR\_nkz\_Atlantic\_Conditions Dataset}
 \input{Chapters/appendix-RDR-nkz-atlantic-conditions}
 
 \chapter{Boat and Sea States Details}
