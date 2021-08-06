@@ -77,7 +77,7 @@ Comment this out if not needed.
 
 \chapter{Introduction}
 
-
+\section{Motivation}
 Modern sailboats are built by combining bleeding edge science from many areas, including material science for lighter and more durable materials, aero and hydro dynamics for the most efficient designs, and latest sensors for most accurate information. One area that stayed underdeveloped compared to the other parts of the boat is the autopilot. Although autopilot systems have also improved, they are still comparatively crude and low performing.
 
 Shorthanded races are one type of popular competition where there are either one or two crew members, as opposed to full crews that can go up to around ten people. Autopilots are used extensively during these shorthanded races, steering the boat for more than 95\% of the time, while the crew handles other boat work or personal sustenance. Despite carrying out more than 95\% of the steering, autopilots only perform at 80\% of the capability of a professional skipper \cite{roman}. Therefore there is a huge potential to gain race winning advantage in shorthanded competitions by improving the autopilots. Jack Trigger \cite{trigger-racing}, who competes in shorthanded races, is providing the data from his boat sensors which makes this project possible. 
@@ -86,11 +86,11 @@ The goal of this project is to realize this potential race winning advantage by 
 
 I, Doruk Taneli, will continue their work, and using the data and code they prepared, I will further improve the state estimator models, implement an OpenAI Gym environment in which the Reinforcement Learning will take place, compare the performance of state-of-the-art RL algorithms on this environment, then draw conclusions. If the simulation environment can reproduce the interactions between the rudder, the boat, and the sea realistically enough, the Reinforcement Learning algorithm can potentially learn how to steer a boat better than a human professional.
 
-%\section{Objectives}
+\section{Objectives}
+TBC: what does this project aim to achieve
 
-%\section{Outcomes}
-
-%\section{Report Structure}
+\section{Summary of Work}
+TBC: A short summary of work with pointers to the main body
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -242,8 +242,6 @@ DDPG is prone to overestimating Q-values. Twin Delayed DDPG (TD3) attempts to so
   \item \textbf{Target Policy Smoothing:} TD3 adds noise to the target action, to make it harder for the policy to exploit Q-function errors by smoothing out Q along changes in action.
 \end{enumerate}
 
-In the original TD3 paper, Fujimoto et al. claims that TD3 outperforms the state of the art in every OpenAI gym task tested \cite{td3}. The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:td3-comparisons}.
-
 \begin{figure}[h]
 \centering
 \includegraphics[width = \hsize]{figures/td3 comparison.png}
@@ -251,6 +249,7 @@ In the original TD3 paper, Fujimoto et al. claims that TD3 outperforms the state
 \label{fig:td3-comparisons}
 \end{figure}
 
+In the original TD3 paper, Fujimoto et al. claims that TD3 outperforms the state of the art in every OpenAI gym task tested \cite{td3}. The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:td3-comparisons}.
 
 \subsection{SAC}
 Instead of deterministic policies used in DDPG and TD3, SAC uses stochastic policies. Thus, it is a bridge between stochastic policy optimization and DDPG-style approaches. Like TD3, it uses a few tricks to improve DDPG: \cite{openai:sac}
@@ -262,14 +261,14 @@ Instead of deterministic policies used in DDPG and TD3, SAC uses stochastic poli
   \item \textbf{Target Policy Smoothing:} Although there is no explicit target policy smoothing, since SAC uses a stochastic policy, the noise from the randomness achieves a similar effect.
 \end{enumerate}
 
-In the original SAC paper, Haarnoja et al. claims that SAC outperforms the state of the art algorithms in sample-efficiency, asymptotic performance, and stability \cite{sacOG}. The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:sac-comparisons}.
-
 \begin{figure}[h]
 \centering
 \includegraphics[width = \hsize]{figures/sac comparison og.png}
 \caption{Performance comparison of RL algorithms in SAC paper \cite{sacOG}}
 \label{fig:sac-comparisons}
 \end{figure}
+
+In the original SAC paper, Haarnoja et al. claims that SAC outperforms the state of the art algorithms in sample-efficiency, asymptotic performance, and stability \cite{sacOG}. The comparison of the algorithms in different environments can be seen in Figure~\ref{fig:sac-comparisons}.
 
 \subsection{Algorithm of Choice}
 Interestingly, both SAC and TD3 authors claim that they perform better than each other in their own papers. So a third party benchmark is necessary to be able to compare the two algorithms. A comparison of OpenAI PyTorch implementations of TD3, SAC, and few other algorithms can be seen in Figure \ref{fig:openAI-comparisons}.
@@ -350,14 +349,14 @@ Birk concluded that his model architecture is able to predict the rudder angle p
 \subsection{Roman Kastusik}
 Roman's objective was to utilize reinforcement learning to increase the autopilots' performance, potentially beyond human level. To achieve this, he trained an LSTM state estimator to simulate the boat's behavior using Jack Trigger's race data, and created a reinforcement learning algorithm that would interact with said simulation environment \cite{roman}.
 
-\begin{wrapfigure}{R}{0.55\textwidth}
+Roman started with some data analysis, data cleaning, and scaling on Jack Trigger's race data. He then used this data to train the simulation environment that would be used for the reinforcement learning algorithm. The data flow around the simulation environment and the reinforcement learning algorithm can be found in Figure \ref{fig:roman dataflow}.
+
+\begin{figure}[h]
 \centering
-\includegraphics[width = 0.54\textwidth]{figures/roman data flow.png}
+\includegraphics[width = 0.7\textwidth]{figures/roman data flow.png}
 \caption{Roman Kastusik's RL data flow}
 \label{fig:roman dataflow}
-\end{wrapfigure}
-
-Roman started with some data analysis, data cleaning, and scaling on Jack Trigger's race data. He then used this data to train the simulation environment that would be used for the reinforcement learning algorithm. The data flow around the simulation environment and the reinforcement learning algorithm can be found in Figure \ref{fig:roman dataflow}.
+\end{figure}
 
 He also did research about the recent advancements in reinforcement learning, and created an RL algorithm utilizing Deep Deterministic Policy Gradients, Actor-Critic Networks and Experience Replay.
 
@@ -368,7 +367,7 @@ Stanislas' goal was to improve the results of Birk Ulstad's supervised learning 
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.8\hsize]{figures/stan results.png}
+\includegraphics[width = 0.9\hsize]{figures/stan results.png}
 \caption{Stanislas Hannabelle's improvements on supervised learning approach}
 \label{fig:stan results}
 \end{figure}
@@ -387,14 +386,14 @@ With his best model 'GRU 5Hz-2s', Stanislas reduced the testing RMSE of Birk's m
 \subsection{Charles Metz}
 Charles' goal was to improve the state estimator model Roman suggested, so it can reliably reproduce the behaviour of a sailing boat in its sea environment. His main idea was that instead of using 1 model to predict \emph{n} sea and boat features like Roman, he used \emph{n} models to predict \emph{n} different features, which lead to very significant improvement \cite{charles}.
 
-\begin{wraptable}{R}{0.55\textwidth}
+Charles had a new dataset available, so he started by applying similar cleaning and preprocessing steps to this new dataset. He noticed that some of the features can be derived mathematically from other features such as true wind, apparent wind, and boat speed. He decided to calculate those features mathematically, then trained \emph{n} separate models for \emph{n} remaining features. He tried 2 different models, model 1 has two final dense layers whereas model 2 has only one final dense layer.
+
+\begin{table}[h]
 \centering
-\includegraphics[width=0.54\textwidth]{figures/charles results.png}
+\includegraphics[width=0.7\textwidth]{figures/charles results.png}
 \caption{Charles' prediction method results}
 \label{tbl:charles results}
-\end{wraptable}
-
-Charles had a new dataset available, so he started by applying similar cleaning and preprocessing steps to this new dataset. He noticed that some of the features can be derived mathematically from other features such as true wind, apparent wind, and boat speed. He decided to calculate those features mathematically, then trained \emph{n} separate models for \emph{n} remaining features. He tried 2 different models, model 1 has two final dense layers whereas model 2 has only one final dense layer.
+\end{table}
 
 He concluded that in general, deterministic mathematical derivations has the least error, followed by model 2, then model 1, and lastly single model for \emph{n} features. He tested model 2 in only some of the features, but it performed better in every feature tested. Error rate of different prediction methods for some of the boat features can be seen in Table \ref{tbl:charles results}. His other notable finding was that mathematical formulas do not always agree with the sensor data, which indicates that something might be wrong on the boat sensors/algorithms. Nevertheless, Charles envisions that after \emph{n} models for \emph{n} features are individually optimised, they can be integrated into a reinforcement learning framework.
 
@@ -419,9 +418,7 @@ The scripts are structured better than Charles' notebooks, plus they are much ea
 %\input{Chapters/progress}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\chapter{Contribution}
-
-\section{Available Datasets}
+\chapter{Data}
 
 There are 7 datasets available for use in this project. Substantial work have been done by previous students for converting, cleaning and preprocessing the datasets. Curated information about the datasets can be found in Figures \ref{tab:datasets-practical} and \ref{tab:datasets-factual}. The information about Team Ocean dataset is recently recieved, it was referred as transat\_1 in previous student reports. 
 
@@ -443,7 +440,7 @@ transat\_2  & \textit{unknown}              & .nkz & 387.5 & -     & $\ballotx$ 
 \label{tab:datasets-practical}
 \end{table}
 
-\begin{table}[]
+\begin{table}[h]
 \centering
 \begin{tabular}{|l|l|l|l|l|}
 \hline
@@ -460,6 +457,41 @@ transat\_2            & \textit{unknown}           &                           &
 \label{tab:datasets-factual}
 \end{table}
 
+\textit{Atlantic} is the dataset with the largest available clean data, and the tack detection is already done. Therefore the \textit{Atlantic} dataset will be used in the rest of this project. You can see more information about \textit{Atlantic} in the next section. For further detail about the other datasets, see the reports of previous students \cite{roman, stan, birk, charles}. 
+
+\section{Atlantic}
+\subsection{Information and Previous Work}
+The \textit{Atlantic} dataset was recorded during a boat delivery made by Jack Trigger in 2019. It was a solo delivery, therefore the autopilot was active during a large portion of the route. The data was recorded by the nke electronics system in .nkz format in 25 Hz, then converted to .csv format.
+
+Next, the dataset was cleaned, removing unusable parts such as:
+\begin{itemize}
+    \item abnormal conditions such as very low wind speed
+    \item corrupted parts with incomplete data
+    \item sections where the boat was anchored or in harbour
+\end{itemize}
+
+The original length of the dataset was 290.9 hours, and 228.7 usuable hours have remained after cleaning done by Charles Metz \cite{charles}.
+
+\subsection{Preprocessing Applied in State Estimator Scripts}
+The datasets need to go under certain preprocessing before the state estimator models can be trained. These steps are:
+
+\begin{itemize}
+    \item \textbf{Rename and Select Columns:} Rename the columns for better clarity, and select the columns of features to be trained.
+    \item \textbf{Convert Angles to sin and cos values:} When going through the end values, the angles jump between those end values such as between -180 and 180. The features that are angles are converted to sin and cos values alleviate this problem and increase model performance.
+    \item \textbf{Scaling:} The values are scaled to be between -1 and 1. The data ranges and scaling applied in the scripts can be seen in Table \ref{tbl:scripts-scaling}.
+    \item \textbf{Removing tacks:} The tacks in the dataset are removed.
+    \item \textbf{Splitting the data:} The data is split into training, validation and testing sets.
+    \item \textbf{Downsampling:} The data is downsampled from 25 Hz to 1 Hz to save on computing .
+\end{itemize}
+
+\begin{table}[h]
+\centering
+\includegraphics[width = 0.65\hsize]{figures/data scaling.png}
+\caption{Updated data ranges and preprocessing applied to features}
+\label{tbl:scripts-scaling}
+\end{table}
+
+\chapter{Contribution}
 
 \section{State Estimator Scripts}
 In this section contributions related to the state estimator scripts that Charles and Thomas first created will be described.
@@ -613,8 +645,6 @@ The full optimization and training runs for all 18 features will be run on multi
 
 After the efficiency tests were completed and GPU was chosen as the choice of processing unit, the full optimization and training run was started. T-DAB has received credits from Microsoft that can be spent on Azure ML platform for Innovation use. Therefore, the default NVIDIA Tesla K80 GPUs available on Azure ML platform were used to optimize and train the models. The result of the efficiency test points that multiple GPUs can be used in parallel. The maximum number of GPUs in the innovation account quota was used and the models were trained on 3 seperate NVIDIA Tesla K80 GPUs.
 
-18 models were trained for 18 features. The error rates of the optimized models can be seen in Table \ref{tab:opt-model}, compared to the error rates of Charles' best performing models. The new models were trained and tested on the larger \textit{Atlantic} dataset, whereas Charles' models were trained and tested on the smaller \textit{DHREAM 18} dataset. Thus it is not a one to one comparison, and because the optimized models were trained and tested on a larger dataset with a more variaty of conditions, we might even expect larger error rates. Nevertheless many of the features have same or lower error rates, which is a great success, except from Pitch, AWA\_cos, AWA\_sin, and VMG models that have higher error rates.
-
 \begin{table}[htbp]
 \centering
 \begin{tabular}{|l|l|l|l|}
@@ -700,9 +730,9 @@ Heading\_True\_sin &
 \label{tab:opt-model}
 \end{table}
 
-The efficiency test results suggested that the optimization would take around 34.5 hours for every feature. In the original scripts and during the efficiency tests, there were logging messages about GPU jobs, printing hundreds of times each second to console. Printing has a surprising effect on time taken by a program, more than a novice engineer might expect. Before starting the runs on Azure cloud GPUs, these logging prints were removed. 
+18 models were trained for 18 features. The error rates of the optimized models can be seen in Table \ref{tab:opt-model}, compared to the error rates of Charles' best performing models. The new models were trained and tested on the larger \textit{Atlantic} dataset, whereas Charles' models were trained and tested on the smaller \textit{DHREAM 18} dataset. Thus it is not a one to one comparison, and because the optimized models were trained and tested on a larger dataset with a more variaty of conditions, we might even expect larger error rates. Nevertheless many of the features have same or lower error rates, which is a great success, except from Pitch, AWA\_cos, AWA\_sin, and VMG models that have higher error rates.
 
-In the resulting models, the average optimization duration was 29:01:16, minimum was 16:11:35, and maximum was 41:46:53. A box whisker plot of the optimization times, compared to the estimated time from the efficiency tests can be seen in Figure \ref{fig:opt-time}. As expected, the range is pretty high due to randomness in Bayesian randomness. However, judging from the plot, the estimated time was accurate and removing the excessive log prints were effective.
+The efficiency test results suggested that the optimization would take around 34.5 hours for every feature. In the original scripts and during the efficiency tests, there were logging messages about GPU jobs, printing hundreds of times each second to console. Printing has a surprising effect on time taken by a program, more than a novice engineer might expect. Before starting the runs on Azure cloud GPUs, these logging prints were removed. 
 
 \begin{figure}[h]
 \centering
@@ -711,8 +741,61 @@ In the resulting models, the average optimization duration was 29:01:16, minimum
 \label{fig:opt-time}
 \end{figure}
 
+In the resulting models, the average optimization duration was 29:01:16, minimum was 16:11:35, and maximum was 41:46:53. A box whisker plot of the optimization times, compared to the estimated time from the efficiency tests can be seen in Figure \ref{fig:opt-time}. As expected, the range is pretty high due to randomness in Bayesian randomness. However, judging from the plot, the estimated time was accurate and removing the excessive log prints were effective.
+
 The full details of the runs, including optimization times, training times, error metrics, and the resulting hyperparameters for all features can be found in appendix.
 
+\subsection{Performance Comparison}
+
+To be able to judge the effect of hyperparameter optimization, some features were selected and trained on the same \textit{Atlantic} dataset with the same model architecture, but with the hyperparameters Charles have used. Only 6 features were trained, as training costs resources and money, plus 6 features should be enough to provide us with a good performance comparison. The performance comparison of the 6 features can be seen in Table \ref{tab:hyperparam-comparison}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+\textbf{Feature} &
+  \textbf{Hyperparameters} &
+  \textbf{MAE} &
+  \textbf{RMSE} \\ \hline
+AWS &
+  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}1.000\\ 0.614\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}1.234\\ 0.785\end{tabular} \\ \hline
+Yaw\_cos &
+  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.006\\ 0.007\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.028\\ 0.023\end{tabular} \\ \hline
+Yaw\_sin &
+  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.027\\ 0.021\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.038\\ 0.034\end{tabular} \\ \hline
+Roll &
+  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}4.429\\ 1.470\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}5.218\\ 1.910\end{tabular} \\ \hline
+Heading\_ov\_ground\_cos &
+  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.024\\ 0.011\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.038\\ 0.025\end{tabular} \\ \hline
+Heading\_ov\_ground\_sin &
+  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.031\\ 0.013\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}0.052\\ 0.048\end{tabular} \\ \hline
+\end{tabular}
+\caption{Performance of the models, charles' vs optimized hyperparameters}
+\label{tab:hyperparam-comparison}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.9\hsize]{figures/Contribution/opt-perf.pdf}
+\caption{Percentage change in error metrics for each feature tested}
+\label{fig:opt-perf}
+\end{figure}
+
+The average MAE decreased by 37.3\%, whereas the average RMSE decreased by 28.34\% among the features tested. It is clear that the optimization had a significant effect on the performance. The percentage changes in test metrics for each feature can be seen in Figure \ref{fig:opt-perf}. A negative change means that optimized models have less error rates.
+
+\vspace{5em}
 \section{Transferability Experiment} \label{section:transferability}
 
 This section is about the Transferability Experiment conducted to see how well the models trained on one dataset can predict the boat features using data from another dataset.
@@ -826,20 +909,19 @@ Spinning Up's main focus is education. Therefore the algorithm implementations a
 
 Spinning Up implementation performs well and converges quickly on easy environments, but it provides disappointing results on the harder BipedalWalker-v3 environment. SAC is expected to have better exploration and achieve better results on BipedalWalker-v3 environment before 300.000 environment interacts \cite{gym-leaderboard}. But it never managed to escape a local minimum for a long period of training time. Considering our sailing environment will be pretty complex, Spinning Up implementation of SAC is not suitable for use on this project.
 
+\bigskip
 \subsection{RL Framework Features} \label{RLF:framework-features}
-
-\begin{wrapfigure}{r}{0.4\textwidth}
-\vspace{-4em}
-\centering
-\includegraphics[width = 0.39\textwidth]{figures/rl-framework/hyperparameter-ddpg.png}
-\caption{DDPG on Walker2d-v1 with random hyperparameters \cite{hyperparameter-ddpg}}
-\label{fig:hyperparameter-ddpg}
-\vspace{-1em}
-\end{wrapfigure}
 
 Spinning Up Framework lacks some important features for Reinforcement Learning. First, it does not support continuing training of a previously trained agents. This is problematic in a few ways: it costs precious time and resources to train agents from scratch every time, plus even if models are trained again from ground up, no two reinforcement learning runs will be identical because of the noise or stochasticity in the algorithms.
 
 The second lacking feature is that there is no hyperparameter optimization support. Hyperparameters can cause huge difference in performance \cite{hyperparameter-ddpg}. A comparison of DDPG on Walker2d-v1 with random hyperparameters can be seen in Figure \ref{fig:hyperparameter-ddpg}. The best and worst performing hyperparameters have approximately 3-fold average reward difference after 1 million timesteps.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.55\textwidth]{figures/rl-framework/hyperparameter-ddpg.png}
+\caption{DDPG on Walker2d-v1 with random hyperparameters \cite{hyperparameter-ddpg}}
+\label{fig:hyperparameter-ddpg}
+\end{figure}
 
 Both of these features, and probably more that will arise in the future are important for this project, so another framework with these additional features is needed.
 
@@ -881,6 +963,12 @@ There are many different versions of environment that were created. The differen
 
 As explained in the previous sections, the models are not transferable to other datasets, and we only have sea state data from the historical data from the boat's location. Therefore the \textit{Atlantic} dataset will be used as a baseline for the environment. The main goal of the gym environment is to reach where the historical boat was a few minutes later, and hopefully reach there faster than the historical boat.
 
+\begin{figure}[htbp]
+\includegraphics[width=1.1\textwidth,center]{figures/rl-env/JTR env setup.png}
+\caption{RL Environment Setup}
+\label{fig:env-setup}
+\end{figure}
+
 The core gym environment structure, whose diagram can be seen in Figure \ref{fig:env-setup}, is as follows: At the beginning of each episode, a random 60 second section is chosen as the state history from the preprocessed, usuable areas of \textit{Atlantic} dataset. Every timestep, the new row of states are created and appended to the end of the state history, while the oldest row is discarded. This state history contains 4 sections, which are all generated in different ways:
 
 \begin{itemize}
@@ -891,12 +979,6 @@ The core gym environment structure, whose diagram can be seen in Figure \ref{fig
 \end{itemize}
 
 \noindent The full details of which features every section contains can be found in appendix.
-
-\begin{figure}[htbp]
-\includegraphics[width=1\textwidth,center]{figures/rl-env/JTR env setup.png}
-\caption{RL Environment Setup}
-\label{fig:env-setup}
-\end{figure}
 
 To ensure that the sea states are valid, when the simulated boat diverges too much from the historical route, the environment is reset and another episode is started with new initial states.
 
@@ -917,7 +999,7 @@ After the initial versions of the OpenAI Gym Environment have been implemented, 
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width = 0.7\hsize]{figures/rl-reward-plots/jtr-v1 100k.png}
+\includegraphics[width = 0.65\hsize]{figures/rl-reward-plots/jtr-v1 100k.png}
 \caption{jtr-v1 training plot for default(blue) and gSDE(orange) hyperparams}
 \label{fig:jtr-v1}
 \end{figure}
@@ -926,28 +1008,25 @@ There is no improvements in the reward the agent achieves, in 100 thousand steps
 
 \begin{figure}[h]
      \centering
-     \begin{subfigure}[b]{0.35\textwidth}
+     \begin{subfigure}[b]{0.24\textwidth}
          \centering
          \includegraphics[width=\textwidth]{figures/heading-problem/heading-t0.png}
-         \caption{t=0, Rudder=3.438}
+         \caption{t=0 Rudder=3.4}
      \end{subfigure}
-     \quad
-     \begin{subfigure}[b]{0.35\textwidth}
+     \begin{subfigure}[b]{0.24\textwidth}
          \centering
          \includegraphics[width=\textwidth]{figures/heading-problem/heading-t1.png}
-         \caption{t=1, Rudder=5.131}
+         \caption{t=1 Rudder=5.1}
      \end{subfigure}
-     \quad
-     \begin{subfigure}[b]{0.35\textwidth}
+     \begin{subfigure}[b]{0.24\textwidth}
          \centering
          \includegraphics[width=\textwidth]{figures/heading-problem/heading-t2.png}
-         \caption{t=2, Rudder=3.291}
+         \caption{t=2 Rudder=3.3}
      \end{subfigure}
-     \quad
-     \begin{subfigure}[b]{0.35\textwidth}
+     \begin{subfigure}[b]{0.24\textwidth}
          \centering
          \includegraphics[width=\textwidth]{figures/heading-problem/heading-t3.png}
-         \caption{t=3, Rudder=4.535}
+         \caption{t=3 Rudder=4.5}
      \end{subfigure}
         \caption{Discrepancy between rudder angle and heading}
         \label{fig:heading-problem}
@@ -1095,7 +1174,7 @@ The hypothesis is refuted. The poor predictions of Yaw\_cos is not the root caus
 The problem with the state estimators is not something that can be solved quickly. The Reinforcement Learning Gym Environment will be refined assuming a working state estimator model, so it can be used when the state estimators are improved.
 
 \section{OpenAI Gym Environment Refinements}
-Examining the results of the State Estimator models, it is clear that they are not suitable for use in a Reinforcement Learning Environment in their current state. Therefore, to refine the Gym Environment, a simple but consistent model will be followed.
+Examining the results of the State Estimator models, it is clear that they are not suitable for use in a Reinforcement Learning Environment in their current state. Therefore, to refine the Gym Environment, a simple environment with no machine learning models will be used.
 
 To build a basic autopilot, the agent does not need to know the full 28 features present in our data. It only needs to 2 features, the speed and the heading of the boat. The gym environment will be refined by assuming a constant speed, and a linear relationship between the rudder and heading, such as if the rudder is turned 10 degrees to left, the boat will turn 10 degrees to left in the next second.
 
@@ -1126,8 +1205,6 @@ The resulting reward function makes it easy to judge the behavior of the agent f
 \subsection{Final Refined Environment}
 jtr-modelless-v4 is the final refined environment, which uses the mentioned observation space and the reward function. Using Stable Baselines3's Soft-Actor Critic algorithm with the default hyperparameters, it converges before 15 thousand steps. The trained agent can be watched on \href{https://youtu.be/uccN--r2uc0} {\underline{\textit{YouTube}}}, and the training episode rewards for the final refined model can be seen in Figure \ref{fig:modelless-v4}.
 
-
-
 \begin{figure}[h]
     \centering
     \begin{subfigure}[b]{0.48\textwidth}
@@ -1144,12 +1221,63 @@ jtr-modelless-v4 is the final refined environment, which uses the mentioned obse
     \label{fig:modelless-v4}
 \end{figure}
 
+\section{Suggested Environment}
+A successful refined version have been implemented that can consistently reach the goal faster than the historical boat. In order to make use of this environment in the future, a suggested environment was created, to be used when the state estimator models are improved.
+
+Using the state estimators in each step makes the training significantly longer, as each step takes a little less than 1 second. This is pretty slow in reinforcement learning applications. Assuming a the improved state estimators will take as long, it is important to make the environment as efficient as possible and not rely on excess computing power.
+
+\subsection{Suggested Observation Space}
+To make the environment efficient, the observation space should not contain any unnecessary features. The suggested observation space have been picked, combining sailing domain knowledge and the results of previous environment iterations.
+
+The suggested observation space have 7 features:
+\begin{itemize}
+    \item \textbf{Speed\_ov\_ground:} Speed is a key factor that will help the agent reach the goal faster than the historical boat.
+    \item \textbf{AWS, AWA:} Apparent Wind Speed and Apparent Wind Angle is important, as how you steer the boat differs based on these.
+    \item \textbf{Pitch, Roll:} As explained in Elements Affecting Heading section in Sailing Background chapter, boat heel and the waves have a big affect on the heading. Including these in the observation space will allow the agent to learn the relationship with heading and preemptively counteract the affect of waves and heel.
+    \item \textbf{Heading\_ov\_ground, Heading to goal:} These two features are ones used in the final refined environment that performed the best.
+\end{itemize}
+
+\subsection{Future Implementation}
+The suggested environment and an accompanying interface have been created with necessary explanations and methods to be implemented. When the \textit{StateEstimatorSuggested} class is implemented using the improved state estimators that follows the created interface, the suggested environment will be ready to use. See appendix for a user guide on how to use train and observe the agents on the environments.
+
+\section{RL Algorithm Comparisons}
+The initial goal was to do the Reinforcement Learning Algorithm comparisons with the environment that uses the state estimator models. However, the state estimator models were problematic, so the refined jtr-modelless-v4 will be used to compare the algorithms which were researched about in the Literature Review section.
+
+SAC with default and gSDE hyperparameters and TQC default stablebaselines3 hyperparameters were compared. You can see the results in Figure \ref{fig:rl-comparison}.
+
+\begin{figure}[h]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/rl-reward-plots/modelless-v4-sac.png}
+        %\caption{tack \cite{img:sailing-tack-gybe}}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/rl-reward-plots/modelless-v4-tqc.png}
+        %\caption{jibe \cite{img:sailing-tack-gybe}}
+    \end{subfigure}
+    \caption{Training Reward Comparison of Algorithms on jtr-modelless-v4}
+    \label{fig:rl-comparison}
+\end{figure}
+
+We can see that SAC with gSDE hyperparameters clearly perform worse than the others. The timesteps needed for convergence, and the maximum reward achieved are both less than default SAC and TQC. 
+
+TQC is known to be especially excelling in harder environments \cite{tqc-paper}. The jtr-modelless-v4 is a pretty easy environment, with converges happening before 15 thousand steps, and there is only so much faster you can go than the historical boat, which makes the reward capped around 110. Still, comparing default SAC and TQC environments, we can see that once SAC reaches convergence, it stays consistent till the end of training; whereas TQC does more exploration, trying to escape a possible local minimum, which gives it the advantage in more challenging environments. 
+
+Therefore, TQC should be incorporated in the future environments using state estimator models. If the improved state estimators are able to successfully replicate the real sea environment, there will be a lot of nuances to be learned by the RL agent. Such as when and how much to move the rudder compared to the observed features of pitch, roll, wind, etc, to keep the boat speed maximum and reach the in the fastest way.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Conclusion}
 
-\section{Future Work}
-add tack detection to pipeline
+\section{Outcomes}
+TBC: Compare with objectives in Introduction, what was achieved what was not. Highlight successes and shortcomings.
 
+\section{Future Work}
+TBC: Explain future work and show pointers to main body where they were mentioned.
+
+\section{Ethical Considerations}
+TBC
 
 %% bibliography
 \bibliographystyle{unsrt}
@@ -1160,6 +1288,9 @@ add tack detection to pipeline
 %% appendix
 \appendix
 \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
+
+\chapter{Ethics Checklist}
+\input{Chapters/appendix-ethics}
 
 \chapter{Sail Trim Approach}
 \input{Chapters/appendix-sailtrim}
@@ -1179,8 +1310,10 @@ add tack detection to pipeline
 \chapter{State Estimator Tests Prediction Plots}
 \input{Chapters/appendix-prediction-plots}
 
-\chapter{OpenAI Gym Environment Refinement Iterations}
+\chapter{OpenAI Gym Environment All Iterations}
 \input{Chapters/appendix-rl-iterations}
 
+\chapter{Reinforcement Learning User Guide}
+\input{Chapters/user-guide}
 
 \end{document}
