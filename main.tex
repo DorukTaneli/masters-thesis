@@ -80,19 +80,72 @@ Comment this out if not needed.
 \section{Motivation}
 Modern sailboats are built by combining bleeding edge science from many areas, including material science for lighter and more durable materials, aero and hydro dynamics for the most efficient designs, and latest sensors for most accurate information. One area that stayed underdeveloped compared to the other parts of the boat is the autopilot. Although autopilot systems have also improved, they are still comparatively crude and low performing.
 
-Shorthanded races are one type of popular competition where there are either one or two crew members, as opposed to full crews that can go up to around ten people. Autopilots are used extensively during these shorthanded races, steering the boat for more than 95\% of the time, while the crew handles other boat work or personal sustenance. Despite carrying out more than 95\% of the steering, autopilots only perform at 80\% of the capability of a professional skipper \cite{roman}. Therefore there is a huge potential to gain race winning advantage in shorthanded competitions by improving the autopilots. Jack Trigger \cite{trigger-racing}, who competes in shorthanded races, is providing the data from his boat sensors which makes this project possible. 
+Shorthanded races are one type of popular competition where there are either one or two crew members, as opposed to full crews that can go up to around ten people. Autopilots are used extensively during these shorthanded races, steering the boat for more than 95\% of the time, while the crew handles other boat work or personal sustenance. Despite carrying out more than 95\% of the steering, autopilots only perform at 80\% of the capability of a professional skipper \cite{trigger-racing}. Therefore there is a huge potential to gain race winning advantage in shorthanded competitions by improving the autopilots. Jack Trigger \cite{trigger-racing}, who competes in shorthanded races, is providing the data from his boat sensors which makes this project possible. 
 
 The goal of this project is to realize this potential race winning advantage by creating a Machine Learning model, trained by Reinforcement Learning, which will predict the optimal rudder angle using onboard boat sensors. To achieve that, this project will continue the work of former Imperial students and the employees of the partner company, The Data Analysis Bureau (T-DAB) \cite{t-dab}. Extensive work have been done on this project since 2018, mostly focusing on cleaning and preprocessing the available data, plus creating Machine Learning models that predicts the state of the boat, which will be referred as state estimator models in the rest of this report.
 
 I, Doruk Taneli, will continue their work, and using the data and code they prepared, I will further improve the state estimator models, implement an OpenAI Gym environment in which the Reinforcement Learning will take place, compare the performance of state-of-the-art RL algorithms on this environment, then draw conclusions. If the simulation environment can reproduce the interactions between the rudder, the boat, and the sea realistically enough, the Reinforcement Learning algorithm can potentially learn how to steer a boat better than a human professional.
 
 \section{Objectives}
-TBC: what does this project aim to achieve
+%TBC: what does this project aim to achieve
+There are three main goals of this project, which are:
+\begin{itemize}
+    \item Improve the state estimator models by optimizing the hyperparameters
+    \item Create a Reinforcement Learning Environment based on improved state estimators
+    \item Train an autopilot that can drive the boat faster than a professional sailor
+\end{itemize}
+
+\bigskip
+\noindent    
+Plus there are numerous side goals, which helps us reach the main goals, have a better understanding of the project, or guide the future work:
+\begin{itemize}
+    \item Test transferability of the state estimators to other races and boats than it was trained on.
+    \item Highlight areas of potential improvements to the state estimator models
+    \item Analyze and prepare the datasets for training
+    \item Identify the best Reinforcement Learning Framework for our use case
+    \item Compare the state of the art RL algorithms on the created environment
+\end{itemize}
+    
+\noindent
+Many of these goal were successfully achieved. The results can be seen in the Outcomes section of the Conclusion.
+
 
 \section{Summary of Work}
-TBC: A short summary of work with pointers to the main body
+%TBC: A short summary of work with pointers to the main body
 
+\subsubsection{Background}
+As a sailor myself, it was easy to get started with the project without spending time on learning necessary sailing terms and basics. Some basics of sailing, and knowledge related to this project were explained in 2.1 - Sailing Background. 
 
+High performance autopilots are much more advanced than regular commercial autopilots. As one of the main goals of this project is to create an autopilot trained by RL, in order to have a good baseline of state of the art autopilots, some research was done. They are explained in 2.2 - State of the Art Autopilots.
+
+Reinforcement Learning is a relatively new field that is improving very fast. There have been improvements in the field since the first students started working on this project. Recent advancements and the state of the art algorithms are explained in 2.3 - Literature Review: RL Algorithms.
+
+This project builds on the work of the 5 students who worked on this project before me. A very brief summary of each student's work can be found in 2.4 - Previous Work.
+
+\subsubsection{Data}
+Substantial work have been done by previous students on converting, cleaning, and preparing the available data for training. Still, not all of the datasets are ready for training. Curated information and work done on datasets can be found in Chapter 3 - Data.
+
+\subsubsection{Contribution}
+The state estimator scripts are used for optimizing the hyperparameters and training the state estimator models using a given dataset. They were created by Thomas who converted Charles' Jupyter Notebooks into .py files. Several improvements and experiments were made with the scripts before optimization and training, which are explained in 4.1 - State Estimator Scripts.
+
+After the improvements, the scripts were used to optimize and train state estimator models on Azure Cloud computing units. The new models with optimized hyperparameters perform about 28\% better than previous models. Detailed comparisons can be seen in 4.2 - Optimized Models.
+
+The optimized models were trained on the \textit{Atlantic} dataset, the largest clean dataset available. An experiment was done to test whether the optimized models were transferable to other datasets. It was concluded that the models were not transferable to other datasets, even from the same boat, same electronics system and and same environmental conditions, which suggest there is a problem on how well the models generalize. Details can be found in 4.3 - Transferability Experiment.
+
+In Section 4.4 - RL Framework, the popular RL frameworks were compared to decide on the best framework for our use case, and Stable Baselines 3 was chosen due to its clear advantages.
+
+Next, a custom OpenAI gym environment was created that utilizes the optimized state estimator models. The environment were designed with the knowledge provided in Sailing Background section in mind. As the state estimators can only make accurate predictions on the \textit{Atlantic} dataset it was trained on, the \textit{Atlantic} dataset is used as starting points for the environment. Details about the environment can be found in section 4.5 - Custom OpenAI Gym Environment
+
+Although the error metrics of the optimized models are satisfactory, the models were not performing well enough in the environment. After some tests, the problem have been narrowed down to the models having difficulty in making predictions based on previously predicted values, which is explained in 4.6 - State Estimator Problem.
+
+The state estimator models were not usable in a RL setting in their current form, so a basic rule based environment was created instead of using ML models. The observation space and the reward function of the Gym environment were refined on this rule based environment. The RL agent is able to drive faster than the human skipper on this environment after about 15 thousand training steps. Information about the refinements are present in 4.7 - OpenAI Gym Environment Refinements.
+
+Based on the final refined environment, and the sailing domain knowledge mentioned in the background, a suggested environment was created to be used when the state estimators are improved. This suggested environment includes interfaces to be implemented, and a user guide on installation and how to train and enjoy the RL agents. This suggested environment is explained in 4.8 - Suggested Environment.
+
+The original plan was to compare the researched RL Algorithms on the environment that uses the state estimator models. However, due to the problem in state estimator models, it cannot be done. For completion, the RL Algorithms were compared and discussed on the simple rule based environment, explained in section 4.9 - RL Algorithm Comparisons.
+
+\subsubsection{Conclusion}
+The outcomes of this project and the future work can be found in Chapter 5 - Conclusion.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Background}
 
@@ -1203,7 +1256,15 @@ Finally, we wanted to give more weight in rewards for reaching the goal fast, so
 The resulting reward function makes it easy to judge the behavior of the agent from the episode reward. A negative reward means that the boat can't make progress towards the goal. Reward near 100 means that it can reach the goal, but not as fast as the historical boat. Lastly, if the reward is more than 100, the agent can reach the goal faster than the historical boat, and the environment is solved.
 
 \subsection{Final Refined Environment}
-jtr-modelless-v4 is the final refined environment, which uses the mentioned observation space and the reward function. Using Stable Baselines3's Soft-Actor Critic algorithm with the default hyperparameters, it converges before 15 thousand steps. The trained agent can be watched on \href{https://youtu.be/uccN--r2uc0} {\underline{\textit{YouTube}}}, and the training episode rewards for the final refined model can be seen in Figure \ref{fig:modelless-v4}.
+jtr-modelless-v4 is the final refined environment, which uses the mentioned observation space and the reward function. The 
+
+\begin{figure}[htbp]
+\includegraphics[width=1.1\textwidth,center]{figures/Contribution/jtr-modelless.png}
+\caption{Modelless Environment Setup}
+\label{fig:modelless-env-setup}
+\end{figure}
+
+Using Stable Baselines3's Soft-Actor Critic algorithm with the default hyperparameters, it converges before 15 thousand steps. The trained agent can be watched on \href{https://youtu.be/uccN--r2uc0} {\underline{\textit{YouTube}}}, and the training episode rewards for the final refined model can be seen in Figure \ref{fig:modelless-v4}.
 
 \begin{figure}[h]
     \centering
