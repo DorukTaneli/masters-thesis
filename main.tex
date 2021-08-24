@@ -571,7 +571,7 @@ The datasets need to go under certain preprocessing before the state estimator m
 \label{tbl:scripts-scaling}
 \end{table}
 
-\chapter{Contribution}
+\chapter{State Estimator Models}
 
 \section{State Estimator Scripts}
 In this section contributions related to the state estimator scripts that Charles and Thomas first created will be described.
@@ -841,7 +841,7 @@ To be able to judge the effect of hyperparameter optimization, some features wer
   \textbf{MAE} &
   \textbf{RMSE} \\ \hline
 AWS &
-  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}charles\\ \textbf{optimized}\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}1.000\\ 0.614\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}1.234\\ 0.785\end{tabular} \\ \hline
 Yaw\_cos &
@@ -849,19 +849,19 @@ Yaw\_cos &
   \begin{tabular}[c]{@{}l@{}}0.006\\ 0.007\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.028\\ 0.023\end{tabular} \\ \hline
 Yaw\_sin &
-  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}charles\\ \textbf{optimized}\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.027\\ 0.021\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.038\\ 0.034\end{tabular} \\ \hline
 Roll &
-  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}charles\\ \textbf{optimized}\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}4.429\\ 1.470\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}5.218\\ 1.910\end{tabular} \\ \hline
 Heading\_ov\_ground\_cos &
-  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}charles\\ \textbf{optimized}\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.024\\ 0.011\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.038\\ 0.025\end{tabular} \\ \hline
 Heading\_ov\_ground\_sin &
-  \begin{tabular}[c]{@{}l@{}}charles\\ optimized\end{tabular} &
+  \begin{tabular}[c]{@{}l@{}}charles\\ \textbf{optimized}\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.031\\ 0.013\end{tabular} &
   \begin{tabular}[c]{@{}l@{}}0.052\\ 0.048\end{tabular} \\ \hline
 \end{tabular}
@@ -964,6 +964,8 @@ A further takeaway is that Charles' suggested essential features describing the 
 The state estimator models we have can only predict succesfully on \textit{Atlantic} data. Therefore in the RL environment that will be created, the data from \textit{Atlantic} dataset will be used.
 
 Suggestions on how to improve the state estimators so it can perform better can be found in \ref{sec:future-work} - Future Work.
+
+\chapter{Reinforcement Learning}
 
 \section{RL Framework}
 After the Background Research, the planned Reinforcement Learning framework to use was OpenAI's Spinning Up framework \cite{SpinningUp2018}. They provide clean implementations of modern RL algorithms, and a basic interface to apply the algorithms to OpenAI Gym environments, then plot the results. However, OpenAI Spinning Up has some downsides and lack some important features that would be helpful during this project.
@@ -1122,6 +1124,7 @@ There is no improvements in the reward the agent achieves, in 100 thousand steps
 The possible rudder range is between -50 to 50 degrees. Here, the provided rudder angles are pretty straight, in 3 to 5 degrees range. However, the boat heading is wildly jumping left to right with each step. This indicates that the problem is not on the Reinforcement Learning part, but the state estimator part. Therefore, the state estimator models were examined next.
 
 \subsection{Test 1: Long Term Predictions}
+\label{sec:long-term-pred}
 
 \subsubsection{Current Information}
 \begin{itemize}
@@ -1133,7 +1136,7 @@ The possible rudder range is between -50 to 50 degrees. Here, the provided rudde
 The state estimator models can successfully make accurate long-term predictions, using previously predicted values as input.
 
 \subsubsection{Experimental Setup}
-To test the state estimators, a similar approach to Figure \ref{fig:env-setup} in Core Environment Setup section have been used. The models were given a 60 second history. For every timestep, the historical rudder angle and sea states were used, the new boat states were predicted with the 18 state estimator models, and the remaining 3 boat states were calculated mathematically. For every new prediction for \textit{t+1}, data between \textit{t-59} and \textit{t} were used. 60 seconds of new states were predicted/calculated. The predicted/calculated values were then compared to the historical values.
+To test the state estimators, a similar approach to Figure \ref{fig:env-setup} in Core Environment Setup section have been used. The models were given a 60 second history from the dataset thet were trained/tested on. For every timestep, the historical rudder angle and sea states were used, the new boat states were predicted with the 18 state estimator models, and the remaining 3 boat states were calculated mathematically. For every new prediction for \textit{t+1}, data between \textit{t-59} and \textit{t} were used. 60 seconds of new states were predicted/calculated. The predicted/calculated values were then compared to the historical values.
 
 \begin{figure}[h]
      \centering
@@ -1362,6 +1365,116 @@ TQC is known to be especially excelling in harder environments \cite{tqc-paper}.
 
 Therefore, TQC should be incorporated in the future environments using state estimator models. If the improved state estimators are able to successfully replicate the real sea environment, there will be a lot of nuances to be learned by the RL agent. Such as when and how much to move the rudder compared to the observed features of pitch, roll, wind, etc, to keep the boat speed maximum and reach the in the fastest way.
 
+\chapter{Revisiting State Estimators}
+
+\section{Training with Multiple Datasets}
+The optimized models have been trained on the \textit{Atlantic} dataset, the largest clean dataset available. However, although smaller in size, there are multiple clean datasets available that can be used in conjunction to create more robust models.
+
+To create the robust models, datasets across different boats but recorded using the same electronics system will be used. Whether the datasets have been recorded with the same electronics system can be checked by looking at the Original Format column. The updated information about the datasets can be seen in Figure \ref{tab:datasets-updated}. Tacks have been removed from \textit{RDR\_nkz} and \textit{DHREAM20}, so they can also be used during training and testing.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|l|l|l|c|}
+\hline
+\textbf{Dataset Name} & \textbf{Boat Name} & 
+\textbf{\begin{tabular}[c]{@{}l@{}}Original\\Format\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Original\\Length[h]\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Cleaned\\Length[h]\end{tabular}} & \textbf{\begin{tabular}[c]{@{}l@{}}Tack\\Detection\end{tabular}} \\ \hline
+RDR\_nkz    & \multirow{4}{*}{Concise 8}    & .nkz & 16    & 16    & $\ballotcheck$        \\ \cline{1-1} \cline{3-6}
+RDR\_adrena &                               & .csv & 306   & -     & $\ballotx$        \\ \cline{1-1} \cline{3-6}
+DHREAM 18   &                               & .log & 64.5  & 64.5  & $\ballotx$        \\ \cline{1-1} \cline{3-6} 
+Atlantic    &                               & .nkz & 290.9 & 228.7 & $\ballotcheck$    \\ \hline
+DHREAM 20   & VMB                           & .nkz & 70    & 6     & $\ballotcheck$        \\ \hline
+Team Ocean  & Time for Oceans               & .nkz & 383.5 & 63.3  & $\ballotcheck$    \\ \hline
+transat\_2  & \textit{unknown}              & .nkz & 387.5 & -     & $\ballotx$        \\ \hline
+\end{tabular}
+\caption{Updated information about available datasets}
+\label{tab:datasets-updated}
+\end{table}
+
+By concatenating clean datasets recorded with the nke electroncs system in nkz format, which are \textit{Atlantic}, \textit{Team Ocean}, and \textit{DHREAM 20}, a joint dataset have been created. This new dataset will be split into training, validation, and testing sets by using the segment split method explained in Section \ref{sec:data-split-concern} - \nameref{sec:data-split-concern}. Tacks were removed from \textit{DHREAM20} also, so the new models can be tested on a separate race.
+
+\subsection{Hyperparameters}
+Optimizing the hyperparameters takes a lot more time than training the models. During optimization and training using \textit{Atlantic} dataset, among all the features, average optimization time was 29:01 hours, whereas the average training time was 1:29 hours.
+
+As explained before, \textit{Atlantic} is the largest clean dataset. 74\% of the joint dataset is \textit{Atlantic}. It was decided to use the hyperparameters optimized for \textit{Atlantic}, as it should provide satisfactory results plus doing so will save a lot of time.
+
+\section{Repeating Tests with Joint Dataset Models}
+
+\subsection{Comparison with Atlantic models}
+When tested on the held out part of the same dataset they were trained on, both \textit{Atlantic} and Joint dataset models perform very closely. The average error rates can be seen in Figure \ref{tab:joint-vs-atlantic} and the full error rates for all features can be found in Appendix \ref{app:joint}.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width = 0.7\hsize]{figures/joint-models/joint-vs-atlantic.png}
+\caption{Joint vs Atlantic dataset models error rates}
+\label{fig:joint-vs-atlantic}
+\end{figure}
+
+The MAE is 4.11\%, and the RMSE is 1.02\% higher for the joint dataset models compared to \textit{Atlantic} models. This slight increase in the error rates is likely due to joint datasets having to learn about a larger variety of sea and weather conditions.
+
+\subsection{Transferability}
+The transferability experiment from section \ref{section:transferability} - \nameref{section:transferability} were repeated, using joint dataset models, and testing whether they would be transferable to another dataset with same electronics system, different boat.
+
+The joint dataset models were trained on datasets from \textit{Concise 8} and \textit{Time for Oceans} boats. Now the transferability test is done on  \textit{DHREAM 20} dataset recorded on \textit{Virgin Media Business} boat. All datasets were recorded on nke electronics system.
+
+The comparison of average error rates of the models when tested on the held-out part of the joint dataset they were trained on versus the \textit{DHREAM 20} dataset can be found in Figure \ref{fig:joint-transferability}. Full error rates for all features compared can be seen in Appendix \ref{app:joint}. 
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width = 0.7\hsize]{figures/joint-models/joint-transferability.png}
+\caption{Transferability: Error rates of models on joint and DHREAM 20 datasets}
+\label{fig:joint-transferability}
+\end{figure}
+
+For DHREAM 20, the MAE is 9.6 and the RMSE is 8.8 times that of the joint dataset. There is close to an order of magnitude difference in the error rates. Therefore, we can conclude that the joint dataset models are not transferable to a dataset from another boat.
+
+\subsection{Long Term Predictions}
+The experiments from Section \ref{sec:long-term-pred} - \nameref{sec:long-term-pred} have been repeated using the joint dataset models.
+The same 60 second section from the \textit{Atlantic} dataset have been given as history, and 60 seconds of predictions were made. Select prediction plots are available in Figure \ref{fig:prediction-joint}. Plots for all the features can be found in Appendix \ref{app:joint}.
+
+\begin{figure}[h]
+     \centering
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-joint/AWA_cos.png}
+         \caption{AWA\_cos}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-joint/AWA_sin.png}
+         \caption{AWA\_sin}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-joint/AWS.png}
+         \caption{AWS}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-joint/Speed_ov_ground.png}
+         \caption{Speed\_ov\_ground}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-joint/Heading_True_cos.png}
+         \caption{Heading\_True\_cos}
+     \end{subfigure}
+     \begin{subfigure}[b]{0.32\textwidth}
+         \centering
+         \includegraphics[width=\textwidth]{figures/prediction-plots-joint/Yaw_cos.png}
+         \caption{Yaw\_cos}
+     \end{subfigure}
+        \caption{Historical(Blue) vs Atlantic Models(Orange) vs Joint Models(Green)}
+        \label{fig:prediction-joint}
+\end{figure}
+
+The blue lines are historical values recorded from the boat sensors. The orange lines are the prediction made using Atlantic models, and the green lines are predictions made using Joint dataset models. Comparing Atlantic and Joint dataset models, for some features one performs better, for other features the other performs better. Neither sets of models perform clearly better than the other. However, it is obvious from the graphs that neither of the models are good enough to be used in a reinforcement learning setting.
+
+\section{Discussion}
+Training the models with more data did not have any meaningful impact on the model performance. All of the available cleaned datasets have been used to make these experiments. There are some uncleaned datasets available but they are not significant in size compared to the data that have been used. The results of these tests implies that cleaning and adding the remaining uncleaned datasets to training set will not have a considerable impact on performance.
+
+Assuming we do not have a way to get vast amounts of data, we need to change the way we are using Machine Learning to be able to achieve results with the data we have. Suggestions on how to utilize the available data better and ideas on Machine Learning design improvements can be found in \ref{sec:future-work} - \nameref{sec:future-work}.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Conclusion}
 
@@ -1408,6 +1521,10 @@ TBC
 
 \chapter{OpenAI Gym Environment All Iterations}
 \input{Chapters/appendix-rl-iterations}
+
+\chapter{Joint Models Tests Details}
+\label{app:joint}
+\input{Chapters/appendix-joint-tests}
 
 \chapter{Reinforcement Learning User Guide}
 \input{Chapters/user-guide}
