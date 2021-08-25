@@ -86,6 +86,21 @@ The goal of this project is to realize this potential race winning advantage by 
 
 I, Doruk Taneli, will continue their work, and using the data and code they prepared, I will further improve the state estimator models, implement an OpenAI Gym environment in which the Reinforcement Learning will take place, compare the performance of state-of-the-art RL algorithms on this environment, then draw conclusions. If the simulation environment can reproduce the interactions between the rudder, the boat, and the sea realistically enough, the Reinforcement Learning algorithm can potentially learn how to steer a boat better than a human professional.
 
+\section{Bigger Picture}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.8\hsize]{figures/other/ML on autopilots.png}
+\caption{2 main ways of using ML on Sailboat Autopilots}
+\label{fig:ml-on-autopilot}
+\end{figure}
+
+There are two main ways to leverage Machine Learning to improve the autopilots. The Supervised Learning Approach, and the Reinforcement Learning Approach. The Supervised Learning Approach is relatively easier. Given the input from the boat sensors, we need to predict how a human would set the rudder angle to optimally steer the boat. The key challenge is making the predictions fast enough if we want to use them on on-board sailboat autopilots. The drawback of this approach is that because it mimics human sailors, it can only be as good as the human sailor in the data available.
+
+The Reinforcement Learning approach is more challenging. First, we need to learn the interactions between a sailboat and its environment, namely the sea and the wind. These models are called the state estimator models. While the supervised learning approach only needs to predict the rudder angle, the state estimators need to learn and predict many of the boat's features such as speed, heading, pitch, roll, etc. After creating a set of state estimator models, the RL Agent can be trained using those models as a simulation.
+
+Four Imperial College London students have worked on this Intelligent Automation in Sailboat project, two of them on Supervised Learning Approach, and two on Reinforcement Learning Approach. The Supervised Learning Approach results are relatively satisfactory, but the state estimator models remains a key challenge in the RL Approach. Charles, the previous Imperial College London student before me, envisioned that following his contributions on state estimators, they would be ready to use in a RL setting after hyperparameter optimization.
+
 \section{Objectives}
 %TBC: what does this project aim to achieve
 There are three main goals of this project, which are:
@@ -106,9 +121,28 @@ Plus there are numerous side goals, which helps us reach the main goals, have a 
     \item Compare the state of the art RL algorithms on the created environment
 \end{itemize}
     
-\noindent
-Many of these goal were successfully achieved. The results can be seen in the Outcomes section of the Conclusion.
 
+\section{Outcomes}
+The project have been successful on many of these goals. Among the main goals:
+\begin{itemize}
+    \item The state estimator hyperparameters were optimized, and they perform 28\% better than unoptimized hyperparameters.
+    \item A working Reinforcement Learning Environment have been created that follows the OpenAI Gym interface.
+    \item On the basic, modelless environment, the RL agent is able to consistently reach the goal faster than the human skipper.
+\end{itemize}
+
+\noindent
+On the side goals:
+\begin{itemize}
+    \item The transferability of the models have been tested, and concluded that the models were not transferable in their current condition.
+    \item Potential improvements to the state estimator models have been explained in the Future Work section.
+    \item Datasets have been further cleaned by detecting tacks, and new datasets have been put together for certain use cases.
+    \item Stable Baselines 3 have been identified as the best Reinforcement Learning Framework for our use case.
+    \item State of the art RL algorithms have been compared on the created environment, and TQC is suggested to use in further work.
+\end{itemize}
+
+The biggest shortcoming of the project is the lack of transferability and long term predictions of the created ML models. Although showing good results on the held-out part of the training dataset, the ML architecture suggested by the previous students have been lacking in those other areas. 
+
+The successes and shortcomings of this project are further explained in Conclusion, and improvements to the ML architecture to alleviate the biggest shortcoming have been suggested on \nameref{sec:future-work} Section.
 
 \section{Summary of Work}
 %TBC: A short summary of work with pointers to the main body
@@ -120,32 +154,38 @@ High performance autopilots are much more advanced than regular commercial autop
 
 Reinforcement Learning is a relatively new field that is improving very fast. There have been improvements in the field since the first students started working on this project. Recent advancements and the state of the art algorithms are explained in 2.3 - Literature Review: RL Algorithms.
 
-This project builds on the work of the 5 students who worked on this project before me. A very brief summary of each student's work can be found in 2.4 - Previous Work.
+This project builds on the work of the 5 students, 4 of which have studied in Imperial College London, who worked on this project before me. A very brief summary of each student's work can be found in 2.5 - Previous Work.
 
 \subsubsection{Data}
 Substantial work have been done by previous students on converting, cleaning, and preparing the available data for training. Still, not all of the datasets are ready for training. Curated information and work done on datasets can be found in Chapter 3 - Data.
 
-\subsubsection{Contribution}
+\subsubsection{State Estimator Models}
 The state estimator scripts are used for optimizing the hyperparameters and training the state estimator models using a given dataset. They were created by Thomas who converted Charles' Jupyter Notebooks into .py files. Several improvements and experiments were made with the scripts before optimization and training, which are explained in 4.1 - State Estimator Scripts.
 
 After the improvements, the scripts were used to optimize and train state estimator models on Azure Cloud computing units. The new models with optimized hyperparameters perform about 28\% better than previous models. Detailed comparisons can be seen in 4.2 - Optimized Models.
 
 The optimized models were trained on the \textit{Atlantic} dataset, the largest clean dataset available. An experiment was done to test whether the optimized models were transferable to other datasets. It was concluded that the models were not transferable to other datasets, even from the same boat, same electronics system and and same environmental conditions, which suggest there is a problem on how well the models generalize. Details can be found in 4.3 - Transferability Experiment.
 
-In Section 4.4 - RL Framework, the popular RL frameworks were compared to decide on the best framework for our use case, and Stable Baselines 3 was chosen due to its clear advantages.
 
-Next, a custom OpenAI gym environment was created that utilizes the optimized state estimator models. The environment were designed with the knowledge provided in Sailing Background section in mind. As the state estimators can only make accurate predictions on the \textit{Atlantic} dataset it was trained on, the \textit{Atlantic} dataset is used as starting points for the environment. Details about the environment can be found in section 4.5 - Custom OpenAI Gym Environment
+\subsubsection{Reinforcement Learning}
+In Section 5.1 - RL Framework, the popular RL frameworks were compared to decide on the best framework for our use case, and Stable Baselines 3 was chosen due to its clear advantages.
 
-Although the error metrics of the optimized models are satisfactory, the models were not performing well enough in the environment. After some tests, the problem have been narrowed down to the models having difficulty in making predictions based on previously predicted values, which is explained in 4.6 - State Estimator Problem.
+Next, a custom OpenAI gym environment was created that utilizes the optimized state estimator models. The environment were designed with the knowledge provided in Sailing Background section in mind. As the state estimators can only make accurate predictions on the \textit{Atlantic} dataset it was trained on, the \textit{Atlantic} dataset is used as starting points for the environment. Details about the environment can be found in section 5.2 - Custom OpenAI Gym Environment
 
-The state estimator models were not usable in a RL setting in their current form, so a basic rule based environment was created instead of using ML models. The observation space and the reward function of the Gym environment were refined on this rule based environment. The RL agent is able to drive faster than the human skipper on this environment after about 15 thousand training steps. Information about the refinements are present in 4.7 - OpenAI Gym Environment Refinements.
+Although the error metrics of the optimized models are satisfactory, the models were not performing well enough in the environment. After some tests, the problem have been narrowed down to the models having difficulty in making predictions based on previously predicted values, which is explained in 5.3 - State Estimator Problem.
 
-Based on the final refined environment, and the sailing domain knowledge mentioned in the background, a suggested environment was created to be used when the state estimators are improved. This suggested environment includes interfaces to be implemented, and a user guide on installation and how to train and enjoy the RL agents. This suggested environment is explained in 4.8 - Suggested Environment.
+The state estimator models were not usable in a RL setting in their current form, so a basic rule based environment was created instead of using ML models. The observation space and the reward function of the Gym environment were refined on this rule based environment. The RL agent is able to drive faster than the human skipper on this environment after about 15 thousand training steps. Information about the refinements are present in 5.4 - OpenAI Gym Environment Refinements.
 
-The original plan was to compare the researched RL Algorithms on the environment that uses the state estimator models. However, due to the problem in state estimator models, it cannot be done. For completion, the RL Algorithms were compared and discussed on the simple rule based environment, explained in section 4.9 - RL Algorithm Comparisons.
+Based on the final refined environment, and the sailing domain knowledge mentioned in the background, a suggested environment was created to be used when the state estimators are improved. This suggested environment includes interfaces to be implemented, and a user guide on installation and how to train and enjoy the RL agents. This suggested environment is explained in 5.5 - Suggested Environment.
 
-\subsubsection{Conclusion}
-The outcomes of this project and the future work can be found in Chapter 5 - Conclusion.
+The original plan was to compare the researched RL Algorithms on the environment that uses the state estimator models. However, due to the problem in state estimator models, it cannot be done. For completion, the RL Algorithms were compared and discussed on the simple rule based environment, explained in section 5.6 - RL Algorithm Comparisons.
+
+\subsubsection{State Estimators Revisited}
+After concluding that the state estimators cannot be used in a RL setting in their current condition, the state estimators were revisited, and new models were created using all of the available clean data. However, the results were still underwhelming. The information about the new models and tests done can be seen in Chapter 6 - State Estimators Revisited. 
+
+It was concluded that significantly more data, or a change in ML design is required to make progress  on state estimators. The suggested improvements are on \ref{sec:future-work} - \nameref{sec:future-work}.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Background}
 
@@ -1365,7 +1405,7 @@ TQC is known to be especially excelling in harder environments \cite{tqc-paper}.
 
 Therefore, TQC should be incorporated in the future environments using state estimator models. If the improved state estimators are able to successfully replicate the real sea environment, there will be a lot of nuances to be learned by the RL agent. Such as when and how much to move the rudder compared to the observed features of pitch, roll, wind, etc, to keep the boat speed maximum and reach the in the fastest way.
 
-\chapter{Revisiting State Estimators}
+\chapter{State Estimators Revisited}
 
 \section{Training with Multiple Datasets}
 The optimized models have been trained on the \textit{Atlantic} dataset, the largest clean dataset available. However, although smaller in size, there are multiple clean datasets available that can be used in conjunction to create more robust models.
@@ -1402,14 +1442,16 @@ As explained before, \textit{Atlantic} is the largest clean dataset. 74\% of the
 \subsection{Comparison with Atlantic models}
 When tested on the held out part of the same dataset they were trained on, both \textit{Atlantic} and Joint dataset models perform very closely. The average error rates can be seen in Figure \ref{tab:joint-vs-atlantic} and the full error rates for all features can be found in Appendix \ref{app:joint}.
 
-\begin{figure}[htbp]
+\begin{figure}[h]
 \centering
-\includegraphics[width = 0.7\hsize]{figures/joint-models/joint-vs-atlantic.png}
-\caption{Joint vs Atlantic dataset models error rates}
+\includegraphics[width = 0.7\hsize]{figures/joint-models/atlantic-vs-joint-on-RDR.png}
+\caption{Joint vs Atlantic models error rates on their original test sets vs on RDR\_nkz}
 \label{fig:joint-vs-atlantic}
 \end{figure}
 
 The MAE is 4.11\%, and the RMSE is 1.02\% higher for the joint dataset models compared to \textit{Atlantic} models. This slight increase in the error rates is likely due to joint datasets having to learn about a larger variety of sea and weather conditions.
+
+When tested on RDR\_nkz dataset, Joint models have significantly lower error rates than Atlantic models. This was expected, testing joint models on RDR\_nkz is not a transferability test anymore, as RDR\_nkz dataset was part of the Joint training set.
 
 \subsection{Transferability}
 The transferability experiment from section \ref{section:transferability} - \nameref{section:transferability} were repeated, using joint dataset models, and testing whether they would be transferable to another dataset with same electronics system, different boat.
@@ -1431,7 +1473,7 @@ For DHREAM 20, the MAE is 9.6 and the RMSE is 8.8 times that of the joint datase
 The experiments from Section \ref{sec:long-term-pred} - \nameref{sec:long-term-pred} have been repeated using the joint dataset models.
 The same 60 second section from the \textit{Atlantic} dataset have been given as history, and 60 seconds of predictions were made. Select prediction plots are available in Figure \ref{fig:prediction-joint}. Plots for all the features can be found in Appendix \ref{app:joint}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
      \centering
      \begin{subfigure}[b]{0.32\textwidth}
          \centering
@@ -1467,7 +1509,19 @@ The same 60 second section from the \textit{Atlantic} dataset have been given as
         \label{fig:prediction-joint}
 \end{figure}
 
-The blue lines are historical values recorded from the boat sensors. The orange lines are the prediction made using Atlantic models, and the green lines are predictions made using Joint dataset models. Comparing Atlantic and Joint dataset models, for some features one performs better, for other features the other performs better. Neither sets of models perform clearly better than the other. However, it is obvious from the graphs that neither of the models are good enough to be used in a reinforcement learning setting.
+\begin{figure}[h]
+\centering
+\includegraphics[width = 0.5\hsize]{figures/joint-models/Heading_True_cos_zoom.png}
+\caption{Long term Heading\_True\_cos predictions zoomed in}
+\label{fig:Heading_True_cos_zoom}
+\end{figure}
+
+The blue lines are historical values recorded from the boat sensors. The orange lines are the prediction made using Atlantic models, and the green lines are predictions made using Joint dataset models. Comparing Atlantic and Joint dataset models, for some features one performs better, for other features the other performs better. 
+
+The only feature that performed relatively better was Heading\_True\_cos, which kept being really close to expected historical values throughout the 60 second prediction frame, which can be seen in Figure \ref{fig:Heading_True_cos_zoom}.
+
+Neither sets of models perform clearly better than the other. However, it is obvious from the graphs that neither of the models are good enough to be used in a reinforcement learning setting.
+
 
 \section{Discussion}
 Training the models with more data did not have any meaningful impact on the model performance. All of the available cleaned datasets have been used to make these experiments. There are some uncleaned datasets available but they are not significant in size compared to the data that have been used. The results of these tests implies that cleaning and adding the remaining uncleaned datasets to training set will not have a considerable impact on performance.
@@ -1478,11 +1532,23 @@ Assuming we do not have a way to get vast amounts of data, we need to change the
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Conclusion}
 
-\section{Outcomes}
-TBC: Compare with objectives in Introduction, what was achieved what was not. Highlight successes and shortcomings.
+\section{Evaluation}
+As explained in the Outcomes section of the Introduction, this project was successful in many of the goals that were set to achieve.
+
+First, the suggested Future Work of Charles Metz, the previous Imperial College London student who worked on this project, were followed. Charles envisioned that following his contributions on the state estimator models, they would be ready to use in a RL setting after hyperparameter optimization. Therefore hyperparameter optimization was done and 28\% performance improvement was achieved. The resulting hyperparameters are not the best hyperparameters available. The hyperparameter optimization was done on a generic large search space for a reasonable time of 30 hours per feature. Further improvements might be achieved by studying the resulting hyperparameters, refining the search space, adjusting the exploration and exploatation steps for computing available, and continuing to optimize the hyperparameters.
+
+Next, a long awaited experiment by the sponsoring company T-DAB, it was tested whether the state estimator models will be transferable to other datasets than the models were trained on. Unfortunately, the models were not transferable to other datasets, even on very specific conditions such as same boat, same marine electronics system, and similar weather. This suggests that models overfit to the training set and cannot generalize to other datasets.
+
+
+To use the models in a RL setting, the models need to be able to make accurate and realistic predictions from previously predicted values.
 
 \section{Future Work} \label{sec:future-work}
-TBC: Explain future work and show pointers to main body where they were mentioned.
+
+\subsection{Main Future Work}
+
+
+\subsection{Additional Improvements}
+
 
 \section{Ethical Considerations}
 TBC
@@ -1498,28 +1564,34 @@ TBC
 \addtocontents{toc}{\protect\setcounter{tocdepth}{0}}
 
 \chapter{Ethics Checklist}
+\label{app:ethics}
 \input{Chapters/appendix-ethics}
 
 \chapter{Sail Trim Approach}
 \input{Chapters/appendix-sailtrim}
 
-\chapter{Azure State Estimator Training Runs Details} \label{app:azure-runs}
+\chapter{Azure State Estimator Training Runs Details} 
+\label{app:azure-runs}
 \input{Chapters/gpu-run-details}
 
 \chapter{Charles' Suggested Features Describing the Environment}
 \label{app:essential-features}
 \input{Chapters/appendix-4-essential-features}
 
-\chapter{Creating the RDR\_nkz\_Atlantic\_Conditions Dataset}
+\chapter{Creating RDR\_nkz(Atlantic Conditions) Dataset}
+\label{app:RDR}
 \input{Chapters/appendix-RDR-nkz-atlantic-conditions}
 
 \chapter{Boat and Sea States Details}
+\label{app:states}
 \input{Chapters/appendix-state-details}
 
 \chapter{State Estimator Tests Prediction Plots}
+\label{app:prediction-plots}
 \input{Chapters/appendix-prediction-plots}
 
 \chapter{OpenAI Gym Environment All Iterations}
+\label{app:rl-iters}
 \input{Chapters/appendix-rl-iterations}
 
 \chapter{Joint Models Tests Details}
@@ -1527,6 +1599,7 @@ TBC
 \input{Chapters/appendix-joint-tests}
 
 \chapter{Reinforcement Learning User Guide}
+\label{app:user-guide}
 \input{Chapters/user-guide}
 
 \end{document}
