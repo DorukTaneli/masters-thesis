@@ -50,22 +50,18 @@
 
 \begin{abstract}
 
-This project focuses on the Reinforcement Learning Approach of the Automation and Intelligent Optimisation in High Performance Sailing Boats project. First, the state estimator models created by previous students, which predicts the interactions between a sailboat and its environment were improved by 28\% through optimizing the hyperparameters. 
+This project focuses on the Reinforcement Learning Approach of the Automation and Intelligent Optimisation in High Performance Sailing Boats project. First, the state estimator models created by previous students, which predicts the interactions between a sailboat and its environment were improved by 28\% through optimizing the hyperparameters. Using these models, an OpenAI Gym RL environment have been implemented. Unfortunately, the models did not perform as expected in the RL environment. Several tests were made using the models, and the models were found to be lacking in transferability to other datasets and long term predictions, likely due to overfitting. The models cannot be used in a RL setting in their current condition, therefore a rule-based modelless environment have been created. The RL Agent is able to reach to goal faster than a human sailor before 15 thousand training steps in the modelless environment, which proves that it is indeed possible to train an autopilot using RL that drives a sailboat faster than a human sailor. New state estimator models have been created using more data, and further experiments were done with these models. Improvements on the state estimator models have been suggested according to sailing domain knowledge and the results of the performed experiments.
 
-RL env created using these models.
-
-Several tests were made using the models, and the models were found to be lacking in transferability to other datasets and long term predictions, likely due to overfitting.
-
-Improvements have been suggested.
+\bigskip
+\noindent
+\textbf{Keywords:} Sailing, Autopilot, Reinforcement Learning, OpenAI Gym, Stable Baselines3, Custom Environment, RL Algorithms, Sim2Real, Hyperparameter Optimization, LSTM, Timeseries Forecasting
 
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section*{Acknowledgments}
-Pedro: supervising my progress, encouraging to turn this project into a scientific paper.
-Eric: making this project possible by bringing together the idea, data, and students; contributed with his technical and sailing knowledge.
-Roman: answered all my questions as fast as possible, guided my progress through detailed weekly meetings
-
+\section*{Acknowledgements}
+\paragraph{}
+Throughout the this project I have received a great help and assistance. I would first like to thank Professor Pedro Baiz for supervising my progress during weekly meetings and encouraging to turn this project into a scientific paper. I would like to acknowledge Eric Topham, for making this project possible by bringing together the idea, data, and students; plus contributing to the project with his technical and sailing knowledge. I would also like to thank Roman Kastusik, who guided my progress through detailed weekly meetings, and answered all my questions about previous work as best as he could. You provided me with great tools and guidance that brought this project to a higher level.
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
@@ -1545,7 +1541,7 @@ Assuming we do not have a way to get vast amounts of data, we need to change the
 \section{Evaluation}
 As explained in the Outcomes section of the Introduction, this project was successful in many of the goals that were set to achieve. See \ref{sec:outcomes} for a short summary of the of the outcomes of this project. In this section, the outcomes are evaluated to highlight successes, shortcomings, and the reasoning for the outcomes.
 
-First, the suggested Future Work of Charles Metz, the previous Imperial College London student who worked on this project, were followed. Charles envisioned that following his contributions on the state estimator models, they would be ready to use in a RL setting after hyperparameter optimization. Therefore hyperparameter optimization was done and 28\% performance improvement was achieved. The resulting hyperparameters are not the best hyperparameters available. The hyperparameter optimization was done on a generic large search space for a reasonable time of 30 hours per feature. Further improvements might be achieved by studying the resulting hyperparameters, refining the search space, adjusting the exploration and exploatation steps for computing available, and continuing to optimize the hyperparameters.
+First, the suggested Future Work of Charles Metz, the previous Imperial College London student who worked on this project, were followed. Charles envisioned that following his contributions on the state estimator models, they would be ready to use in a RL setting after hyperparameter optimization. Therefore hyperparameter optimization was done and 28\% performance improvement was achieved. The resulting hyperparameters are not the best hyperparameters possible. The hyperparameter optimization was done on a generic large search space for a reasonable time of 30 hours per feature. Further improvements might be achieved by studying the resulting hyperparameters, refining the search space, adjusting the exploration and exploatation steps for computing available, and continuing to optimize the hyperparameters.
 
 Next, a long awaited experiment by the sponsoring company T-DAB, it was tested whether the state estimator models will be transferable to other datasets than the models were trained on. Unfortunately, the models were not transferable to other datasets, even on very specific conditions such as same boat, same marine electronics system, and similar weather. This suggests that models overfit to the training set and cannot generalize to other datasets. 
 
@@ -1554,7 +1550,7 @@ To see what is happening with the models, a experiment that was never done befor
 
 The biggest shortcoming of the project is these lack of transferability and long term predictions of the created ML models. Although showing good results on the held-out part of the training dataset, the ML architecture suggested by the previous students have been lacking in these areas. Suggestion on how to improve the state estimators and alleviate these problems can be found in the following \nameref{sec:future-work} section.
 
-To assure that the problem was not in the RL part, and as a guideline for future students who will work on this project, a rule-based RL environment was created. In this modelless rule-based environment, the agent is able to consistently reach the goal faster than the human skipper before 15 thousand training steps. This is the biggest success of this project, and it shows that the RL approach is indeed possible if the state estimator models can be improved. Several iterations of improvements have been done on the RL environment to produce the final environment. Plus a suggested environment have been created to be used when the state estimators are improved. This suggested environment have been created with the sailing domain knowledge and the knowledge learned during the improvement iterations. However, the reward and observation space given to the agent might need to be updated depending on the behavior of the agent on the environment with improved models.
+To assure that the problem was not in the RL part, and as a guideline for future students who will work on this project, a rule-based RL environment was created. In this modelless rule-based environment, the agent is able to consistently reach the goal faster than the human skipper before 15 thousand training steps. This is the biggest success of this project, and it shows that the RL approach is indeed possible if the state estimator models can be improved. Several iterations of improvements have been done on the RL environment to produce the final environment. Plus a suggested environment have been created to be used when the state estimators are improved. This suggested environment includes an interface to be implemented so that in can easily be used with the improved models, and a User Guide in Appendix \ref{app:user-guide} on how to install and use the written code and the framework. The suggested environment have been created with the sailing domain knowledge and the knowledge learned during the improvement iterations. However, the reward and observation space given to the agent might need to be updated depending on the behavior of the agent on the environment with improved models.
 
 Lastly, the state estimator models were revisited to try improve them during the remaining time. The models used in previous sections were trained on \textit{Atlantic}, the largest clean dataset available. However there are multiple datasets available, as seen in Chapter 3 - Data. New models were created using all of the clean data available, and the experiments were repeated with those new models. However, training the models with more data did not have any significant impact on the model performance on these tests. Assuming we do not have a way to get vast amounts of data, we need to change the way we are using Machine Learning to be able to achieve results with the data we have, which are suggested in the next section.
 
@@ -1564,30 +1560,62 @@ There are many possible areas of future work on this project. The next important
 \subsection{Main Future Work}
 The next step of the Automation and Intelligent Optimisation in High Performance Sailing Boats project is improving the State Estimator Models. In this section, the envisioned main ways of achieving significant improvements on the models are explained.
 
-\subsubsection{ML Usage}
+\subsubsection{Feature Selection}
+Right now, there are 18 different models making 18 different predictions on the boat states. Using this many features have two significant drawbacks on a Reinforcement Learning setting. 
 
+\begin{itemize}
+    \item \textbf{Prediction Accuracy:} In order to use the models in a reinforcement learning setting, the models need to be able to do long term predictions over previously predicted values. Each of the models have a small error rate on predictions. On each step, every one of these models uses the predictions made by all the other models as input. This causes the error rates to accumulate very quickly. The higher the number of models, the faster the error rates will accumulate.
+    \item \textbf{Prediction Speed:} Making 18 separate predictions are time consuming. Hundreds of thousands steps are required to train the RL agent. If one step can be optimized, it will have a huge effect on the total computing and time required to train the agent.
+\end{itemize}
+
+Furthermore, many of the features convey similar information with other features. For example there are four seperate features: Heading\_True, Heading\_over\_ground, Heading\_over\_surface and Yaw. All these convey the same information with some degrees of differences due to magnetic/true north disrepancy and the ocean current. 
+
+In addition, some of the futures either have very low affect on the core sailboat-environment relationship we are trying to learn. For example the air temperature has a negligible effect on boat dynamics compared to rudder angle, wind direction and wind speed.
+
+Therefore, it is suggested to simplify the setup, and only use the features that are definitely needed for the core sailboat-environment relationship. Those features are:
+\begin{itemize}
+    \item \textbf{Sea States:} True Wind Speed, True Wind Direction, Ocean current speed, Ocean current direction
+    \item \textbf{Predicted Boat States:} Heading True, Speed over ground, Pitch, Roll
+    \item \textbf{Calculated Boat States:} Latitude, Longitude, Apparent Wind Speed, Apparent Wind Direction
+\end{itemize}
+
+In this simplified version, we only need 5 models, Heading\_True\_cos, Heading\_True\_sin, Speed\_ov\_ground, Pitch and Roll. Sea states are environmental variables that are given. Latitude, Longitude is currently calculated by using boat speed, heading, and previous location. Apparent Wind Speed, Apparent Wind Direction can also be calculated using boat speed and heading, True Wind Speed, True Wind Direction.
+
+This simplified version will have much less error accumulation, will be faster on each step, and will be less likely to overfit to features that are not as relevant. 
 
 \subsubsection{Data Split Method}
+The two data split methods compared in this project were segment and normal split methods implemented by previous students. Segment method was chosen as it is the better option, but there are other data split methods such as forward-chaining. Forward-chaining might be the superior option, so it should be tried as a data split method.
+
+Moreover, as the training sections are concatenated together in segment method, there are parts in the training set where the models are trained across time jumps, which needs to be addressed.
 
 
 \subsubsection{ML Techniques}
 ML techniques such as Ensembles can be used to improve model performance. Ensembles have its advantages and disadvantages. The advantages of Ensembles are impressive, they improve prediction performance, and if used correctly, prevent overfitting in Deep Neural Networks \cite{ensembles-paper} - which the current state estimators suffer from. It might give the state estimators the performance boost needed so it can be used in applications such as RL. 
 
-However, there are also disadvantages of Ensembles. First,
-
-Despite the disadvantages, Ensemble Learning is a technique worth trying, if the ML Usage changes does not yield the necessary performance boost.
-
+However, there are also disadvantages of Ensembles. Using ensembles increase the complexity of the systems. The models will be harder to train, deploy, and debug. Plus the time taken for predictions will also increase. Despite the disadvantages, Ensemble Learning is a technique worth trying, if the changes suggested in sections above does not yield the necessary performance boost.
 
 
 \subsection{Additional Improvements}
 
-\subsubsection{Adding Tack Detection to Pipeline}
+\subsubsection{Tack Detection}
+Currently, the tack information is given hardcoded for every dataset. This makes working across datasets harder, and requires further work for new datasets. Following previous students' work, tack detection is done on a semi manual way, but it can be fully automated and added to the pipeline to solve these issues.
+
+It should also be noted that removing tacks improve the performance on the test set which also has its tacks removed. The performance on the test set still including the tacks were not tested. Tack removal might actually be detrimental for Reinforcement Learning. The agent tries different rudder movements to find the optimal way of steering the boat. Removing these rudder movements might hinder the RL agent.
+
 \subsubsection{Improve Data Storage}
+The data is stored as CSV files on the company SharePoint. CSV files are not very efficient, but reading, processing and writing using CSV is slow. This isn't a big problem right now as the available data is not very large, but a more efficient solution, Parquet might be considered.
+
 \subsubsection{Optimize LSTM history amount}
+The state estimator models require 60 seconds of history to predict what will happen in the next second. Roman \cite{roman} have tested 30, 60, and 90 seconds of history, and achieved best results with 60 seconds. However, an exhaustive search have not been completed.
+
 \subsubsection{Normalization Ranges}
+The normalization ranges were set by Roman \cite{roman} and Birk \cite{birk} as physical limits. However gathering more data available showed us that those ranges are not the limits, and higher values are possible, especially on boat and wind speeds. The normalizations need to be revisited with this information, by also considering the distributions of the values.
+
 \subsubsection{Further Hyperparameter Optimizations}
+The hyperparameters used in the state estimator models are not the best hyperparameters possible. The hyperparameter optimization was done on a generic large search space for a reasonable time of 30 hours per feature. Further improvements might be achieved by studying the resulting hyperparameters, refining the search space, adjusting the exploration and exploatation steps for computing available, and continuing to optimize the hyperparameters.
 
 \subsection{Reinforcement Learning}
+The modelless environment created shows that the RL approach is indeed possible if the state estimator models can be improved. A suggested environment have also been created to be used when the state estimators are improved. This suggested environment includes an interface to be implemented so that in can easily be used with the improved models, and a User Guide in Appendix \ref{app:user-guide} on how to install and use the written code and the framework.
 
 \section{Ethical Considerations}
 TBC
