@@ -45,20 +45,30 @@
 %\setcounter{page}{1}
 \pagestyle{fancy}
 
-\begin{comment}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{abstract}
-Your abstract.
+
+This project focuses on the Reinforcement Learning Approach of the Automation and Intelligent Optimisation in High Performance Sailing Boats project. First, the state estimator models created by previous students, which predicts the interactions between a sailboat and its environment were improved by 28\% through optimizing the hyperparameters. 
+
+RL env created using these models.
+
+Several tests were made using the models, and the models were found to be lacking in transferability to other datasets and long term predictions, likely due to overfitting.
+
+Improvements have been suggested.
+
 \end{abstract}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgments}
-Comment this out if not needed.
+Pedro: supervising my progress, encouraging to turn this project into a scientific paper.
+Eric: making this project possible by bringing together the idea, data, and students; contributed with his technical and sailing knowledge.
+Roman: answered all my questions as fast as possible, guided my progress through detailed weekly meetings
+
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
-\end{comment}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %--- table of contents
@@ -122,7 +132,7 @@ Plus there are numerous side goals, which helps us reach the main goals, have a 
 \end{itemize}
     
 
-\section{Outcomes}
+\section{Outcomes} \label{sec:outcomes}
 The project have been successful on many of these goals. Among the main goals:
 \begin{itemize}
     \item The state estimator hyperparameters were optimized, and they perform 28\% better than unoptimized hyperparameters.
@@ -1533,22 +1543,51 @@ Assuming we do not have a way to get vast amounts of data, we need to change the
 \chapter{Conclusion}
 
 \section{Evaluation}
-As explained in the Outcomes section of the Introduction, this project was successful in many of the goals that were set to achieve.
+As explained in the Outcomes section of the Introduction, this project was successful in many of the goals that were set to achieve. See \ref{sec:outcomes} for a short summary of the of the outcomes of this project. In this section, the outcomes are evaluated to highlight successes, shortcomings, and the reasoning for the outcomes.
 
 First, the suggested Future Work of Charles Metz, the previous Imperial College London student who worked on this project, were followed. Charles envisioned that following his contributions on the state estimator models, they would be ready to use in a RL setting after hyperparameter optimization. Therefore hyperparameter optimization was done and 28\% performance improvement was achieved. The resulting hyperparameters are not the best hyperparameters available. The hyperparameter optimization was done on a generic large search space for a reasonable time of 30 hours per feature. Further improvements might be achieved by studying the resulting hyperparameters, refining the search space, adjusting the exploration and exploatation steps for computing available, and continuing to optimize the hyperparameters.
 
-Next, a long awaited experiment by the sponsoring company T-DAB, it was tested whether the state estimator models will be transferable to other datasets than the models were trained on. Unfortunately, the models were not transferable to other datasets, even on very specific conditions such as same boat, same marine electronics system, and similar weather. This suggests that models overfit to the training set and cannot generalize to other datasets.
+Next, a long awaited experiment by the sponsoring company T-DAB, it was tested whether the state estimator models will be transferable to other datasets than the models were trained on. Unfortunately, the models were not transferable to other datasets, even on very specific conditions such as same boat, same marine electronics system, and similar weather. This suggests that models overfit to the training set and cannot generalize to other datasets. 
 
+Because the state estimators cannot generalize to other sets, only \textit{Atlantic} dataset was used in the RL environment. However, the models were still misbehaving. 
+To see what is happening with the models, a experiment that was never done before, long term predictions were tested. In those tests, the predictions look fine at first, but they very quickly deteriorate after a few seconds. This is likely due to accumulated error and overfitting. There are 18 models, and each have a slight error rate in predictions. Each model uses the output of all the other models, therefore the error rate very quickly accumulates. And because the models overfit to only the previously seen data, it cannot generalize when the features get out of the previously seen range. To be used in a RL setting, the models need to be improved to be able to make accurate and realistic predictions from previously predicted values.
 
-To use the models in a RL setting, the models need to be able to make accurate and realistic predictions from previously predicted values.
+The biggest shortcoming of the project is these lack of transferability and long term predictions of the created ML models. Although showing good results on the held-out part of the training dataset, the ML architecture suggested by the previous students have been lacking in these areas. Suggestion on how to improve the state estimators and alleviate these problems can be found in the following \nameref{sec:future-work} section.
+
+To assure that the problem was not in the RL part, and as a guideline for future students who will work on this project, a rule-based RL environment was created. In this modelless rule-based environment, the agent is able to consistently reach the goal faster than the human skipper before 15 thousand training steps. This is the biggest success of this project, and it shows that the RL approach is indeed possible if the state estimator models can be improved. Several iterations of improvements have been done on the RL environment to produce the final environment. Plus a suggested environment have been created to be used when the state estimators are improved. This suggested environment have been created with the sailing domain knowledge and the knowledge learned during the improvement iterations. However, the reward and observation space given to the agent might need to be updated depending on the behavior of the agent on the environment with improved models.
+
+Lastly, the state estimator models were revisited to try improve them during the remaining time. The models used in previous sections were trained on \textit{Atlantic}, the largest clean dataset available. However there are multiple datasets available, as seen in Chapter 3 - Data. New models were created using all of the clean data available, and the experiments were repeated with those new models. However, training the models with more data did not have any significant impact on the model performance on these tests. Assuming we do not have a way to get vast amounts of data, we need to change the way we are using Machine Learning to be able to achieve results with the data we have, which are suggested in the next section.
 
 \section{Future Work} \label{sec:future-work}
+There are many possible areas of future work on this project. The next important steps for the project are explained in the Main Future Work section. Then, the non-essential, quality of life improvements that will make working on the project easier, or incremental improvements that will have smaller impact on the performance are listed in Additional Improvements section. Finally, the future work on Reinforcement Learning area is explained, which can take place after state estimators are improved and can successfully make long term predictions.
 
 \subsection{Main Future Work}
+The next step of the Automation and Intelligent Optimisation in High Performance Sailing Boats project is improving the State Estimator Models. In this section, the envisioned main ways of achieving significant improvements on the models are explained.
+
+\subsubsection{ML Usage}
+
+
+\subsubsection{Data Split Method}
+
+
+\subsubsection{ML Techniques}
+ML techniques such as Ensembles can be used to improve model performance. Ensembles have its advantages and disadvantages. The advantages of Ensembles are impressive, they improve prediction performance, and if used correctly, prevent overfitting in Deep Neural Networks \cite{ensembles-paper} - which the current state estimators suffer from. It might give the state estimators the performance boost needed so it can be used in applications such as RL. 
+
+However, there are also disadvantages of Ensembles. First,
+
+Despite the disadvantages, Ensemble Learning is a technique worth trying, if the ML Usage changes does not yield the necessary performance boost.
+
 
 
 \subsection{Additional Improvements}
 
+\subsubsection{Adding Tack Detection to Pipeline}
+\subsubsection{Improve Data Storage}
+\subsubsection{Optimize LSTM history amount}
+\subsubsection{Normalization Ranges}
+\subsubsection{Further Hyperparameter Optimizations}
+
+\subsection{Reinforcement Learning}
 
 \section{Ethical Considerations}
 TBC
