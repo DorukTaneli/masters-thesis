@@ -11,6 +11,13 @@ The Reinforcement Learning environment created follows the OpenAI Gym interface,
     \begin{lstlisting}
     pip install -e .
     \end{lstlisting}
+    \item Add the following lines to \textit{rl-baselines3-zoo/utils/import\_envs.py}:
+    \begin{lstlisting}
+    try:
+        import gym_jtr
+    except ImportError:
+        gym_jtr = None
+    \end{lstlisting}   
 \end{itemize}
 
 \section{Train}
@@ -54,5 +61,5 @@ python scripts/plot_train.py -a sac -env jtr-modelless-v4 -f logs/
 \noindent
 Again, details of options can be found in RL Baselines3 Zoo \href{https://stable-baselines3.readthedocs.io/en/master/guide/rl_zoo.html}{\underline{Docs}} and \href{https://github.com/DLR-RM/rl-baselines3-zoo}{\underline{Github}}
 
-It should be noted that the plotting options are buggy, especially on shorter training runs. They sometimes fail even on official OpenAI Gym environments, 
+It should be noted that the plotting options are buggy, especially on shorter training runs. They sometimes fail even on official OpenAI Gym environments.
 
