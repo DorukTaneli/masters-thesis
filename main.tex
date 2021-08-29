@@ -1,4 +1,5 @@
 \documentclass[12pt,twoside]{report}
+\usepackage{listings}
 \usepackage{parskip}
 \usepackage{comment}
 \usepackage{wrapfig}
@@ -1572,7 +1573,7 @@ Furthermore, many of the features convey similar information with other features
 
 In addition, some of the futures either have very low affect on the core sailboat-environment relationship we are trying to learn. For example the air temperature has a negligible effect on boat dynamics compared to rudder angle, wind direction and wind speed.
 
-Therefore, it is suggested to simplify the setup, and only use the features that are definitely needed for the core sailboat-environment relationship. Those features are:
+Therefore, it is suggested to simplify the setup, and only use the features that are definitely needed for the core sailboat-environment relationship. The features below were selected by considering which features affect the boat the most, and what does a professional skipper look for while steering the boat.
 \begin{itemize}
     \item \textbf{Sea States:} True Wind Speed, True Wind Direction, Ocean current speed, Ocean current direction
     \item \textbf{Predicted Boat States:} Heading True, Speed over ground, Pitch, Roll
@@ -1618,7 +1619,25 @@ The hyperparameters used in the state estimator models are not the best hyperpar
 The modelless environment created shows that the RL approach is indeed possible if the state estimator models can be improved. A suggested environment have also been created to be used when the state estimators are improved. This suggested environment includes an interface to be implemented so that in can easily be used with the improved models, and a User Guide in Appendix \ref{app:user-guide} on how to install and use the written code and the framework.
 
 \section{Ethical Considerations}
-TBC
+
+Here, the ethical considerations of not only my part of the bigger Automation and Intelligent Optimisation in High Performance Sailing Boats, but the whole planned project is discussed.
+
+\subsubsection{Human Participants and Safety}
+Human participants are expected to be involved when the autopilot is deployed to a real sailboat. There is still a long way until the autopilot can be deployed, but security systems should be added to ensure safety. High performance sailboats can be dangerous due to the high speeds and the large mass of moving parts involved. The security systems to be included can be: fast and easy interruption by a human, limits on rudder angle movement, switching to safe rule-based autopiloting when in doubt, etc.
+
+\subsubsection{Protection of Personal Data}
+The project involves collecting and further processing personal data. There are data provided by Jack Trigger and NKE electronics. The data collected is stored in T-DAB cloud service, where the access protected by user permissions and password. When using computing services, the location is chosen as 'UK South' so the data would not leave UK and EEA.
+
+\subsubsection{Dual Use}
+This project has an exclusive civilian application focus. The project does not have a potential for military applications as sailboats are not viable as combatants.
+
+\subsubsection{Legal Issues}
+A non-diclosure agreement is signed with people involved in this project, including NKE, T-DAB employees, and the students working on the project. This agreement states that no data from NKE can be published, as well as information about how the data have been recorded by NKE software or hardware. To protect this information, the data is kept on private repositories, plus any published code will be checked that the protected information cannot be inferred.
+
+Moreover, GDPR rules which are still applicable in the UK has to be respected. This means that Jack Trigger can exercise his rights of ”regarding their personal data, including the rights of access, rectification, erasure, restriction, data portability, objection and those related to automated decision-making” \cite{ico-gdpr}. A Reliable communication between parties ensures that these right can be exercised throughout the project.
+
+Lastly, when the autopilot is deployed, the racing rules need to be checked if the autopilot is within the rules. Particularly, Jack Trigger's Concise 8 belongs to the Class 40. It was announced that "a plan to limit all the main components involved in the pilot (Inertial navigation system, processor, autopilot computer and related licenses, excluding wind and speed sensors) is being drafted for submission to a vote by a AGE in 2020 and an application in 2021” \cite{class40}. The 2021 rules does not include this change \cite{class40-rules}, but they might get updated in the future.
+
 
 %% bibliography
 \bibliographystyle{unsrt}

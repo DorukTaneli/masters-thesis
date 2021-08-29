@@ -1,1 +1,58 @@
-TBC
+
+The Reinforcement Learning environment created follows the OpenAI Gym interface, so it can be used with many Reinforcement Learning Frameworks including OpenAI Spinning Up \cite{SpinningUp2018}, OpenAI Baselines \cite{baselines}, and Stable Baselines3 \cite{stable-baselines3}. The framework of choice was Stable Baselines3, and this user guide will explain the basic usage with Stable Baselines3. The full features of Stable Baselines3 can be found in the \href{https://stable-baselines3.readthedocs.io/en/master/index.html}{\underline{SB3 Documentation}} and \href{https://github.com/DLR-RM/rl-baselines3-zoo}{\underline{RL Baselines3 Zoo Github}}
+
+\section{Installation}
+
+\begin{itemize}
+    \item Install Stable Baselines3, following the \href{https://stable-baselines3.readthedocs.io/en/master/guide/install.html}{\underline{SB3 Installation}}
+    \item Install RL Baselines3 Zoo, following the \href{https://stable-baselines3.readthedocs.io/en/master/guide/rl_zoo.html}{\underline{RL Baselines3 Zoo Installation}}
+    \item Clone the CONCI01-RL repository and set the directory to the cloned folder.
+    \item Install the environments in CONCI01-RL using pip:
+    \begin{lstlisting}
+    pip install -e .
+    \end{lstlisting}
+\end{itemize}
+
+\section{Train}
+\begin{itemize}
+    \item Switch to rl-baselines3-zoo folder.
+    \item Hyperparameters can be specified from the files in hyperparams folder. If not, the default hyperparameters will be used.
+    \item Train the agent with selected algorithm on the selected environment:
+    \begin{lstlisting}
+    python train.py --algo algo_name --env env_id
+    \end{lstlisting}
+    For example:
+        \begin{lstlisting}
+    python train.py --algo sac --env jtr-modelless-v4
+    \end{lstlisting}
+    \item Details of training options can be found in RL Baselines3 Zoo \href{https://stable-baselines3.readthedocs.io/en/master/guide/rl_zoo.html}{\underline{Docs}} and \href{https://github.com/DLR-RM/rl-baselines3-zoo}{\underline{Github}}
+\end{itemize}
+
+\section{View Results}
+The resulting agents can be tested on the environment by:
+\begin{lstlisting}
+python enjoy.py --algo algo_name --env env_id --folder folder_name
+\end{lstlisting}
+For example:
+\begin{lstlisting}
+python enjoy.py --algo sac --env jtr-modelless-v4 --folder logs/
+\end{lstlisting}
+
+\noindent
+Or different graphs can be viewed by
+\begin{itemize}
+    \item scripts/all\_plots.py or scripts/plot\_from\_file.py for plotting evaluations
+    \item scripts/plot\_train.py for plotting training reward/success
+\end{itemize}
+
+\noindent
+The most used plotting option was scripts/plot\_train.py, such as:
+\begin{lstlisting}
+python scripts/plot_train.py -a sac -env jtr-modelless-v4 -f logs/
+\end{lstlisting}
+
+\noindent
+Again, details of options can be found in RL Baselines3 Zoo \href{https://stable-baselines3.readthedocs.io/en/master/guide/rl_zoo.html}{\underline{Docs}} and \href{https://github.com/DLR-RM/rl-baselines3-zoo}{\underline{Github}}
+
+It should be noted that the plotting options are buggy, especially on shorter training runs. They sometimes fail even on official OpenAI Gym environments, 
+
