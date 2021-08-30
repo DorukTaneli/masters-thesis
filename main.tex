@@ -51,7 +51,7 @@
 
 \begin{abstract}
 
-This project focuses on the Reinforcement Learning Approach of the Automation and Intelligent Optimisation in High Performance Sailing Boats project. First, the state estimator models created by previous students, which predicts the interactions between a sailboat and its environment were improved by 28\% through optimizing the hyperparameters. Using these models, an OpenAI Gym RL environment have been implemented. Unfortunately, the models did not perform as expected in the RL environment. Several tests were made using the models, and the models were found to be lacking in transferability to other datasets and long term predictions, likely due to overfitting. The models cannot be used in a RL setting in their current condition, therefore a rule-based modelless environment have been created. The RL Agent is able to reach to goal faster than a human sailor before 15 thousand training steps in the modelless environment, which proves that it is indeed possible to train an autopilot using RL that drives a sailboat faster than a human sailor. New state estimator models have been created using more data, and further experiments were done with these models. Improvements on the state estimator models have been suggested according to sailing domain knowledge and the results of the performed experiments.
+This project focuses on the Reinforcement Learning Approach of the Automation and Intelligent Optimisation in High Performance Sailing Boats project. First, the state estimator models created by previous students, which predicts the interactions between a sailboat and its environment were improved by 33\% through optimizing the hyperparameters. Using these models, an OpenAI Gym RL environment have been implemented. Unfortunately, the models did not perform as expected in the RL environment. Several tests were made using the models, and the models were found to be lacking in transferability to other datasets and long term predictions, likely due to overfitting. The models cannot be used in a RL setting in their current condition, therefore a rule-based modelless environment have been created. The RL Agent is able to reach to goal faster than a human sailor before 15 thousand training steps in the modelless environment, which proves that it is indeed possible to train an autopilot using RL that drives a sailboat faster than a human sailor. New state estimator models have been created using more data, and further experiments were done with these models. Improvements on the state estimator models have been suggested according to sailing domain knowledge and the results of the performed experiments.
 
 \bigskip
 \noindent
@@ -89,7 +89,7 @@ Modern sailboats are built by combining bleeding edge science from many areas, i
 
 Shorthanded races are one type of popular competition where there are either one or two crew members, as opposed to full crews that can go up to around ten people. Autopilots are used extensively during these shorthanded races, steering the boat for more than 95\% of the time, while the crew handles other boat work or personal sustenance. Despite carrying out more than 95\% of the steering, autopilots only perform at 80\% of the capability of a professional skipper \cite{trigger-racing}. Therefore there is a huge potential to gain race winning advantage in shorthanded competitions by improving the autopilots. Jack Trigger \cite{trigger-racing}, who competes in shorthanded races, is providing the data from his boat sensors which makes this project possible. 
 
-The goal of this project is to realize this potential race winning advantage by creating a Machine Learning model, trained by Reinforcement Learning, which will predict the optimal rudder angle using onboard boat sensors. To achieve that, this project will continue the work of former Imperial students and the employees of the partner company, The Data Analysis Bureau (T-DAB) \cite{t-dab}. Extensive work have been done on this project since 2018, mostly focusing on cleaning and preprocessing the available data, plus creating Machine Learning models that predicts the state of the boat, which will be referred as state estimator models in the rest of this report.
+The goal of this project is to realize this potential race winning advantage by training a Reinforcement Learning agent which will predict the optimal rudder angle using onboard boat sensors. To achieve that, this project will continue the work of former Imperial students and the employees of the partner company, The Data Analysis Bureau (T-DAB) \cite{t-dab}. Extensive work have been done on this project since 2018, mostly focusing on cleaning and preprocessing the available data, plus creating Machine Learning models that predicts the state of the boat, which will be referred as state estimator models in the rest of this report.
 
 I, Doruk Taneli, will continue their work, and using the data and code they prepared, I will further improve the state estimator models, implement an OpenAI Gym environment in which the Reinforcement Learning will take place, compare the performance of state-of-the-art RL algorithms on this environment, then draw conclusions. If the simulation environment can reproduce the interactions between the rudder, the boat, and the sea realistically enough, the Reinforcement Learning algorithm can potentially learn how to steer a boat better than a human professional.
 
@@ -132,7 +132,7 @@ Plus there are numerous side goals, which helps us reach the main goals, have a 
 \section{Outcomes} \label{sec:outcomes}
 The project have been successful on many of these goals. Among the main goals:
 \begin{itemize}
-    \item The state estimator hyperparameters were optimized, and they perform 28\% better than unoptimized hyperparameters.
+    \item The state estimator hyperparameters were optimized, and they perform 33\% better than unoptimized hyperparameters.
     \item A working Reinforcement Learning Environment have been created that follows the OpenAI Gym interface.
     \item On the basic, modelless environment, the RL agent is able to consistently reach the goal faster than the human skipper.
 \end{itemize}
@@ -169,7 +169,7 @@ Substantial work have been done by previous students on converting, cleaning, an
 \subsubsection{State Estimator Models}
 The state estimator scripts are used for optimizing the hyperparameters and training the state estimator models using a given dataset. They were created by Thomas who converted Charles' Jupyter Notebooks into .py files. Several improvements and experiments were made with the scripts before optimization and training, which are explained in 4.1 - State Estimator Scripts.
 
-After the improvements, the scripts were used to optimize and train state estimator models on Azure Cloud computing units. The new models with optimized hyperparameters perform about 28\% better than previous models. Detailed comparisons can be seen in 4.2 - Optimized Models.
+After the improvements, the scripts were used to optimize and train state estimator models on Azure Cloud computing units. The new models with optimized hyperparameters perform about 33\% better than previous models. Detailed comparisons can be seen in 4.2 - Optimized Models.
 
 The optimized models were trained on the \textit{Atlantic} dataset, the largest clean dataset available. An experiment was done to test whether the optimized models were transferable to other datasets. It was concluded that the models were not transferable to other datasets, even from the same boat, same electronics system and and same environmental conditions, which suggest there is a problem on how well the models generalize. Details can be found in 4.3 - Transferability Experiment.
 
@@ -404,7 +404,7 @@ Interestingly, both SAC and TD3 authors claim that they perform better than each
 
 As can be seen in Figure \ref{fig:openAI-comparisons}, TD3 and SAC perform closely to each other, with SAC having a slight advantage over TD3. However one should note that OpenAI implementation of SAC have slight variations that bring it closer to TD3 \cite{openai:sac-code}.
 
-The advantage of TD3 is that it performs really close to SAC, with less complexity and less hyperparameters to tune. However, the second iteration of SAC from the original authors automatically tunes the problematic temperature hyperparameter, reducing the problem of hyperparameter tuning, making the algorithm more stable among different seeds and environments, and performs well even in the worst case, which is important for real life use cases \cite{sacOG}. 
+The advantage of TD3 is that it performs really close to SAC, with less complexity and less hyperparameters to tune. However, the second iteration of SAC from the original authors automatically tunes the problematic hyperparameter 'temperature', reducing the problem of hyperparameter tuning, making the algorithm more stable among different seeds and environments, and performs well even in the worst case, which is important for real life use cases \cite{sacOG}. 
 
 Because of these reasons, the suggested algorithm to be used for the Reinforcement Learning Approach is Soft Actor-Critic (SAC).
 
@@ -453,13 +453,13 @@ The "Automation and Intelligent Optimisation in High Performance Sailing Boats" 
 %I, Doruk Taneli, will be picking up where Birk, Roman, Stanislas, and Charles left off and  further improve the project.
 
 \subsection{Birk Ulstad}
-Birk's goal was to develop a supervised machine learning model that predicts the rudder angle set by Jack Trigger on the Concise 8 boat, using the previous data recorded during races by the existing sensors on the boat \cite{birk}.
+Birk's \cite{birk} goal was to develop a supervised machine learning model that predicts the rudder angle set by Jack Trigger on the Concise 8 boat, using the previous data recorded during races by the existing sensors on the boat.
 
 Birk Ulstad converted the available raw, partially corrupted data to processable csv data. He then cleaned the csv data by removing the irrelevant and corrupted parts, analysing outliers and applying smoothing. Next, he normalized, reframed, and downsampled the data to get it ready for the supervised learning model.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.7\hsize]{figures/Birk Ulstad LSTM prediction.png}
+\includegraphics[width = 0.75\hsize]{figures/Birk Ulstad LSTM prediction.png}
 \caption{Birk Ulstad's LSTM prediction methods \cite{birk}}
 \label{fig:birk lstm}
 \end{figure}
@@ -474,7 +474,7 @@ Birk concluded that his model architecture is able to predict the rudder angle p
 \end{itemize} 
 
 \subsection{Roman Kastusik}
-Roman's objective was to utilize reinforcement learning to increase the autopilots' performance, potentially beyond human level. To achieve this, he trained an LSTM state estimator to simulate the boat's behavior using Jack Trigger's race data, and created a reinforcement learning algorithm that would interact with said simulation environment \cite{roman}.
+Roman's \cite{roman} objective was to utilize reinforcement learning to increase the autopilots' performance, potentially beyond human level. To achieve this, he trained an LSTM state estimator to simulate the boat's behavior using Jack Trigger's race data, and created a reinforcement learning algorithm that would interact with said simulation environment.
 
 Roman started with some data analysis, data cleaning, and scaling on Jack Trigger's race data. He then used this data to train the simulation environment that would be used for the reinforcement learning algorithm. The data flow around the simulation environment and the reinforcement learning algorithm can be found in Figure \ref{fig:roman dataflow}.
 
@@ -490,11 +490,11 @@ He also did research about the recent advancements in reinforcement learning, an
 Roman concluded that due to the poor performance of the simulation environment, it was not possible to realize the full potential of the reinforcement learning algorithm. Charles Metz later continues his work and improves the simulation environment.
 
 \subsection{Stanislas Hannabelle} \label{sec:Stan}
-Stanislas' goal was to improve the results of Birk Ulstad's supervised learning approach to the problem. He further cleaned the dataset using a tack\footnote{Tacking is a sailing maneuver where the boat changes direction by turning its head towards and through the wind so that the direction from which the wind blows changes from one side of the boat to the other, allowing progress in the desired direction \cite{wiki:tack}.} detection system, did hyperparameter and bayesian optimization, and compared GRU and LSTM models. He was able to reduce the Root Mean Squared Error from 3.493 degrees of Birk's final model to 1.096 degrees, and reduced the computational time needed for rudder angle prediction \cite{stan}.
+Stanislas' \cite{stan} goal was to improve the results of Birk Ulstad's supervised learning approach to the problem. He further cleaned the dataset using a tack\footnote{Tacking is a sailing maneuver where the boat changes direction by turning its head towards and through the wind so that the direction from which the wind blows changes from one side of the boat to the other, allowing progress in the desired direction \cite{wiki:tack}.} detection system, did hyperparameter and bayesian optimization, and compared GRU and LSTM models. He was able to reduce the Root Mean Squared Error from 3.493 degrees of Birk's final model to 1.096 degrees, and reduced the computational time needed for rudder angle prediction.
 
 \begin{figure}[h]
 \centering
-\includegraphics[width = 0.9\hsize]{figures/stan results.png}
+\includegraphics[width = 0.95\hsize]{figures/stan results.png}
 \caption{Stanislas Hannabelle's improvements on supervised learning approach \cite{stan}}
 \label{fig:stan results}
 \end{figure}
@@ -511,7 +511,7 @@ Stanislas further cleaned the available dataset by training a classifier to remo
 With his best model 'GRU 5Hz-2s', Stanislas reduced the testing RMSE of Birk's model by approximately 68\% while cutting the required training time in half. Stanislas' model was able to predict the rudder angle produced by a human by around 1 degree. His other success was to reduce the computational time needed for rudder angle prediction so that the model can be implemented live in onboard autopilots.
 
 \subsection{Charles Metz}
-Charles' goal was to improve the state estimator model Roman suggested, so it can reliably reproduce the behaviour of a sailing boat in its sea environment. His main idea was that instead of using 1 model to predict \emph{n} sea and boat features like Roman, he used \emph{n} models to predict \emph{n} different features, which lead to very significant improvement \cite{charles}.
+Charles' \cite{charles} goal was to improve the state estimator model Roman suggested, so it can reliably reproduce the behaviour of a sailing boat in its sea environment. His main idea was that instead of using 1 model to predict \emph{n} sea and boat features like Roman, he used \emph{n} models to predict \emph{n} different features, which lead to very significant improvement.
 
 Charles had a new dataset available, so he started by applying similar cleaning and preprocessing steps to this new dataset. He noticed that some of the features can be derived mathematically from other features such as true wind, apparent wind, and boat speed. He decided to calculate those features mathematically, then trained \emph{n} separate models for \emph{n} remaining features. He tried 2 different models, model 1 has two final dense layers whereas model 2 has only one final dense layer.
 
@@ -597,7 +597,7 @@ Next, the dataset was cleaned, removing unusable parts such as:
     \item sections where the boat was anchored or in harbour
 \end{itemize}
 
-The original length of the dataset was 290.9 hours, and 228.7 usuable hours have remained after cleaning done by Charles Metz \cite{charles}.
+The original length of the dataset was 290.9 hours, and 228.7 usable hours have remained after cleaning done by Charles Metz \cite{charles}.
 
 \subsection{Preprocessing Applied in State Estimator Scripts}
 The datasets need to go under certain preprocessing before the state estimator models can be trained. These steps are:
@@ -950,9 +950,9 @@ The new models have optimized hyperparameters and were trained on a larger datas
 Charles' suggested essential features describing the physical environment, which are: True Wind Speed, True Wind Angle, Apparent Wind Angle, and Pitch, provide an accurate and sufficient description of the environment. More information about these essential features can be found in Appendix \ref{app:essential-features}.
 
 \subsubsection{Experimental set up and methods}
-To test this hypothesis, we need a dataset which was recorded on the same boat with the same electronics system and format as the \textit{Atlantic} dataset the models were trained on. Looking at Figure \ref{tab:datasets-practical} in the Available Datasets Section, we can see that the \textit{RDR\_nkz} dataset, suits these requirements. Thus it was chosen as the dataset to make the experiments.
+To test this hypothesis, we need a dataset which was recorded on the same boat with the same electronics system and format as the \textit{Atlantic} dataset the models were trained on. Looking at Figure \ref{tab:datasets-practical} in Chapter 3 - Data, we can see that the \textit{RDR\_nkz} dataset, suits these requirements. Thus it was chosen as the dataset to make the experiments.
 
-To test both of the hypotheses, A new dataset was created, named \textit{RDR\_nkz (Atlantic conditions)}, by selecting parts from the RDR\_nkz dataset, which have the mentioned four essential features in the range of what is present in the \textit{Atlantic} dataset. For a detailed explanation of how \textit{RDR\_nkz (Atlantic conditions)} was created, see Appendix.
+To test both of the hypotheses, A new dataset was created, named \textit{RDR\_nkz (Atlantic conditions)}, by selecting parts from the RDR\_nkz dataset, which have the mentioned four essential features in the range of what is present in the \textit{Atlantic} dataset. For a detailed explanation of how \textit{RDR\_nkz (Atlantic conditions)} was created, see Appendix \ref{app:RDR}.
 
 
 \subsubsection{Results}
@@ -1105,16 +1105,16 @@ As explained in the previous sections, the models are not transferable to other 
 \label{fig:env-setup}
 \end{figure}
 
-The core gym environment structure, whose diagram can be seen in Figure \ref{fig:env-setup}, is as follows: At the beginning of each episode, a random 60 second section is chosen as the state history from the preprocessed, usuable areas of \textit{Atlantic} dataset. Every timestep, the new row of states are created and appended to the end of the state history, while the oldest row is discarded. This state history contains 4 sections, which are all generated in different ways:
+The core gym environment structure, whose diagram can be seen in Figure \ref{fig:env-setup}, is as follows: At the beginning of each episode, a random 60 second section is chosen as the state history from the preprocessed, usable areas of \textit{Atlantic} dataset. Every timestep, the new row of states are created and appended to the end of the state history, while the oldest row is discarded. This state history contains 4 sections, which are all generated in different ways:
 
 \begin{itemize}
     \item \textbf{Rudder:} The rudder angle. This is provided by the RL agent every step. As the agent learns to drive the boat better, it provides better angles.
     \item \textbf{Boat States:} Features describing the current state of the boat. These 18 states are predicted by the state estimator models, using the 60 seconds of state history.
-    \item \textbf{Boat States - Math:} 3 features that are more accurately calculated from previous values mathematically, rather than using ML models, as tested by Charles \cite{charles}.
+    \item \textbf{Boat States - Math:} Latitude, Longitude\_cos, and Longitude\_sin, which are more accurately calculated from previous values mathematically, rather than using ML models, as tested by Charles \cite{charles}.
     \item \textbf{Sea States:} The features that describe the sea state, independent from the boat. These features are taken from the historical values.
 \end{itemize}
 
-\noindent The full details of which features every section contains can be found in appendix.
+\noindent The full details of which features every section contains can be found in Appendix \ref{app:states}.
 
 To ensure that the sea states are valid, when the simulated boat diverges too much from the historical route, the environment is reset and another episode is started with new initial states.
 
@@ -1130,17 +1130,17 @@ A visual rendering of the environment have been implemented to better understand
 
 The dark blue boat is the one the RL agent controls in real time, and the dark blue line is the path taken. The light blue counterparts are the historical data that the agent is trying to take over. The light red area is the goal, which the environment is reset when the dark blue boat reaches it. Other useful information such as the speed of the boat, rudder angle provided by the agent, distance to goal, etc. are printed to terminal.
 
-\section{State Estimator Problem}
-After the initial versions of the OpenAI Gym Environment have been implemented, they have been trained on Azure Cloud CPUs. The training reward graph for the default Stable Baselines 3 hyperparameters and the popular gSDE hyperparameters for SAC, can be seen in Figure \ref{fig:jtr-v1}.
+\section{State Estimator Problem} \label{sec:state-estimator-problem}
+After the initial versions of the OpenAI Gym Environment have been implemented, they have been trained on Azure Cloud CPUs. The training reward graph for SAC algorithm using the default Stable Baselines 3 hyperparameters vs the popular gSDE hyperparameters can be seen in Figure \ref{fig:jtr-v1}.
 
 \begin{figure}[htbp]
 \centering
 \includegraphics[width = 0.65\hsize]{figures/rl-reward-plots/jtr-v1 100k.png}
-\caption{jtr-v1 training plot for default(blue) and gSDE(orange) hyperparams}
+\caption{jtr-v1 training plot for default(blue) and gSDE(orange) hyperparameters}
 \label{fig:jtr-v1}
 \end{figure}
 
-There is no improvements in the reward the agent achieves, in 100 thousand steps, the general trend for the reward is downwards, which indicates that there is a problem. To find the problem, the resulting agent from the training run have been observed. The simulation starts fine for the first few seconds, but it very quickly gets problematic. A four second section of the problematic part can be seen in Figure \ref{fig:heading-problem}. 
+There is no improvements in the reward the agent achieves, in 100 thousand steps. The general trend for the reward is downwards, which indicates that there is a problem. To find the problem, the resulting agent from the training run have been observed. The simulation starts fine for the first few seconds, but it very quickly gets problematic. A four second section of the problematic part can be seen in Figure \ref{fig:heading-problem}. 
 
 \begin{figure}[h]
      \centering
@@ -1207,7 +1207,7 @@ To test the state estimators, a similar approach to Figure \ref{fig:env-setup} i
 \end{figure}
 
 \subsubsection{Results}
-The first 60 seconds are the historical values, the predictions start after 60 seconds. The first few values, in t=61, 62, and 63 are close to the historical values, but very quickly after the first few seconds, the predictions start jumping between very high and very low in every step. A few example features of the 18 predicted states are presented in Figure \ref{fig:prediction-boat-states}. The blue line is the historical values, and the orange line is the predicted values. The plots of all features can be found in Appendix.
+The first 60 seconds are the historical values, the predictions start after 60 seconds. The first few values, in t=61, 62, and 63 are close to the historical values, but very quickly after the first few seconds, the predictions start jumping between very high and very low in every step. A few example features of the 18 predicted states are presented in Figure \ref{fig:prediction-boat-states}. The blue line is the historical values, and the orange line is the predicted values. The plots of all features can be found in Appendix \ref{app:prediction-plots}.
 
 \begin{figure}[h]
      \centering
@@ -1266,7 +1266,7 @@ The poor predictions of Yaw\_cos is the root cause that affect the inputs of all
 Same setup with \textit{Test 1: Long term predictions} will be applied, but historical Yaw\_cos values will be used instead of making predictions. Then the outputs of Test 1 and Test 2 will be compared.
 
 \subsubsection{Results}
-The results of Test 2(Orange) were drawn in the same plot with the results of Test 1(Green) for an easier comparison. As can be seen in Figure \ref{fig:prediction-Yaw-cos}, the results are very similar to Test 1 results. In some features, the jumps start a little later, and the amplitude of jumps are a little smaller. The plots of all features can be found in Appendix.
+The results of Test 2(Orange) were drawn in the same plot with the results of Test 1(Green) for an easier comparison. As can be seen in Figure \ref{fig:prediction-Yaw-cos}, the results are very similar to Test 1 results. In some features, the jumps start a little later, and the amplitude of jumps are a little smaller. The plots of all features can be found in Appendix \ref{app:prediction-plots}.
 
 \begin{figure}[h]
      \centering
@@ -1313,34 +1313,36 @@ The problem with the state estimators is not something that can be solved quickl
 \section{OpenAI Gym Environment Refinements}
 Examining the results of the State Estimator models, it is clear that they are not suitable for use in a Reinforcement Learning Environment in their current state. Therefore, to refine the Gym Environment, a simple environment with no machine learning models will be used.
 
-To build a basic autopilot, the agent does not need to know the full 28 features present in our data. It only needs 2 features, the speed and the heading of the boat. The gym environment will be refined by assuming a constant speed, and a linear relationship between the rudder and heading, such as if the rudder is turned 10 degrees to left, the boat will turn 10 degrees to left in the next second.
+To build a basic autopilot, the agent does not need to know the full 18 features present in our data. It only needs 2 features, the speed and the heading of the boat. The gym environment will be refined by assuming a constant speed, and a linear relationship between the rudder and heading, such as if the rudder is turned 10 degrees to left, the boat will turn 10 degrees to left in the next second.
 
-As explained in Core Environment Setup section, the main goal of the gym environment is to reach where the historical boat was a few minutes later, and hopefully reach there faster than the historical boat. The reward function and the observation space of the agent was refined through many iterations to achieve this main goal. The details of what was changed during each iterations, which also include performance and rendering improvements can be seen in Appendix.
+As explained in Core Environment Setup section, the main goal of the gym environment is to reach where the historical boat was a few minutes later, and hopefully reach there faster than the historical boat. The reward function and the observation space of the agent was refined through many iterations to achieve this main goal. The details of what was changed during each iterations, which also include performance and rendering improvements can be seen in Appendix \ref{app:rl-iters}.
 
 \subsection{Observation Space}
 To help the agent reach the goal, we need to provide the necessary information to the agent in the observation space. The initial, naive attempt was to include both the current location and the goal location separately in the observation space. Different formats were tried using cos and sin or angular values. Neither of the attempts were successful.
 
 Next, widely used Gym environments were examined. Many of the similar goal oriented Gym Environments such as the Lunar Lander \cite{LunarLander-v2} and the Robotics Environments \cite{gym-robotics} use relative position in their observation space. This makes sense for our environment too, as how the autopilot steers the boat should not change based on latitude and longitude, we only need the relative position information to be able to reach the goal. Therefore, using relative position between the current location and the goal location have been tried, but it wasn't very successful either. 
 
-Finally, the existing autopilots that utilize heading and compass for steering were inspired from, and heading was used in the observation space, which showed great success. The final observation space consists of the current boat heading angle, and the heading angle to the goal location, recalculated at every timestep. 
+Finally, the existing autopilots that utilize heading and compass for steering were inspired from, and heading was used in the observation space, which showed great success. The final observation space consists of the current boat heading angle, and the heading angle to the goal location, recalculated at every timestep. The heading angle is recalculated at every step and not a fixed angle, because in sailing the fastest way from one point to another might not be a straight line. By recalculating the heading to goal at every step, The RL Agent is given the option to steer away from goal and still find the goal at the end, if that would result in a faster route.
 
 The speed of the boat, which is crucial for a high performance autopilot, was omitted in the final version as it is constant. The suggested observation space to be used when the state estimators are improved, proposed based on experiences during implementation and sailing domain knowledge can be found in Suggested Environment section.
 
 \subsection{Reward Function}
-The reward function Roman used only gave rewards based on how close it is to the historical route. There are no rewards based on speed or time taken. Plus there are no bounds for rewards. The rewards reach hundreds of thousands per episode, which makes judging the agent from rewards difficult. It is clear that we need a better reward function.
+The reward function Roman \cite{roman} used only gave rewards based on how close it is to the historical route. There are no rewards based on speed or time taken. Plus there are no bounds for rewards. The rewards reach hundreds of thousands per episode, which makes judging the agent from rewards difficult. It is clear that we need a better reward function.
 
 The initial inspiration for the reward function was the Car Racing \cite{CarRacing-v0} environment. It is a similar environment to ours in the sense that we are trying to make the vehicle reach the finishing point as fast as possible. The first versions of our environment followed a very similar reward function to the Car Racing environment. There are at most 1000 rewards given, based on how close the boat is able to get to the goal location. Then, there is some penalty based on time, such that if the boat reaches the goal at the same time with the historical boat, the total reward will be 900. If the agent can reach the goal faster, the reward will be more than 900, if it is slower, reward will be less than 900.
 
 Observing the behaviour of the trained agent, a lot of times, the boat was getting close to the goal but not quite reach it, then it was going straight past the goal. As a solution, in addition to the rewards while getting closer to goal, a penalty was added when moving away from the goal. But the total reward for reaching the goal was kept at 1000.
 
-A penalty for rudder movement was experimented with, which helps the agent learn that the quickest route is more or less a straight line. However, there are good rudder movements that makes a boat go faster, so this penalty were removed. More information about this rudder movements can be found in the Suggested Environment Section.
+A penalty for rudder movement was experimented with, which helps the agent learn that the quickest route is more or less a straight line. However, there are good rudder movements that makes a boat go faster, so this penalty were removed.
 
-Finally, we wanted to give more weight in rewards for reaching the goal fast, so the reward for reaching the goal was decreased to 200 while keeping the time penalty the same. 
+To prioritize reaching the goal, a penalty of -300 was added if the agent couldn't reach the goal when the episode ends. Such as if the time limit is reached, or the boat moved too far from the historical boat. 
 
-The resulting reward function makes it easy to judge the behavior of the agent from the episode reward. A negative reward means that the boat can't make progress towards the goal. Reward near 100 means that it can reach the goal, but not as fast as the historical boat. Lastly, if the reward is more than 100, the agent can reach the goal faster than the historical boat, and the environment is solved.
+Finally, we wanted to give more weight to time, so the reward for reaching the goal was decreased to 200 while keeping the time penalty the same. The penalty for not reaching to goal was also reduced to 50.
+
+The resulting reward function makes it easy to judge the behavior of the agent from the episode reward. A negative reward means that the boat can't make progress towards the goal. Below 50, the agent can make progress towards the goal but cannot reach the goal yet. Reward that is close to 100 means that it can reach the goal, but not as fast as the historical boat. Lastly, if the reward is more than 100, the agent can reach the goal faster than the historical boat, and the environment is solved.
 
 \subsection{Final Refined Environment}
-jtr-modelless-v4 is the final refined environment, which uses the mentioned observation space and the reward function. The 
+jtr-modelless-v4 is the final refined environment, which uses the mentioned observation space and the reward function. The Setup for the final modelless environment can be seen in Figure \ref{fig:modelless-env-setup}.
 
 \begin{figure}[htbp]
 \includegraphics[width=1.1\textwidth,center]{figures/Contribution/jtr-modelless.png}
@@ -1348,7 +1350,11 @@ jtr-modelless-v4 is the final refined environment, which uses the mentioned obse
 \label{fig:modelless-env-setup}
 \end{figure}
 
-Using Stable Baselines3's Soft-Actor Critic algorithm with the default hyperparameters, it converges before 15 thousand steps. The trained agent can be watched on \href{https://youtu.be/uccN--r2uc0} {\underline{\textit{YouTube}}}, and the training episode rewards for the final refined model can be seen in Figure \ref{fig:modelless-v4}.
+The modelless environment follows a similar approach to the core environment setup. At the beginning of each episode, a section from usable areas of \textit{Atlantic} dataset is selected randomly as a starting point. This starting point provides us with the initial 'Boat Location' and 'Boat Speed', plus the 'Historical Data' for comparison purposes. The runtime is selected randomly between 1 to 5 minutes, and the 'Goal Location' is determined by looking at the historical boat position after the determined runtime amount.
+
+The RL agent is providing the 'Rudder' angle at each step. The observation space is restricted to 2 features. Every step, 'Boat Heading' is calculated from previous heading and rudder angle, whereas 'Heading to Goal' is calculated using the current boat location and the goal location. The 'Boat Location' is calculated using previous boat location, heading, and speed. Finally, 'Goal Location' and 'Boat Speed' is constant for the episode.
+
+Using Stable Baselines3's Soft-Actor Critic algorithm with the default hyperparameters, the algorithm converges on this environment before 15 thousand steps. The trained agent can be watched on \href{https://youtu.be/uccN--r2uc0} {\underline{\textit{YouTube}}}, and the training episode rewards for the final refined model can be seen in Figure \ref{fig:modelless-v4}.
 
 \begin{figure}[h]
     \centering
@@ -1367,7 +1373,7 @@ Using Stable Baselines3's Soft-Actor Critic algorithm with the default hyperpara
 \end{figure}
 
 \section{Suggested Environment}
-A successful refined version have been implemented that can consistently reach the goal faster than the historical boat. In order to make use of this environment in the future, a suggested environment was created, to be used when the state estimator models are improved.
+A successful modelless version have been implemented that can consistently reach the goal faster than the historical boat. In order to make use of this environment in the future, a suggested environment was created, to be used when the state estimator models are improved.
 
 Using the state estimators in each step makes the training significantly longer, as each step takes a little less than 1 second. This is pretty slow in reinforcement learning applications. Assuming the improved state estimators will take as long, it is important to make the environment as efficient as possible and not rely on excess computing power.
 
@@ -1383,7 +1389,7 @@ The suggested observation space have 7 features:
 \end{itemize}
 
 \subsection{Future Implementation}
-The suggested environment and an accompanying interface have been created with necessary explanations and methods to be implemented. When the \textit{StateEstimatorSuggested} class is implemented using the improved state estimators that follows the created interface, the suggested environment will be ready to use. See appendix for a user guide on how to use train and observe the agents on the environments.
+The suggested environment and an accompanying interface have been created with necessary explanations and methods to be implemented. When the \textit{StateEstimatorSuggested} class is implemented using the improved state estimators that follows the created interface, the suggested environment will be ready to use. See Appendix \ref{app:user-guide} for a user guide on how to use train and observe the agents on the environments.
 
 \section{RL Algorithm Comparisons}
 The initial goal was to do the Reinforcement Learning Algorithm comparisons with the environment that uses the state estimator models. However, the state estimator models were problematic, so the refined jtr-modelless-v4 will be used to compare the algorithms which were researched about in the Literature Review section.
@@ -1410,14 +1416,14 @@ We can see that SAC with gSDE hyperparameters clearly perform worse than the oth
 
 TQC is known to be especially excelling in harder environments \cite{tqc-paper}. The jtr-modelless-v4 is a pretty easy environment, with converges happening before 15 thousand steps, and there is only so much faster you can go than the historical boat, which makes the reward capped around 110. Still, comparing default SAC and TQC environments, we can see that once SAC reaches convergence, it stays consistent till the end of training; whereas TQC does more exploration, trying to escape a possible local minimum, which gives it the advantage in more challenging environments. 
 
-Therefore, TQC should be incorporated in the future environments using state estimator models. If the improved state estimators are able to successfully replicate the real sea environment, there will be a lot of nuances to be learned by the RL agent. Such as when and how much to move the rudder compared to the observed features of pitch, roll, wind, etc, to keep the boat speed maximum and reach the in the fastest way.
+Therefore, TQC should be incorporated in the future environments that uses the state estimator models. If the improved state estimators are able to successfully replicate the real sea environment, there will be a lot of nuances to be learned by the RL agent. Such as when and how much to move the rudder compared to the observed features of pitch, roll, wind, etc, to keep the boat speed maximum and reach the in the fastest way.
 
 \chapter{State Estimators Revisited}
 
 \section{Training with Multiple Datasets}
 The optimized models have been trained on the \textit{Atlantic} dataset, the largest clean dataset available. However, although smaller in size, there are multiple clean datasets available that can be used in conjunction to create more robust models.
 
-To create the robust models, datasets across different boats but recorded using the same electronics system will be used. Whether the datasets have been recorded with the same electronics system can be checked by looking at the Original Format column. The updated information about the datasets can be seen in Figure \ref{tab:datasets-updated}. Tacks have been removed from \textit{RDR\_nkz} and \textit{DHREAM20}, so they can also be used during training and testing.
+To create the robust models, datasets across different boats but recorded using the same electronics system will be used. Whether the datasets have been recorded with the same electronics system can be checked by looking at the Original Format column in the updated information about the datasets in Table \ref{tab:datasets-updated}. Tacks have been removed from \textit{RDR\_nkz} and \textit{DHREAM20}, so they can also be used during training and testing.
 
 \begin{table}[h]
 \centering
@@ -1447,7 +1453,7 @@ As explained before, \textit{Atlantic} is the largest clean dataset. 74\% of the
 \section{Repeating Tests with Joint Dataset Models}
 
 \subsection{Comparison with Atlantic models}
-When tested on the held out part of the same dataset they were trained on, both \textit{Atlantic} and Joint dataset models perform very closely. The average error rates can be seen in Figure \ref{tab:joint-vs-atlantic} and the full error rates for all features can be found in Appendix \ref{app:joint}.
+When tested on the held out part of the same dataset they were trained on, both \textit{Atlantic} and Joint dataset models perform very closely. The average error rates can be seen in Figure \ref{fig:joint-vs-atlantic} and the full error rates for all features can be found in Appendix \ref{app:joint}.
 
 \begin{figure}[h]
 \centering
@@ -1525,7 +1531,7 @@ The same 60 second section from the \textit{Atlantic} dataset have been given as
 
 The blue lines are historical values recorded from the boat sensors. The orange lines are the prediction made using Atlantic models, and the green lines are predictions made using Joint dataset models. Comparing Atlantic and Joint dataset models, for some features one performs better, for other features the other performs better. 
 
-The only feature that performed relatively better was Heading\_True\_cos, which kept being really close to expected historical values throughout the 60 second prediction frame, which can be seen in Figure \ref{fig:Heading_True_cos_zoom}.
+The only feature that performed relatively better was Heading\_True\_cos, which kept being much closer to expected historical values throughout the 60 second prediction frame, which can be seen in Figure \ref{fig:Heading_True_cos_zoom}.
 
 Neither sets of models perform clearly better than the other. However, it is obvious from the graphs that neither of the models are good enough to be used in a reinforcement learning setting.
 
@@ -1540,9 +1546,9 @@ Assuming we do not have a way to get vast amounts of data, we need to change the
 \chapter{Conclusion}
 
 \section{Evaluation}
-As explained in the Outcomes section of the Introduction, this project was successful in many of the goals that were set to achieve. See \ref{sec:outcomes} for a short summary of the of the outcomes of this project. In this section, the outcomes are evaluated to highlight successes, shortcomings, and the reasoning for the outcomes.
+As explained in the Outcomes section of the Introduction, this project was successful in many of the goals that were set to achieve. See Section \ref{sec:outcomes} for a short summary of the of the outcomes of this project. In this section, the outcomes are evaluated to highlight successes, shortcomings, and the reasoning for the outcomes.
 
-First, the suggested Future Work of Charles Metz, the previous Imperial College London student who worked on this project, were followed. Charles envisioned that following his contributions on the state estimator models, they would be ready to use in a RL setting after hyperparameter optimization. Therefore hyperparameter optimization was done and 28\% performance improvement was achieved. The resulting hyperparameters are not the best hyperparameters possible. The hyperparameter optimization was done on a generic large search space for a reasonable time of 30 hours per feature. Further improvements might be achieved by studying the resulting hyperparameters, refining the search space, adjusting the exploration and exploatation steps for computing available, and continuing to optimize the hyperparameters.
+First, the suggested Future Work of Charles Metz, the previous Imperial College London student who worked on this project, were followed. Charles envisioned that following his contributions on the state estimator models, they would be ready to use in a RL setting after hyperparameter optimization. Therefore hyperparameter optimization was done and 33\% performance improvement was achieved. The resulting hyperparameters are not the best hyperparameters possible. The hyperparameter optimization was done on a generic large search space for a reasonable time of 30 hours per feature. Further improvements might be achieved by studying the resulting hyperparameters, refining the search space, adjusting the exploration and exploitation steps for computing available, and continuing to optimize the hyperparameters.
 
 Next, a long awaited experiment by the sponsoring company T-DAB, it was tested whether the state estimator models will be transferable to other datasets than the models were trained on. Unfortunately, the models were not transferable to other datasets, even on very specific conditions such as same boat, same marine electronics system, and similar weather. This suggests that models overfit to the training set and cannot generalize to other datasets. 
 
@@ -1551,9 +1557,11 @@ To see what is happening with the models, a experiment that was never done befor
 
 The biggest shortcoming of the project is these lack of transferability and long term predictions of the created ML models. Although showing good results on the held-out part of the training dataset, the ML architecture suggested by the previous students have been lacking in these areas. Suggestion on how to improve the state estimators and alleviate these problems can be found in the following \nameref{sec:future-work} section.
 
-To assure that the problem was not in the RL part, and as a guideline for future students who will work on this project, a rule-based RL environment was created. In this modelless rule-based environment, the agent is able to consistently reach the goal faster than the human skipper before 15 thousand training steps. This is the biggest success of this project, and it shows that the RL approach is indeed possible if the state estimator models can be improved. Several iterations of improvements have been done on the RL environment to produce the final environment. Plus a suggested environment have been created to be used when the state estimators are improved. This suggested environment includes an interface to be implemented so that in can easily be used with the improved models, and a User Guide in Appendix \ref{app:user-guide} on how to install and use the written code and the framework. The suggested environment have been created with the sailing domain knowledge and the knowledge learned during the improvement iterations. However, the reward and observation space given to the agent might need to be updated depending on the behavior of the agent on the environment with improved models.
+To assure that the problem was not in the RL part, and as a guideline for future students who will work on this project, a rule-based RL environment was created. In this modelless rule-based environment, the agent is able to consistently reach the goal faster than the human skipper before 15 thousand training steps. This is the biggest success of this project, and it shows that the RL approach is indeed possible if the state estimator models can be improved. Several iterations of improvements have been done on the RL environment to produce the final environment. Plus a suggested environment have been created to be used when the state estimators are improved. This suggested environment includes an interface to be implemented so that in can easily be used with the improved models, along with a User Guide in Appendix \ref{app:user-guide} on how to install and use the written code and the framework. The suggested environment have been created with the sailing domain knowledge and the information learned during the refinement iterations. However, the reward and observation space given to the agent might need to be updated depending on the behavior of the agent on the environment with improved models.
 
-Lastly, the state estimator models were revisited to try improve them during the remaining time. The models used in previous sections were trained on \textit{Atlantic}, the largest clean dataset available. However there are multiple datasets available, as seen in Chapter 3 - Data. New models were created using all of the clean data available, and the experiments were repeated with those new models. However, training the models with more data did not have any significant impact on the model performance on these tests. Assuming we do not have a way to get vast amounts of data, we need to change the way we are using Machine Learning to be able to achieve results with the data we have, which are suggested in the next section.
+Lastly, the state estimator models were revisited to try improve them during the remaining time. The models used in previous sections were trained on \textit{Atlantic}, the largest clean dataset. However there are multiple datasets available, as seen in Chapter 3 - Data. New models were created using all of the clean data available, and the experiments were repeated with those new models. However, training the models with more data did not have any significant impact on the model performance on these tests. Assuming we do not have a way to get vast amounts of data, we need to change the way we are using Machine Learning to be able to achieve results with the data we have, which are suggested in the next section.
+
+The poor state estimator performance might be caused by the nature of the data. The data have been recorded during long ocean races, where heading is the same for hours, there are no obstacles in the open ocean that will change the wind speed or direction, and the wave patterns are similar throughout the course. Although there are over 200 hours of data, because they have been recorded in this type of conditions, it doesn't provide the models with a wide range of conditions to learn from. This makes training the state estimator models even harder. If there was enough data to learn from, using all available sensors would make sense, as in creating end-to-end kind of models. However, that is not the case, so we need to simplify the structure and help models learn the relationships between the boat and its environment by carefully selecting the key features.
 
 \section{Future Work} \label{sec:future-work}
 There are many possible areas of future work on this project. The next important steps for the project are explained in the Main Future Work section. Then, the non-essential, quality of life improvements that will make working on the project easier, or incremental improvements that will have smaller impact on the performance are listed in Additional Improvements section. Finally, the future work on Reinforcement Learning area is explained, which can take place after state estimators are improved and can successfully make long term predictions.
@@ -1569,20 +1577,23 @@ Right now, there are 18 different models making 18 different predictions on the 
     \item \textbf{Prediction Speed:} Making 18 separate predictions are time consuming. Hundreds of thousands steps are required to train the RL agent. If one step can be optimized, it will have a huge effect on the total computing and time required to train the agent.
 \end{itemize}
 
-Furthermore, many of the features convey similar information with other features. For example there are four seperate features: Heading\_True, Heading\_over\_ground, Heading\_over\_surface and Yaw. All these convey the same information with some degrees of differences due to magnetic/true north disrepancy and the ocean current. 
+Furthermore, many of the features convey similar information with other features. For example there are four seperate features: Heading\_True, Heading\_over\_ ground, Heading\_over\_surface and Yaw. All these convey the same information with some degrees of differences due to magnetic/true north disrepancy and the ocean current. 
 
 In addition, some of the futures either have very low affect on the core sailboat-environment relationship we are trying to learn. For example the air temperature has a negligible effect on boat dynamics compared to rudder angle, wind direction and wind speed.
 
 Therefore, it is suggested to simplify the setup, and only use the features that are definitely needed for the core sailboat-environment relationship. The features below were selected by considering which features affect the boat the most, and what does a professional skipper look for while steering the boat.
+
 \begin{itemize}
-    \item \textbf{Sea States:} True Wind Speed, True Wind Direction, Ocean current speed, Ocean current direction
+    \item \textbf{Sea States:} True Wind Speed, Ocean Current Speed
     \item \textbf{Predicted Boat States:} Heading True, Speed over ground, Pitch, Roll
-    \item \textbf{Calculated Boat States:} Latitude, Longitude, Apparent Wind Speed, Apparent Wind Direction
+    \item \textbf{Calculated Boat States:} Latitude, Longitude, Apparent Wind Speed, Apparent Wind Direction, Ocean Current Angle
 \end{itemize}
 
-In this simplified version, we only need 5 models, Heading\_True\_cos, Heading\_True\_sin, Speed\_ov\_ground, Pitch and Roll. Sea states are environmental variables that are given. Latitude, Longitude is currently calculated by using boat speed, heading, and previous location. Apparent Wind Speed, Apparent Wind Direction can also be calculated using boat speed and heading, True Wind Speed, True Wind Direction.
+Additional bookkeeping is also required to keep track of states such as True Wind Direction or Ocean Current Direction, which is not an input for the models, but they are required to calculate other features.
 
-This simplified version will have much less error accumulation, will be faster on each step, and will be less likely to overfit to features that are not as relevant. 
+In this simplified version, we only need 5 models, Heading\_True\_cos, Heading\_True\_sin, Speed\_ov\_ground, Pitch and Roll. Sea states are environmental variables that are given. Latitude, Longitude is currently calculated by using boat speed, heading, and previous location. Apparent Wind Speed, Apparent Wind Direction can also be calculated using boat speed and heading, True Wind Speed, True Wind Direction. Similarly, ocean current angle can be calculated by boat speed and heading plus ocean current speed and direction.
+
+This simplified version will have much less error accumulation, will be faster on each step, and will be less likely to overfit to features that are not as relevant. Which features to select is up for discussion, but I believe that this should be the way forward for this project.
 
 \subsubsection{Data Split Method}
 The two data split methods compared in this project were segment and normal split methods implemented by previous students. Segment method was chosen as it is the better option, but there are other data split methods such as forward-chaining. Forward-chaining might be the superior option, so it should be tried as a data split method.
@@ -1599,28 +1610,28 @@ However, there are also disadvantages of Ensembles. Using ensembles increase the
 \subsection{Additional Improvements}
 
 \subsubsection{Tack Detection}
-Currently, the tack information is given hardcoded for every dataset. This makes working across datasets harder, and requires further work for new datasets. Following previous students' work, tack detection is done on a semi manual way, but it can be fully automated and added to the pipeline to solve these issues.
+Currently, the tack information is given hardcoded for every dataset. This makes working across datasets harder, and requires additional work for new datasets. Following previous students' work, tack detection was done on a semi manual way, but it can be fully automated and added to the pipeline to solve these issues.
 
-It should also be noted that removing tacks improve the performance on the test set which also has its tacks removed. The performance on the test set still including the tacks were not tested. Tack removal might actually be detrimental for Reinforcement Learning. The agent tries different rudder movements to find the optimal way of steering the boat. Removing these rudder movements might hinder the RL agent.
+It should also be noted that removing tacks improve the performance on the test set which also has its tacks removed. The performance on the test set still including the tacks were not tested. Tack removal might actually be detrimental for Reinforcement Learning. The agent tries different rudder movements to find the optimal way of steering the boat. Removing tacks, which has crucial rudder movements, might hinder the RL agent.
 
 \subsubsection{Improve Data Storage}
-The data is stored as CSV files on the company SharePoint. CSV files are not very efficient, but reading, processing and writing using CSV is slow. This isn't a big problem right now as the available data is not very large, but a more efficient solution, Parquet might be considered.
+The data is stored as CSV files on the company SharePoint. CSV files are not very efficient. Reading, processing and writing using CSV is slow. This isn't a big problem right now as the available data is not very large, but a more efficient solution, Parquet \cite{parquet} might be considered.
 
 \subsubsection{Optimize LSTM history amount}
-The state estimator models require 60 seconds of history to predict what will happen in the next second. Roman \cite{roman} have tested 30, 60, and 90 seconds of history, and achieved best results with 60 seconds. However, an exhaustive search have not been completed.
+The state estimator models require 60 seconds of history to predict what will happen in the next second. Roman \cite{roman} have tested 30, 60, and 90 seconds of history, and achieved best results with 60 seconds. However, an exhaustive search have not been performed.
 
 \subsubsection{Normalization Ranges}
-The normalization ranges were set by Roman \cite{roman} and Birk \cite{birk} as physical limits. However gathering more data available showed us that those ranges are not the limits, and higher values are possible, especially on boat and wind speeds. The normalizations need to be revisited with this information, by also considering the distributions of the values.
+The normalization ranges were set by Roman \cite{roman} and Birk \cite{birk} as physical limits. However gathering more data in the following years showed us that those ranges are not the limits, and higher values are possible, especially in boat and wind speeds. The normalizations need to be revisited with this information, by also considering the distributions of the values.
 
 \subsubsection{Further Hyperparameter Optimizations}
 The hyperparameters used in the state estimator models are not the best hyperparameters possible. The hyperparameter optimization was done on a generic large search space for a reasonable time of 30 hours per feature. Further improvements might be achieved by studying the resulting hyperparameters, refining the search space, adjusting the exploration and exploatation steps for computing available, and continuing to optimize the hyperparameters.
 
 \subsection{Reinforcement Learning}
-The modelless environment created shows that the RL approach is indeed possible if the state estimator models can be improved. A suggested environment have also been created to be used when the state estimators are improved. This suggested environment includes an interface to be implemented so that in can easily be used with the improved models, and a User Guide in Appendix \ref{app:user-guide} on how to install and use the written code and the framework.
+The modelless environment created shows that the RL approach is indeed possible if the state estimator models can be improved. A suggested environment have been created to be used when the state estimators are improved. This suggested environment includes an interface to be implemented so that in can easily be used with the improved models, and a User Guide in Appendix \ref{app:user-guide} on how to install and use the written code and the framework.
 
 \section{Ethical Considerations}
 
-Here, the ethical considerations of not only my part of the bigger Automation and Intelligent Optimisation in High Performance Sailing Boats, but the whole planned project is discussed.
+Here, the ethical considerations of not only my part of the bigger \textit{Automation and Intelligent Optimisation in High Performance Sailing Boats} project, but the whole planned project is discussed.
 
 \subsubsection{Human Participants and Safety}
 Human participants are expected to be involved when the autopilot is deployed to a real sailboat. There is still a long way until the autopilot can be deployed, but security systems should be added to ensure safety. High performance sailboats can be dangerous due to the high speeds and the large mass of moving parts involved. The security systems to be included can be: fast and easy interruption by a human, limits on rudder angle movement, switching to safe rule-based autopiloting when in doubt, etc.
@@ -1629,12 +1640,12 @@ Human participants are expected to be involved when the autopilot is deployed to
 The project involves collecting and further processing personal data. There are data provided by Jack Trigger and NKE electronics. The data collected is stored in T-DAB cloud service, where the access protected by user permissions and password. When using computing services, the location is chosen as 'UK South' so the data would not leave UK and EEA.
 
 \subsubsection{Dual Use}
-This project has an exclusive civilian application focus. The project does not have a potential for military applications as sailboats are not viable as combatants.
+This project has an exclusive civilian application focus. The project does not have a potential for military applications as sailboats are not viable compared to motorboats.
 
 \subsubsection{Legal Issues}
-A non-diclosure agreement is signed with people involved in this project, including NKE, T-DAB employees, and the students working on the project. This agreement states that no data from NKE can be published, as well as information about how the data have been recorded by NKE software or hardware. To protect this information, the data is kept on private repositories, plus any published code will be checked that the protected information cannot be inferred.
+A non-disclosure agreement is signed with people involved in this project, including NKE, T-DAB employees, and the students working on the project. This agreement states that no data from NKE can be published, as well as information about how the data have been recorded by NKE software or hardware. To protect this information, the data is kept on private repositories, plus any published code will be checked that the protected information cannot be inferred.
 
-Moreover, GDPR rules which are still applicable in the UK has to be respected. This means that Jack Trigger can exercise his rights of ”regarding their personal data, including the rights of access, rectification, erasure, restriction, data portability, objection and those related to automated decision-making” \cite{ico-gdpr}. A Reliable communication between parties ensures that these right can be exercised throughout the project.
+Moreover, GDPR rules which are still applicable in the UK has to be respected. This means that Jack Trigger can exercise his rights ”regarding their personal data, including the rights of access, rectification, erasure, restriction, data portability, objection and those related to automated decision-making” \cite{ico-gdpr}. A Reliable communication between parties ensures that these right can be exercised throughout the project.
 
 Lastly, when the autopilot is deployed, the racing rules need to be checked if the autopilot is within the rules. Particularly, Jack Trigger's Concise 8 belongs to the Class 40. It was announced that "a plan to limit all the main components involved in the pilot (Inertial navigation system, processor, autopilot computer and related licenses, excluding wind and speed sensors) is being drafted for submission to a vote by a AGE in 2020 and an application in 2021” \cite{class40}. The 2021 rules does not include this change \cite{class40-rules}, but they might get updated in the future.
 
